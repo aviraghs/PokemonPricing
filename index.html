@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Card Price Checker</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            background: #f0f0f0;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #result {
+            margin-top: 20px;
+            width: 500px;
+            text-align: center;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #fff;
+            text-align: left;
+        }
+        .title { font-weight: bold; }
+        a { color: blue; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h2>Pokémon Card Price Checker</h2>
+    <input id="cardName" placeholder="Enter card name" />
+    <button id="searchBtn">Search</button>
+
+    <div id="result"></div>
+
+    <script>
+        const searchBtn = document.getElementById('searchBtn');
+        const cardNameInput = document.getElementById('cardName');
+        const resultDiv = document.getElementById('result');
+
+        searchBtn.addEventListener('click', async () => {
+            const keywords = cardNameInput.value.trim();
+            if (!keywords) {
+                resultDiv.innerHTML = 'Please enter a card name.';
+                return;
+            }
+
+            resultDiv.innerHTML = 'Loading...';
+
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ keywords })
+                });
+
+                const data = await response.json();
+
+                if (!data.recentSold || data.recentSold.length === 0) {
+                    resultDiv.innerHTML = 'No recent sold listings found for this card.';
+                    return;
+                }
+
+                let html = `<p><strong>Average Price:</strong> $${data.averagePrice.toFixed(2)}</p>`;
+                data.recentSold.forEach(item => {
+                    html += `
+                        <div class="card">
+                            <div class="title">${item.title}</div>
+                            <p>Sale Price: $${item.sale_price}</p>
+                            <p>Condition: ${item.condition}</p>
+                            <p>Format: ${item.buying_format}</p>
+                            <p>Date Sold: ${item.date_sold}</p>
+                            <p><a href="${item.link}" target="_blank">View Listing</a></p>
+                        </div>
+                    `;
+                });
+
+                resultDiv.innerHTML = html;
+            } catch (err) {
+                console.error(err);
+                resultDiv.innerHTML = 'Error fetching data';
+            }
+        });
+    </script>
+</body>
+</html>
