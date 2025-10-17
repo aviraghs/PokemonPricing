@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Collection - Pokémon Card Manager</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f23;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+        .header {
+            background: #1a1a2e;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #2d2d44;
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .collection-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: opacity 0.3s;
+        }
+        .collection-btn:hover { opacity: 0.9; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .admin-section {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #2d2d44;
+        }
+        .admin-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #2d2d44;
+            padding-bottom: 10px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #b0b0b0;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: #16213e;
+            border: 2px solid #2d2d44;
+            border-radius: 8px;
+            font-size: 1em;
+            color: #e0e0e0;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .button-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-clear { background: #2d2d44; color: #e0e0e0; }
+        .btn-clear:hover { background: #3a3a5a; }
+        .btn-danger { background: #ef4444; color: white; }
+        .cards-list { display: grid; gap: 15px; }
+        .card-item {
+            background: #16213e;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+        }
+        .card-info h3 { margin-bottom: 5px; }
+        .card-info p { font-size: 0.9em; color: #b0b0b0; margin-bottom: 3px; }
+        .card-pricing {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2d2d44;
+        }
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+        .price-box {
+            background: #1a1a2e;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .price-source {
+            font-size: 0.8em;
+            color: #b0b0b0;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .price-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .ebay-listings ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .ebay-listings li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #2d2d44;
+            font-size: 0.9em;
+        }
+        .ebay-listings li:last-child {
+            border-bottom: none;
+        }
+        .ebay-listings a {
+            color: #b0b0b0;
+            text-decoration: none;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: 15px;
+        }
+        .ebay-listings a:hover {
+            color: #667eea;
+        }
+        .ebay-listings strong {
+            color: #667eea;
+        }
+        .ebay-listings h4 {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #2d2d44;
+            text-align: center;
+        }
+        .modal-content h3 { margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 15px; }
+        .loading { text-align: center; padding: 20px; color: #b0b0b0; }
+        .empty-state { text-align: center; padding: 40px; color: #b0b0b0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <h1>My Collection</h1>
+                <a href="/" class="collection-btn">← Back to Explorer</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="status-message" class="status-message"></div>
+
+        <div class="admin-section">
+            <h2>Add New Card</h2>
+            <form id="addCardForm">
+                <div class="form-group">
+                    <label for="cardTitle">Card Title *</label>
+                    <input type="text" id="cardTitle" placeholder="e.g., Mew, Rayquaza V" required />
+                </div>
+                <div class="form-group">
+                    <label for="cardSet">Set *</label>
+                    <select id="cardSet" required>
+                        <option value="">-- Loading sets... --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cardNumber">Card Number *</label>
+                    <input type="text" id="cardNumber" placeholder="e.g., 011/025 or GG44/GG70" required />
+                </div>
+                <div class="form-group">
+                    <label for="cardLanguage">Language *</label>
+                    <select id="cardLanguage" required>
+                        <option value="">Select Language</option>
+                        <option value="English">English</option>
+                        <option value="Japanese">Japanese</option>
+                        <option value="German">German</option>
+                        <option value="French">French</option>
+                        <option value="Spanish">Spanish</option>
+                        <option value="Italian">Italian</option>
+                        <option value="Portuguese">Portuguese</option>
+                        <option value="Korean">Korean</option>
+                        <option value="Chinese">Chinese</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Add Card</button>
+                    <button type="reset" class="btn-clear">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="admin-section">
+            <h2>Cards in Collection</h2>
+            <div id="cardsList" class="cards-list">
+                <div class="loading">Loading cards...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalCardTitle"></h3>
+            <div class="modal-actions">
+                <button id="modalEditBtn" class="btn-primary">Edit</button>
+                <button id="modalRemoveBtn" class="btn-danger">Remove</button>
+                <button onclick="closeModal()" class="btn-clear">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const addCardForm = document.getElementById('addCardForm');
+        const cardsList = document.getElementById('cardsList');
+        const setSelect = document.getElementById('cardSet');
+        const modal = document.getElementById('actionModal');
+        const modalTitle = document.getElementById('modalCardTitle');
+        const modalEditBtn = document.getElementById('modalEditBtn');
+        const modalRemoveBtn = document.getElementById('modalRemoveBtn');
+        let sets = [];
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.className = `status-message status-${type}`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        async function loadSets() {
+            try {
+                const response = await fetch('/api/sets');
+                const data = await response.json();
+                sets = data.data || [];
+                if (sets.length > 0) {
+                    setSelect.innerHTML = '<option value="">-- Select a set --</option>';
+                    sets.forEach(set => {
+                        const option = document.createElement('option');
+                        option.value = set.id;
+                        option.textContent = set.name;
+                        setSelect.appendChild(option);
+                    });
+                }
+            } catch (err) {
+                setSelect.innerHTML = '<option value="">Failed to load sets</option>';
+                showStatus('Failed to load sets', 'error');
+            }
+        }
+
+        addCardForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('cardTitle').value.trim();
+            const setId = document.getElementById('cardSet').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const language = document.getElementById('cardLanguage').value.trim();
+
+            if (!title || !setId || !cardNumber || !language) {
+                showStatus('Please fill in all fields', 'error');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Adding...';
+
+            try {
+                const response = await fetch('/api/cards', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, setId, cardNumber, language })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('Card added successfully!', 'success');
+                    addCardForm.reset();
+                    await loadCards();
+
+                    const cardElement = document.getElementById(data.data._id);
+                    if (cardElement) {
+                        cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        const pricingDiv = document.getElementById(`pricing-${data.data._id}`);
+                        if (pricingDiv) {
+                            await fetchCardPrice(data.data._id, data.data.title, data.data.variantId);
+                        }
+                    }
+                } else {
+                    showStatus(data.error || 'Failed to add card', 'error');
+                }
+            } catch (err) {
+                showStatus('Error adding card', 'error');
+                console.error('Error:', err);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add Card';
+            }
+        });
+
+        async function loadCards() {
+            try {
+                const response = await fetch('/api/cards');
+                const cards = await response.json();
+                if (cards.length === 0) {
+                    cardsList.innerHTML = '<div class="empty-state">No cards in collection.</div>';
+                    return;
+                }
+
+                // Find set name for each card
+                cardsList.innerHTML = cards.map(card => {
+                    const setInfo = sets.find(s => s.id === card.setId);
+                    const setName = setInfo ? setInfo.name : card.setId;
+
+                    return `
+                    <div class="card-item" id="${card._id}" onclick="openActionModal('${card._id}', '${card.title}')">
+                        <div class="card-info">
+                            <h3>${card.title}</h3>
+                            <p><strong>Set:</strong> ${setName}</p>
+                            <p>Card #: ${card.cardNumber} | Lang: ${card.language}</p>
+                            <p><strong>Variant ID:</strong> ${card.variantId || 'N/A'}</p>
+                        </div>
+                        <div class="card-pricing" id="pricing-${card._id}"></div>
+                    </div>
+                `;
+                }).join('');
+
+                // After rendering, fetch prices for each card with staggered delays
+                for (let i = 0; i < cards.length; i++) {
+                    const card = cards[i];
+                    if (card._id && card.title) {
+                        // Stagger requests by index to prevent rate limiting
+                        setTimeout(() => {
+                            fetchCardPrice(card._id, card.title, card.variantId);
+                        }, i * 2000); // 2 second delay between each card
+                    }
+                }
+            } catch (err) {
+                cardsList.innerHTML = '<div class="empty-state">Failed to load cards.</div>';
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function fetchCardPrice(cardId, cardTitle, variantId) {
+            const pricingDiv = document.getElementById(`pricing-${cardId}`);
+            pricingDiv.innerHTML = '<em>Fetching prices...</em>';
+
+            // Add delay to prevent overwhelming the APIs
+            await sleep(1500);
+
+            try {
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: cardTitle, variantId })
+                });
+                if (!response.ok) throw new Error('Price fetch failed');
+                const data = await response.json();
+
+                pricingDiv.innerHTML = `
+                    <div class="price-grid">
+                        <div class="price-box" id="ebay-box-${cardId}" style="cursor: pointer;">
+                            <span class="price-source">eBay</span>
+                            <span class="price-value">${data.ebay?.averagePrice || 'N/A'}</span>
+                        </div>
+                        <div class="price-box">
+                            <span class="price-source">JustTCG</span>
+                            <span class="price-value">${data.tcgPlayer?.averagePrice || 'N/A'}</span>
+                        </div>
+                        <div class="price-box">
+                            <span class="price-source">PriceCharting</span>
+                            <span class="price-value">${data.priceCharting?.averagePrice || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="ebay-listings" id="ebay-listings-${cardId}" style="display: none; margin-top: 10px;"></div>
+                `;
+
+                const ebayBox = pricingDiv.querySelector(`#ebay-box-${cardId}`);
+                if (ebayBox) {
+                    ebayBox.addEventListener('click', () => {
+                        showEbayListings(cardId, data.ebay?.listings);
+                    });
+                }
+            } catch (err) {
+                pricingDiv.innerHTML = '<p style="color: #ef4444;">Could not fetch prices.</p>';
+            }
+        }
+
+        function showEbayListings(cardId, listings) {
+            const listingsDiv = document.getElementById(`ebay-listings-${cardId}`);
+            if (!listingsDiv) return;
+
+            if (listingsDiv.style.display === 'block') {
+                listingsDiv.style.display = 'none';
+                return;
+            }
+
+            if (!listings || listings.length === 0) {
+                listingsDiv.innerHTML = '<p>No recent eBay sales found.</p>';
+            } else {
+                listingsDiv.innerHTML = `
+                    <h4>Recent eBay Sales</h4>
+                    <ul>
+                        ${listings.map(item => `
+                            <li>
+                                <a href="${item.link}" target="_blank" title="${item.title}">
+                                    ${item.title || 'N/A'}
+                                </a>
+                                <strong>$${(item.sale_price || 0).toFixed(2)}</strong>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+            }
+            listingsDiv.style.display = 'block';
+        }
+
+        function openActionModal(cardId, cardTitle) {
+            modal.style.display = 'flex';
+            modalTitle.textContent = cardTitle;
+            modalEditBtn.onclick = () => {
+                alert('Edit functionality is not yet implemented.');
+                closeModal();
+            };
+            modalRemoveBtn.onclick = () => {
+                removeCard(cardId);
+                closeModal();
+            };
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        async function removeCard(cardId) {
+            if (!confirm('Are you sure you want to remove this card?')) return;
+            try {
+                const response = await fetch(`/api/cards/${cardId}`, { method: 'DELETE' });
+                if (response.ok) {
+                    showStatus('Card deleted successfully!', 'success');
+                    loadCards();
+                } else {
+                    showStatus('Failed to delete card', 'error');
+                }
+            } catch (err) {
+                showStatus('Error deleting card', 'error');
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        loadSets();
+        loadCards();
+    </script>
+</body>
+</html>

@@ -1,17 +1,1 @@
-{
-  "name": "pokemon-tracker",
-  "version": "1.0.0",
-  "main": "server.js",
-  "type": "module",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "body-parser": "^2.2.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^4.19.0",
-    "mongodb": "^6.6.0",
-    "node-fetch": "^3.3.2"
-  }
-}
+{"name":"pokemon-card-checker","version":"1.0.0","type":"module","main":"server.js","scripts":{"start":"node server.js"},"dependencies":{"body-parser":"^2.2.0","cors":"^2.8.5","dotenv":"^17.2.3","express":"^4.19.0","mongodb":"^6.6.0","next":"^15.5.4","node-fetch":"^3.3.2","react":"^19.2.0"}}
