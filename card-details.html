@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Details - PokéCard Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1a1a2e;
+            border-bottom: 1px solid #2d2d44;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: #2d2d44;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #3a3a5a;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .spinner {
+            border: 4px solid #2d2d44;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .card-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 40px;
+        }
+
+        .card-image-section {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .card-image-container {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #2d2d44;
+            text-align: center;
+        }
+
+        .card-image-large {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .add-to-collection-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-collection-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .card-details-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .info-card {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #2d2d44;
+        }
+
+        .info-card h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .card-subtitle {
+            font-size: 1.2em;
+            color: #b0b0b0;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: #16213e;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .attacks-list {
+            margin-top: 20px;
+        }
+
+        .attack-item {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .attack-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .attack-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .attack-damage {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .attack-cost {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+
+        .attack-effect {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .price-card {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .price-source {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            margin-bottom: 15px;
+            display: block;
+            font-weight: 500;
+        }
+
+        .price-variants {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .price-variant {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #2d2d44;
+        }
+
+        .price-variant:last-child {
+            border-bottom: none;
+        }
+
+        .variant-label {
+            font-size: 0.85em;
+            color: #b0b0b0;
+        }
+
+        .variant-price {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .price-loading {
+            padding: 40px;
+            text-align: center;
+            color: #b0b0b0;
+        }
+
+        .price-unavailable {
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .ebay-listings {
+            margin-top: 20px;
+        }
+
+        .ebay-listings h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+
+        .ebay-item {
+            background: #16213e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ebay-item a {
+            color: #b0b0b0;
+            text-decoration: none;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 15px;
+        }
+
+        .ebay-item a:hover {
+            color: #667eea;
+        }
+
+        .ebay-price {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .error-message {
+            background: #ef4444;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-right: 5px;
+            background: #2d2d44;
+            color: #e0e0e0;
+        }
+
+        @media (max-width: 1024px) {
+            .card-layout {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .card-image-section {
+                position: relative;
+                top: 0;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 1.3em;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .card-title {
+                font-size: 1.8em;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo" onclick="window.location.href='/'">⚡ POKÉCARD PRO</div>
+        <button class="back-btn" onclick="history.back()">← Back</button>
+    </div>
+
+    <div class="container">
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading card details...</p>
+        </div>
+
+        <div id="error" style="display: none;">
+            <div class="error-message"></div>
+        </div>
+
+        <div id="cardContent" style="display: none;">
+            <div class="card-layout">
+                <!-- Left Column: Card Image -->
+                <div class="card-image-section">
+                    <div class="card-image-container">
+                        <img id="cardImage" class="card-image-large" alt="Card Image">
+                        <button class="add-to-collection-btn" onclick="addToCollection()">
+                            Add to Collection
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Card Details -->
+                <div class="card-details-section">
+                    <!-- Basic Info -->
+                    <div class="info-card">
+                        <h1 class="card-title" id="cardName"></h1>
+                        <div class="card-subtitle" id="cardSubtitle"></div>
+
+                        <div class="stats-grid" id="statsGrid">
+                            <!-- Stats will be inserted here -->
+                        </div>
+
+                        <div id="typesContainer"></div>
+                    </div>
+
+                    <!-- Attacks/Abilities -->
+                    <div class="info-card" id="attacksCard" style="display: none;">
+                        <h2>Attacks & Abilities</h2>
+                        <div class="attacks-list" id="attacksList">
+                            <!-- Attacks will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Pricing -->
+                    <div class="info-card">
+                        <h2>Current Market Prices</h2>
+                        <div id="pricingContent" class="price-loading">
+                            <div class="spinner" style="width: 30px; height: 30px;"></div>
+                            <p>Fetching prices from multiple sources...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get card ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const cardId = urlParams.get('id');
+        const language = urlParams.get('lang') || 'en';
+
+        let currentCard = null;
+
+        if (!cardId) {
+            showError('No card specified. Please select a card from a set.');
+        } else {
+            loadCardDetails(cardId, language);
+        }
+
+        async function loadCardDetails(cardId, language) {
+            try {
+                // Fetch card details from TCGdex API
+                const response = await fetch(`https://api.tcgdex.net/v2/${language}/cards/${cardId}`);
+
+                if (!response.ok) {
+                    throw new Error('Card not found');
+                }
+
+                const cardData = await response.json();
+                currentCard = cardData;
+                displayCardDetails(cardData);
+
+                // Fetch comprehensive pricing from our backend
+                fetchPricing(cardData);
+
+            } catch (error) {
+                console.error('Error loading card:', error);
+                showError('Failed to load card details. Please try again.');
+            }
+        }
+
+        function displayCardDetails(card) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('cardContent').style.display = 'block';
+
+            // Card name and subtitle
+            document.getElementById('cardName').textContent = card.name;
+            document.getElementById('cardSubtitle').textContent = `${card.set.name} • #${card.localId}`;
+
+            // Card image
+            const imageUrl = card.image || `https://assets.tcgdex.net/${language}/${card.set.id}/${card.localId}`;
+            const cardImageEl = document.getElementById('cardImage');
+            cardImageEl.src = `${imageUrl}/high.webp`;
+            cardImageEl.onerror = () => {
+                cardImageEl.src = `${imageUrl}/high.png`;
+                cardImageEl.onerror = () => {
+                    cardImageEl.src = `${imageUrl}/low.png`;
+                };
+            };
+
+            // Stats
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = '';
+
+            const stats = [
+                { label: 'Rarity', value: card.rarity || 'N/A' },
+                { label: 'Set', value: card.set.name },
+                { label: 'Card #', value: card.localId },
+                { label: 'Category', value: card.category || 'N/A' }
+            ];
+
+            if (card.hp) {
+                stats.push({ label: 'HP', value: card.hp });
+            }
+
+            if (card.stage) {
+                stats.push({ label: 'Stage', value: card.stage });
+            }
+
+            if (card.regulationMark) {
+                stats.push({ label: 'Regulation', value: card.regulationMark });
+            }
+
+            if (card.illustrator) {
+                stats.push({ label: 'Illustrator', value: card.illustrator });
+            }
+
+            stats.forEach(stat => {
+                const statBox = document.createElement('div');
+                statBox.className = 'stat-box';
+                statBox.innerHTML = `
+                    <span class="stat-label">${stat.label}</span>
+                    <div class="stat-value">${stat.value}</div>
+                `;
+                statsGrid.appendChild(statBox);
+            });
+
+            // Types
+            if (card.types && card.types.length > 0) {
+                const typesContainer = document.getElementById('typesContainer');
+                typesContainer.innerHTML = '<div style="margin-top: 15px;"><strong>Types:</strong> ' +
+                    card.types.map(type => `<span class="type-badge">${type}</span>`).join('') +
+                    '</div>';
+            }
+
+            // Attacks/Abilities
+            if (card.attacks && card.attacks.length > 0) {
+                const attacksCard = document.getElementById('attacksCard');
+                const attacksList = document.getElementById('attacksList');
+                attacksCard.style.display = 'block';
+                attacksList.innerHTML = '';
+
+                card.attacks.forEach(attack => {
+                    const attackEl = document.createElement('div');
+                    attackEl.className = 'attack-item';
+
+                    const costHtml = attack.cost ?
+                        `<div class="attack-cost">Cost: ${attack.cost.join(', ')}</div>` : '';
+
+                    const effectHtml = attack.effect ?
+                        `<div class="attack-effect">${attack.effect}</div>` : '';
+
+                    attackEl.innerHTML = `
+                        <div class="attack-header">
+                            <div class="attack-name">${attack.name}</div>
+                            <div class="attack-damage">${attack.damage || ''}</div>
+                        </div>
+                        ${costHtml}
+                        ${effectHtml}
+                    `;
+                    attacksList.appendChild(attackEl);
+                });
+            }
+
+            // Show abilities if present
+            if (card.abilities && card.abilities.length > 0) {
+                const attacksCard = document.getElementById('attacksCard');
+                const attacksList = document.getElementById('attacksList');
+                attacksCard.style.display = 'block';
+
+                card.abilities.forEach(ability => {
+                    const abilityEl = document.createElement('div');
+                    abilityEl.className = 'attack-item';
+                    abilityEl.innerHTML = `
+                        <div class="attack-header">
+                            <div class="attack-name">${ability.name}</div>
+                            <div style="font-size: 0.9em; color: #b0b0b0;">${ability.type || 'Ability'}</div>
+                        </div>
+                        <div class="attack-effect">${ability.effect || ''}</div>
+                    `;
+                    attacksList.appendChild(abilityEl);
+                });
+            }
+        }
+
+        async function fetchPricing(card) {
+            const pricingContent = document.getElementById('pricingContent');
+
+            try {
+                // Call our backend to get comprehensive pricing
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: card.name,
+                        cardId: card.id,
+                        cardNumber: card.localId,
+                        set: card.set.name,
+                        rarity: card.rarity,
+                        language: language
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch pricing');
+                }
+
+                const pricingData = await response.json();
+                displayPricing(pricingData, card);
+
+            } catch (error) {
+                console.error('Error fetching pricing:', error);
+                pricingContent.innerHTML = '<p class="price-unavailable">Unable to load pricing data</p>';
+            }
+        }
+
+        function displayPricing(pricing, card) {
+            const pricingContent = document.getElementById('pricingContent');
+            pricingContent.innerHTML = '';
+
+            const pricingGrid = document.createElement('div');
+            pricingGrid.className = 'pricing-grid';
+
+            // TCGPlayer pricing
+            if (pricing.tcgPlayer) {
+                const tcgCard = createPriceCard('TCGPlayer', pricing.tcgPlayer.averagePrice);
+                pricingGrid.appendChild(tcgCard);
+            }
+
+            // eBay pricing
+            if (pricing.ebay) {
+                const ebayCard = createPriceCard('eBay', pricing.ebay.averagePrice);
+                pricingGrid.appendChild(ebayCard);
+
+                // Show eBay listings if available
+                if (pricing.ebay.listings && pricing.ebay.listings.length > 0) {
+                    const ebayListings = document.createElement('div');
+                    ebayListings.className = 'ebay-listings';
+                    ebayListings.innerHTML = '<h3>Recent eBay Sales</h3>';
+
+                    pricing.ebay.listings.slice(0, 5).forEach(item => {
+                        const listingEl = document.createElement('div');
+                        listingEl.className = 'ebay-item';
+                        listingEl.innerHTML = `
+                            <a href="${item.link}" target="_blank" title="${item.title}">${item.title}</a>
+                            <span class="ebay-price">$${(item.sale_price || 0).toFixed(2)}</span>
+                        `;
+                        ebayListings.appendChild(listingEl);
+                    });
+
+                    pricingContent.appendChild(ebayListings);
+                }
+            }
+
+            // Pokemon Price Tracker pricing
+            if (pricing.pokemonPriceTracker) {
+                const pptCard = createPriceCard('Price Charting', pricing.pokemonPriceTracker.averagePrice);
+                pricingGrid.appendChild(pptCard);
+            }
+
+            pricingContent.insertBefore(pricingGrid, pricingContent.firstChild);
+
+            // Also show TCGdex pricing if available
+            if (card.pricing) {
+                const tcgdexPricing = document.createElement('div');
+                tcgdexPricing.innerHTML = '<h3 style="margin-top: 30px; margin-bottom: 15px; color: #e0e0e0;">TCGdex Market Data</h3>';
+
+                const tcgdexGrid = document.createElement('div');
+                tcgdexGrid.className = 'pricing-grid';
+
+                if (card.pricing.tcgplayer) {
+                    const variants = card.pricing.tcgplayer;
+                    Object.keys(variants).forEach(variant => {
+                        if (variant !== 'updated' && variant !== 'unit' && variants[variant]) {
+                            const variantData = variants[variant];
+                            const variantCard = createVariantPriceCard(variant, variantData);
+                            tcgdexGrid.appendChild(variantCard);
+                        }
+                    });
+                }
+
+                if (card.pricing.cardmarket) {
+                    const cmCard = createCardmarketPriceCard(card.pricing.cardmarket);
+                    tcgdexGrid.appendChild(cmCard);
+                }
+
+                tcgdexPricing.appendChild(tcgdexGrid);
+                pricingContent.appendChild(tcgdexPricing);
+            }
+        }
+
+        function createPriceCard(source, price) {
+            const div = document.createElement('div');
+            div.className = 'price-card';
+
+            const priceDisplay = (price && price !== 'N/A') ?
+                `$${typeof price === 'number' ? price.toFixed(2) : price}` :
+                'N/A';
+
+            div.innerHTML = `
+                <span class="price-source">${source}</span>
+                <div class="variant-price ${price === 'N/A' ? 'price-unavailable' : ''}">${priceDisplay}</div>
+            `;
+            return div;
+        }
+
+        function createVariantPriceCard(variantName, variantData) {
+            const div = document.createElement('div');
+            div.className = 'price-card';
+
+            const displayName = variantName.charAt(0).toUpperCase() + variantName.slice(1);
+
+            div.innerHTML = `
+                <span class="price-source">TCGPlayer ${displayName}</span>
+                <div class="price-variants">
+                    ${variantData.marketPrice ? `<div class="price-variant"><span class="variant-label">Market</span><span class="variant-price">$${variantData.marketPrice.toFixed(2)}</span></div>` : ''}
+                    ${variantData.lowPrice ? `<div class="price-variant"><span class="variant-label">Low</span><span class="variant-price">$${variantData.lowPrice.toFixed(2)}</span></div>` : ''}
+                    ${variantData.midPrice ? `<div class="price-variant"><span class="variant-label">Mid</span><span class="variant-price">$${variantData.midPrice.toFixed(2)}</span></div>` : ''}
+                    ${variantData.highPrice ? `<div class="price-variant"><span class="variant-label">High</span><span class="variant-price">$${variantData.highPrice.toFixed(2)}</span></div>` : ''}
+                </div>
+            `;
+            return div;
+        }
+
+        function createCardmarketPriceCard(cmData) {
+            const div = document.createElement('div');
+            div.className = 'price-card';
+
+            div.innerHTML = `
+                <span class="price-source">Cardmarket</span>
+                <div class="price-variants">
+                    ${cmData.avg ? `<div class="price-variant"><span class="variant-label">Average</span><span class="variant-price">€${cmData.avg.toFixed(2)}</span></div>` : ''}
+                    ${cmData.trend ? `<div class="price-variant"><span class="variant-label">Trend</span><span class="variant-price">€${cmData.trend.toFixed(2)}</span></div>` : ''}
+                    ${cmData.low ? `<div class="price-variant"><span class="variant-label">Low</span><span class="variant-price">€${cmData.low.toFixed(2)}</span></div>` : ''}
+                </div>
+            `;
+            return div;
+        }
+
+        async function addToCollection() {
+            const token = localStorage.getItem('pokecardToken');
+
+            if (!token) {
+                alert('Please login to add cards to your collection');
+                window.location.href = '/?login=true';
+                return;
+            }
+
+            if (!currentCard) {
+                alert('Card data not loaded');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/cards', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        title: currentCard.name,
+                        setId: currentCard.set.id,
+                        cardNumber: currentCard.localId,
+                        language: language
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to add card');
+                }
+
+                alert('Card added to your collection!');
+            } catch (error) {
+                console.error('Error adding card:', error);
+                alert('Failed to add card to collection: ' + error.message);
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.querySelector('.error-message').textContent = message;
+        }
+    </script>
+</body>
+</html>
