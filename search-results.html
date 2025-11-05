@@ -108,6 +108,8 @@
             padding: 30px;
             border: 1px solid #2d2d44;
             transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
         }
 
         .result-card:hover {
@@ -211,6 +213,8 @@
             cursor: pointer;
             font-family: 'Poppins', sans-serif;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
         }
 
         .add-to-collection:hover {
@@ -221,6 +225,14 @@
         .add-to-collection:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        .card-clickable-area {
+            cursor: pointer;
+        }
+
+        .card-clickable-area:hover {
+            opacity: 0.95;
         }
 
         .no-results {
@@ -309,6 +321,38 @@
     </div>
 
     <script>
+        // Currency conversion (USD to INR)
+        let USD_TO_INR = 88.72; // Default fallback rate
+
+        async function fetchExchangeRate() {
+            try {
+                const response = await fetch('/api/exchange-rate');
+                if (response.ok) {
+                    const data = await response.json();
+                    USD_TO_INR = data.rate;
+                    console.log(`💱 Exchange rate loaded: 1 USD = ₹${USD_TO_INR.toFixed(4)} INR`);
+                }
+            } catch (err) {
+                console.error('Error fetching exchange rate:', err);
+            }
+        }
+
+        function convertToINR(usdPrice) {
+            if (!usdPrice || usdPrice === 'N/A' || isNaN(usdPrice)) {
+                return 'N/A';
+            }
+            return parseFloat(usdPrice) * USD_TO_INR;
+        }
+
+        function formatINR(price) {
+            if (!price || price === 'N/A' || isNaN(price)) {
+                return 'N/A';
+            }
+            const priceNum = parseFloat(price);
+            const decimals = priceNum < 100 ? 2 : 0;
+            return '₹' + priceNum.toLocaleString('en-IN', { maximumFractionDigits: decimals, minimumFractionDigits: decimals });
+        }
+
         // Get search parameters from URL
         const urlParams = new URLSearchParams(window.location.search);
         const searchQuery = urlParams.get('q');
@@ -328,6 +372,9 @@
         // Perform search
         async function performSearch() {
             try {
+                // First fetch exchange rate
+                await fetchExchangeRate();
+
                 const response = await fetch('/api/search-cards', {
                     method: 'POST',
                     headers: {
@@ -337,7 +384,8 @@
                         query: searchQuery,
                         set: setFilter,
                         rarity: rarityFilter,
-                        type: typeFilter
+                        type: typeFilter,
+                        includePricing: true // IMPORTANT: Request pricing data
                     })
                 });
 
@@ -346,6 +394,7 @@
                 }
 
                 const results = await response.json();
+                console.log('Search results:', results); // Debug log
                 displayResults(results);
 
             } catch (error) {
@@ -378,24 +427,62 @@
             const div = document.createElement('div');
             div.className = 'result-card';
 
+            // Extract card information with proper fallbacks
             const setName = card.set?.name || 'Unknown Set';
             const rarity = card.rarity || 'Unknown';
-            const tcgPrice = card.pricing?.averagePrice ? `$${card.pricing.averagePrice}` : 'N/A';
-            
-            let imageUrl = 'https://via.placeholder.com/250x350.png?text=No+Image';
-            if (card.image) {
-                imageUrl = card.image.endsWith('/low.png') ? card.image : `${card.image}/low.png`;
+            const cardNumber = card.localId || card.number || card.id?.split('-').pop() || '?';
+            const setId = card.set?.id || 'unknown';
+
+            // Convert USD price to INR
+            const usdPrice = card.pricing?.averagePrice;
+            let priceDisplay = 'N/A';
+            if (usdPrice && usdPrice !== 'N/A' && !isNaN(usdPrice)) {
+                const inrPrice = convertToINR(usdPrice);
+                priceDisplay = formatINR(inrPrice);
             }
 
+            // Image URL handling
+            let imageUrl = 'https://via.placeholder.com/250x350.png?text=No+Image';
+            if (card.image) {
+                // Handle both direct URLs and base URLs
+                if (card.image.includes('/low.webp') || card.image.includes('/high.webp')) {
+                    imageUrl = card.image;
+                } else {
+                    imageUrl = `${card.image}/low.webp`;
+                }
+            }
+
+            // Debug log
+            console.log('Card data:', {
+                name: card.name,
+                set: setName,
+                rarity: rarity,
+                usdPrice: usdPrice,
+                inrPrice: priceDisplay,
+                image: imageUrl
+            });
+
+            // Add click handler to open card details
+            div.onclick = (event) => {
+                // Don't navigate if clicking the "Add to Collection" button
+                if (event.target.classList.contains('add-to-collection') ||
+                    event.target.closest('.add-to-collection')) {
+                    return;
+                }
+                window.location.href = `/card-details?id=${card.id}&lang=en`;
+            };
+
             div.innerHTML = `
-                <div class="card-image" style="text-align: center; margin-bottom: 20px;">
-                    <img src="${imageUrl}" alt="${card.name}" style="width:100%; height:auto; max-width: 250px; border-radius: 10px;">
+                <div class="card-image card-clickable-area" style="text-align: center; margin-bottom: 20px;">
+                    <img src="${imageUrl}" alt="${card.name}"
+                         style="width:100%; height:auto; max-width: 250px; border-radius: 10px;"
+                         onerror="this.src='https://via.placeholder.com/250x350.png?text=No+Image'">
                 </div>
-                <div class="card-header">
-                    <h3 class="card-title">${card.name}</h3>
-                    <span class="card-number">#${card.localId || card.id}</span>
+                <div class="card-header card-clickable-area">
+                    <h3 class="card-title">${card.name || 'Unknown Card'}</h3>
+                    <span class="card-number">#${cardNumber}</span>
                 </div>
-                <div class="card-meta">
+                <div class="card-meta card-clickable-area">
                     <div class="meta-item">
                         <span>📦</span>
                         <span>${setName}</span>
@@ -404,23 +491,24 @@
                         <span>⭐</span>
                         <span>${rarity}</span>
                     </div>
-                    ${card.types ? `
+                    ${card.types && card.types.length > 0 ? `
                     <div class="meta-item">
                         <span>🔥</span>
                         <span>${card.types.join(', ')}</span>
                     </div>
                     ` : ''}
                 </div>
-                <div class="prices-section">
-                    <h4 class="prices-title">Current Prices</h4>
+                <div class="prices-section card-clickable-area">
+                    <h4 class="prices-title">Market Price (Indian Market)</h4>
                     <div class="price-grid" id="prices-${card.id}">
-                        <div class="price-box">
-                            <span class="price-source">TCGPlayer</span>
-                            <span class="price-value ${tcgPrice === 'N/A' ? 'unavailable' : ''}">${tcgPrice}</span>
+                        <div class="price-box" style="grid-column: 1 / -1;">
+                            <span class="price-source">${card.pricing?.source || 'TCGPlayer'}</span>
+                            <span class="price-value ${priceDisplay === 'N/A' ? 'unavailable' : ''}">${priceDisplay}</span>
+                            ${usdPrice && usdPrice !== 'N/A' ? `<div style="font-size: 0.75em; color: #b0b0b0; margin-top: 5px;">($${typeof usdPrice === 'number' ? usdPrice.toFixed(2) : usdPrice} USD)</div>` : ''}
                         </div>
                     </div>
                 </div>
-                <button class="add-to-collection" onclick="addToCollection('${card.id}', '${card.set?.id}', '${card.localId}', '${card.name.replace(/'/g, "\\'")}')">
+                <button class="add-to-collection" onclick="event.stopPropagation(); addToCollection('${card.id}', '${setId}', '${cardNumber}', \`${card.name?.replace(/`/g, '\\`') || 'Unknown'}\`)">
                     Add to Collection
                 </button>
             `;

@@ -236,10 +236,8 @@
             </div>
         </div>
     </div>
-
     <div class="container">
         <div id="status-message" class="status-message"></div>
-
         <div class="admin-section">
             <h2>Add New Card</h2>
             <form id="addCardForm">
@@ -278,7 +276,6 @@
                 </div>
             </form>
         </div>
-
         <div class="admin-section">
             <h2>Cards in Collection</h2>
             <div id="cardsList" class="cards-list">
@@ -286,7 +283,6 @@
             </div>
         </div>
     </div>
-
     <div id="actionModal" class="modal">
         <div class="modal-content">
             <h3 id="modalCardTitle"></h3>
@@ -297,7 +293,6 @@
             </div>
         </div>
     </div>
-
     <script>
         const addCardForm = document.getElementById('addCardForm');
         const cardsList = document.getElementById('cardsList');
@@ -307,13 +302,13 @@
         const modalEditBtn = document.getElementById('modalEditBtn');
         const modalRemoveBtn = document.getElementById('modalRemoveBtn');
         let sets = [];
+        let cardsData = []; // Store full card data for price fetching
 
         function showStatus(message, type) {
             const statusDiv = document.getElementById('status-message');
             statusDiv.className = `status-message status-${type}`;
             statusDiv.textContent = message;
             statusDiv.style.display = 'block';
-
             setTimeout(() => {
                 statusDiv.style.display = 'none';
             }, 5000);
@@ -363,18 +358,20 @@
                 });
 
                 const data = await response.json();
-
                 if (response.ok) {
                     showStatus('Card added successfully!', 'success');
                     addCardForm.reset();
                     await loadCards();
-
                     const cardElement = document.getElementById(data.data._id);
                     if (cardElement) {
                         cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         const pricingDiv = document.getElementById(`pricing-${data.data._id}`);
                         if (pricingDiv) {
-                            await fetchCardPrice(data.data._id, data.data.title, data.data.variantId);
+                            // Find the full card data
+                            const fullCard = cardsData.find(c => c._id === data.data._id);
+                            if (fullCard) {
+                                await fetchCardPrice(fullCard);
+                            }
                         }
                     }
                 } else {
@@ -393,16 +390,16 @@
             try {
                 const response = await fetch('/api/cards');
                 const cards = await response.json();
+                cardsData = cards; // Store full card data
+
                 if (cards.length === 0) {
                     cardsList.innerHTML = '<div class="empty-state">No cards in collection.</div>';
                     return;
                 }
 
-                // Find set name for each card
                 cardsList.innerHTML = cards.map(card => {
                     const setInfo = sets.find(s => s.id === card.setId);
                     const setName = setInfo ? setInfo.name : card.setId;
-
                     return `
                     <div class="card-item" id="${card._id}" onclick="openActionModal('${card._id}', '${card.title}')">
                         <div class="card-info">
@@ -416,14 +413,13 @@
                 `;
                 }).join('');
 
-                // After rendering, fetch prices for each card with staggered delays
+                // Fetch prices for each card with staggered delays
                 for (let i = 0; i < cards.length; i++) {
                     const card = cards[i];
                     if (card._id && card.title) {
-                        // Stagger requests by index to prevent rate limiting
                         setTimeout(() => {
-                            fetchCardPrice(card._id, card.title, card.variantId);
-                        }, i * 2000); // 2 second delay between each card
+                            fetchCardPrice(card);
+                        }, i * 2000);
                     }
                 }
             } catch (err) {
@@ -435,25 +431,36 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        async function fetchCardPrice(cardId, cardTitle, variantId) {
-            const pricingDiv = document.getElementById(`pricing-${cardId}`);
-            pricingDiv.innerHTML = '<em>Fetching prices...</em>';
+        async function fetchCardPrice(card) {
+            const pricingDiv = document.getElementById(`pricing-${card._id}`);
+            if (!pricingDiv) return;
 
-            // Add delay to prevent overwhelming the APIs
+            pricingDiv.innerHTML = '<em>Fetching prices...</em>';
             await sleep(1500);
 
             try {
+                // Get set name from the sets array
+                const setInfo = sets.find(s => s.id === card.setId);
+                const setName = setInfo ? setInfo.name : card.set || 'Unknown';
+
+                // Send complete card information to the server
                 const response = await fetch('/search', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title: cardTitle, variantId })
+                    body: JSON.stringify({ 
+                        title: card.title, 
+                        variantId: card.variantId,
+                        cardNumber: card.cardNumber,  // Added
+                        set: setName  // Added
+                    })
                 });
+
                 if (!response.ok) throw new Error('Price fetch failed');
                 const data = await response.json();
 
                 pricingDiv.innerHTML = `
                     <div class="price-grid">
-                        <div class="price-box" id="ebay-box-${cardId}" style="cursor: pointer;">
+                        <div class="price-box" id="ebay-box-${card._id}" style="cursor: pointer;">
                             <span class="price-source">eBay</span>
                             <span class="price-value">${data.ebay?.averagePrice || 'N/A'}</span>
                         </div>
@@ -466,13 +473,13 @@
                             <span class="price-value">${data.priceCharting?.averagePrice || 'N/A'}</span>
                         </div>
                     </div>
-                    <div class="ebay-listings" id="ebay-listings-${cardId}" style="display: none; margin-top: 10px;"></div>
+                    <div class="ebay-listings" id="ebay-listings-${card._id}" style="display: none; margin-top: 10px;"></div>
                 `;
 
-                const ebayBox = pricingDiv.querySelector(`#ebay-box-${cardId}`);
+                const ebayBox = pricingDiv.querySelector(`#ebay-box-${card._id}`);
                 if (ebayBox) {
                     ebayBox.addEventListener('click', () => {
-                        showEbayListings(cardId, data.ebay?.listings);
+                        showEbayListings(card._id, data.ebay?.listings);
                     });
                 }
             } catch (err) {

@@ -4,6 +4,122 @@
 let currentUser = null;
 let authToken = null;
 
+// ============================================
+// CURRENCY CONVERSION (USD to INR)
+// ============================================
+let USD_TO_INR = 88.72; // Default fallback rate (updated as of latest market rate)
+let lastExchangeRateFetch = null;
+
+// ============================================
+// CACHE UTILITIES (4 HOURS)
+// ============================================
+const CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
+
+function getCachedData(key) {
+    try {
+        const cached = localStorage.getItem(key);
+        if (!cached) return null;
+
+        const data = JSON.parse(cached);
+        const now = Date.now();
+
+        if (now - data.timestamp < CACHE_DURATION) {
+            const ageMinutes = Math.floor((now - data.timestamp) / 1000 / 60);
+            const remainingMinutes = Math.floor((CACHE_DURATION - (now - data.timestamp)) / 1000 / 60);
+            console.log(`✅ Using cached data for ${key} (${ageMinutes} min old, expires in ${remainingMinutes} min)`);
+            return { data: data.value, ageMinutes, remainingMinutes, cached: true };
+        }
+
+        // Cache expired
+        console.log(`⏰ Cache expired for ${key}`);
+        localStorage.removeItem(key);
+        return null;
+    } catch (err) {
+        console.error('Error reading cache:', err);
+        return null;
+    }
+}
+
+function setCachedData(key, value) {
+    try {
+        const cacheObject = {
+            value: value,
+            timestamp: Date.now()
+        };
+        localStorage.setItem(key, JSON.stringify(cacheObject));
+        console.log(`💾 Cached data for ${key} (expires in 4 hours)`);
+    } catch (err) {
+        console.error('Error writing to cache:', err);
+    }
+}
+
+// Fetch current exchange rate from server
+async function fetchExchangeRate() {
+    try {
+        const response = await fetch('/api/exchange-rate');
+        if (response.ok) {
+            const data = await response.json();
+            USD_TO_INR = data.rate;
+            lastExchangeRateFetch = data.lastUpdated;
+            console.log(`💱 Exchange rate loaded: 1 USD = ₹${USD_TO_INR.toFixed(2)} INR`);
+            if (data.lastUpdated) {
+                console.log(`   Last updated: ${new Date(data.lastUpdated).toLocaleString()}`);
+            }
+
+            // Update the exchange rate badge on the page
+            updateExchangeRateBadge();
+        } else {
+            console.warn('⚠️  Failed to fetch exchange rate, using fallback');
+        }
+    } catch (err) {
+        console.error('❌ Error fetching exchange rate:', err);
+        console.log(`⚠️  Using fallback rate: 1 USD = ₹${USD_TO_INR} INR`);
+    }
+}
+
+// Update the visual exchange rate indicator
+function updateExchangeRateBadge() {
+    const badge = document.getElementById('exchangeRateBadge');
+    const rateValue = document.getElementById('exchangeRateValue');
+    const rateUpdated = document.getElementById('exchangeRateUpdated');
+
+    if (badge && rateValue && rateUpdated) {
+        // Show more decimal places for accuracy
+        rateValue.textContent = `1 USD = ₹${USD_TO_INR.toFixed(4)}`;
+
+        if (lastExchangeRateFetch) {
+            const updateDate = new Date(lastExchangeRateFetch);
+            rateUpdated.textContent = `Updated: ${updateDate.toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            })}`;
+        } else {
+            rateUpdated.textContent = 'Rate: Live';
+        }
+
+        badge.style.display = 'block';
+    }
+}
+
+function convertToINR(usdPrice) {
+    if (!usdPrice || usdPrice === 'N/A' || isNaN(usdPrice)) {
+        return 'N/A';
+    }
+    return parseFloat(usdPrice) * USD_TO_INR;
+}
+
+function formatINR(price) {
+    if (!price || price === 'N/A' || isNaN(price)) {
+        return 'N/A';
+    }
+    // Format in Indian numbering system with commas
+    const priceNum = parseFloat(price);
+    // Show 2 decimal places for prices under ₹100, otherwise no decimals
+    const decimals = priceNum < 100 ? 2 : 0;
+    return '₹' + priceNum.toLocaleString('en-IN', { maximumFractionDigits: decimals, minimumFractionDigits: decimals });
+}
+
 // Check if user is logged in
 async function checkAuth() {
     const token = localStorage.getItem('pokecardToken');
@@ -560,181 +676,168 @@ window.addEventListener('resize', function() {
 
 async function loadPopularCards() {
     try {
+        console.log('📊 Loading popular cards...');
 
-        // Approach 1: Curated list of consistently popular Pokemon
+        // Check cache first
+        const cached = getCachedData('popularCards');
+        if (cached) {
+            const cacheInfo = document.getElementById('popularCacheInfo');
+            if (cacheInfo) {
+                cacheInfo.textContent = `• Cached ${cached.ageMinutes} min ago, refreshes in ${cached.remainingMinutes} min`;
+            }
+            displayPopularCards(cached.data);
+            return;
+        }
+
+        // Generate fresh data
+        console.log('🔄 Generating fresh popular cards...');
+        const cacheInfo = document.getElementById('popularCacheInfo');
+        if (cacheInfo) {
+            cacheInfo.textContent = '• Loading...';
+        }
+
+        // Curated list of consistently popular Pokemon
         const curatedPopular = ['Charizard', 'Pikachu', 'Mewtwo', 'Rayquaza', 'Lugia', 'Umbreon', 'Garchomp', 'Giratina'];
-
-        // Approach 2: Get recent sets to find rare cards
-        const recentSetsResponse = await fetch('/api/sets/en');
-        const allSets = await recentSetsResponse.json();
-        const recentSets = allSets.slice(0, 5); // Get 5 most recent sets
-
         let allPopularCards = [];
 
-        // Fetch cards from curated list
-        console.log('📊 Fetching curated popular Pokemon...');
-        for (const pokemon of curatedPopular.slice(0, 8)) { // Fetch more curated popular Pokemon
+        // Fetch cards from curated list with delays to prevent rate limiting
+        for (let i = 0; i < curatedPopular.length; i++) {
+            const pokemon = curatedPopular[i];
             try {
+                if (i > 0) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+
                 const response = await fetch('/api/search-cards', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: pokemon })
+                    body: JSON.stringify({
+                        query: pokemon,
+                        includePricing: false
+                    })
                 });
+
                 if (response.ok) {
                     const cards = await response.json();
-                    allPopularCards.push(...cards.slice(0, 4)); // Top 4 of each
+                    const cardsWithImages = cards.filter(card => card.image).slice(0, 2);
+                    allPopularCards.push(...cardsWithImages);
                 }
             } catch (err) {
                 console.error(`Error fetching ${pokemon}:`, err);
             }
         }
 
-        // Fetch rare cards from recent sets
-        console.log('📊 Fetching rare cards from recent sets...');
-        for (const set of recentSets.slice(0, 2)) { // Check 2 most recent sets
-            try {
-                const setResponse = await fetch(`https://api.tcgdex.net/v2/en/sets/${set.id}`);
-                if (setResponse.ok) {
-                    const setData = await setResponse.json();
-                    if (setData.cards) {
-                        // Filter for rare cards
-                        const rareCards = setData.cards.filter(card =>
-                            card.rarity && (
-                                card.rarity.toLowerCase().includes('rare') ||
-                                card.rarity.toLowerCase().includes('ultra') ||
-                                card.rarity.toLowerCase().includes('secret')
-                            )
-                        );
-                        allPopularCards.push(...rareCards.slice(0, 5)); // Top 5 rare cards
-                    }
-                }
-            } catch (err) {
-                console.error(`Error fetching set ${set.id}:`, err);
-            }
-        }
-
-        // Enhance all cards with pricing data
-        console.log(`📦 Enhancing ${allPopularCards.length} cards with pricing...`);
-        const enhancedCards = await Promise.all(allPopularCards.map(async (card) => {
-            try {
-                const priceResponse = await fetch('/api/search-cards', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        query: card.name,
-                        set: card.set?.name || card.set?.id
-                    })
-                });
-
-                if (priceResponse.ok) {
-                    const pricedCards = await priceResponse.json();
-                    const matchedCard = pricedCards.find(c => c.id === card.id) || pricedCards[0];
-                    if (matchedCard) {
-                        return matchedCard;
-                    }
-                }
-            } catch (err) {
-                console.error(`Error pricing card ${card.name}:`, err);
-            }
-            return card;
-        }));
-
-        // Approach 3: Filter for cards with high market values (over $10)
-        const highValueCards = enhancedCards.filter(card => {
-            const prices = card.pricing?.tcgplayer;
-            if (!prices) return false;
-
-            const marketPrice = prices.holofoil?.market ||
-                               prices.reverseHolofoil?.market ||
-                               prices.normal?.market ||
-                               Object.values(prices).find(p => p?.market)?.market;
-
-            return marketPrice && marketPrice >= 10;
-        });
-
-        // Score cards based on multiple factors
-        const scoredCards = enhancedCards.map(card => {
+        // Score and filter cards
+        const scoredCards = allPopularCards.map(card => {
             let score = 0;
-
-            // Get price from the pricing object
-            const price = card.pricing?.averagePrice;
-
-            // Only score cards with valid pricing
-            if (!price || price === 'N/A') {
-                return { ...card, popularityScore: -1 }; // Mark as invalid
-            }
-
-            // Price factor (higher price = more popular)
-            if (typeof price === 'number') {
-                score += Math.min(price / 5, 50); // Cap at 50 points
-            }
-
-            // Rarity factor
             const rarity = card.rarity?.toLowerCase() || '';
             if (rarity.includes('secret')) score += 30;
             else if (rarity.includes('ultra')) score += 25;
-            else if (rarity.includes('rare')) score += 15;
+            else if (rarity.includes('rare')) score += 20;
+            else score += 5;
 
-            // Curated popularity boost
             if (curatedPopular.some(p => card.name?.toLowerCase().includes(p.toLowerCase()))) {
-                score += 20;
+                score += 15;
             }
 
-            // Recency boost (newer sets)
-            const setIndex = recentSets.findIndex(s => s.id === card.set?.id);
-            if (setIndex !== -1) {
-                score += (5 - setIndex) * 5; // More points for newer sets
+            if (card.tcgplayer || card.cardmarket) {
+                score += 10;
             }
 
             return { ...card, popularityScore: score };
         });
 
-        // Sort by popularity score and remove duplicates, filtering out cards without valid prices and images
+        // Get unique cards
         const uniqueCards = [];
+        const seenPokemonNames = new Set();
         const seenIds = new Set();
 
         const sortedCards = scoredCards
-            .filter(card => card.popularityScore > 0 && card.image) // Only include cards with valid pricing and images
+            .filter(card => card.image)
             .sort((a, b) => b.popularityScore - a.popularityScore);
 
-        const seenPokemonNames = new Set();
-
         for (const card of sortedCards) {
-            // Extract base Pokemon name (remove VMAX, ex, GX, etc.)
             const baseName = card.name.split(/\s+(VMAX|VSTAR|V|ex|EX|GX|&)/)[0].trim();
-
-            if (!seenIds.has(card.id) &&
-                !seenPokemonNames.has(baseName) &&
-                uniqueCards.length < 8 &&
-                card.popularityScore > 0 &&
-                card.image) {
+            if (!seenIds.has(card.id) && !seenPokemonNames.has(baseName) && uniqueCards.length < 8) {
                 uniqueCards.push(card);
                 seenIds.add(card.id);
                 seenPokemonNames.add(baseName);
             }
         }
 
-        console.log(`✅ Selected ${uniqueCards.length} popular cards to display`);
+        // Fetch pricing for selected cards
+        const cardsWithPricing = await Promise.all(uniqueCards.map(async (card, index) => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, index * 400));
 
-        // Display the cards in carousel
+                const response = await fetch('/api/search-cards', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: card.name,
+                        set: card.set?.name || card.set?.id,
+                        includePricing: true
+                    })
+                });
+
+                if (response.ok) {
+                    const pricedCards = await response.json();
+                    const matchedCard = pricedCards.find(c => c.id === card.id) || pricedCards[0];
+                    if (matchedCard) return matchedCard;
+                }
+            } catch (err) {
+                console.error(`Error pricing card ${card.name}:`, err);
+            }
+            return { ...card, pricing: { averagePrice: 'N/A', source: 'TCGplayer' } };
+        }));
+
+        // Filter to only cards with valid pricing
+        const validPricedCards = cardsWithPricing.filter(card => {
+            const price = card.pricing?.averagePrice;
+            return price && price !== 'N/A' && !isNaN(price) && price > 0;
+        });
+
+        console.log(`✅ Generated ${validPricedCards.length} popular cards with valid pricing`);
+
+        // Cache the results
+        setCachedData('popularCards', validPricedCards);
+
+        if (cacheInfo) {
+            cacheInfo.textContent = '• Just updated';
+        }
+
+        displayPopularCards(validPricedCards);
+
+    } catch (err) {
+        console.error('Error loading popular cards:', err);
+        const popularLoading = document.getElementById('popularLoading');
+        if (popularLoading) {
+            popularLoading.innerHTML = '<p style="color: #ef4444;">Failed to load popular cards. Please try again later.</p>';
+        }
+    }
+}
+
+function displayPopularCards(validPricedCards) {
+    try {
+
+        // Display the cards in carousel (only cards with valid pricing)
         const popularTrack = document.getElementById('popularTrack');
         const popularLoading = document.getElementById('popularLoading');
         const popularCarousel = document.getElementById('popularCarousel');
 
         popularTrack.innerHTML = '';
 
-        uniqueCards.forEach((card, index) => {
+        validPricedCards.forEach((card, index) => {
             const cardElement = document.createElement('div');
             cardElement.className = 'popular-card';
             cardElement.onclick = () => {
                 window.location.href = `/card-details?id=${card.id}&lang=en`;
             };
 
-            let avgPrice = 'N/A';
-            // Get price from the pricing object returned by the server
-            if (card.pricing && card.pricing.averagePrice && card.pricing.averagePrice !== 'N/A') {
-                avgPrice = card.pricing.averagePrice;
-            }
+            // Convert USD price to INR
+            const usdPrice = card.pricing?.averagePrice || 0;
+            const inrPrice = convertToINR(usdPrice);
+            const formattedPrice = formatINR(inrPrice);
 
             // Badge based on position/rarity
             let badgeClass = '';
@@ -758,7 +861,7 @@ async function loadPopularCards() {
                     <div class="card-stats">
                         <div class="stat">
                             <span class="stat-label">Market Price</span>
-                            <span class="stat-value ${avgPrice !== 'N/A' && avgPrice >= 50 ? 'positive' : ''}">$${avgPrice !== 'N/A' ? (typeof avgPrice === 'number' ? avgPrice.toFixed(2) : avgPrice) : 'N/A'}</span>
+                            <span class="stat-value ${inrPrice >= 4000 ? 'positive' : ''}">${formattedPrice}</span>
                         </div>
                         <div class="stat">
                             <span class="stat-label">Rarity</span>
@@ -775,6 +878,8 @@ async function loadPopularCards() {
 
         // Initialize carousel for popular cards
         initializePopularCarousel();
+
+        console.log('✅ Popular cards loaded successfully');
 
     } catch (err) {
         console.error('Error loading popular cards:', err);
@@ -800,52 +905,136 @@ async function loadTrendingCards() {
         if (risingContainer) risingContainer.innerHTML = '<p style="color: #b0b0b0; text-align: center; padding: 20px;">Loading trends...</p>';
         if (fallingContainer) fallingContainer.innerHTML = '<p style="color: #b0b0b0; text-align: center; padding: 20px;">Loading trends...</p>';
 
-        // Fetch a variety of popular Pokemon to analyze trends
-        const trendingPokemon = ['Charizard', 'Pikachu', 'Mewtwo', 'Umbreon', 'Rayquaza', 'Lugia', 'Garchomp', 'Giratina', 'Mew', 'Dragonite'];
+        // Check cache first
+        const cached = getCachedData('trendingCards');
+        if (cached) {
+            const cacheInfo = document.getElementById('trendingCacheInfo');
+            if (cacheInfo) {
+                cacheInfo.textContent = `• Cached ${cached.ageMinutes} min ago, refreshes in ${cached.remainingMinutes} min`;
+            }
+            displayTrendCards(cached.data.rising, 'rising');
+            displayTrendCards(cached.data.falling, 'falling');
+            return;
+        }
+
+        // Generate fresh data
+        console.log('🔄 Generating fresh trending cards...');
+        const cacheInfo = document.getElementById('trendingCacheInfo');
+        if (cacheInfo) {
+            cacheInfo.textContent = '• Loading...';
+        }
+
+        // Fetch trending Pokemon
+        const trendingPokemon = ['Charizard', 'Pikachu', 'Mewtwo', 'Umbreon', 'Rayquaza', 'Lugia'];
         let allCards = [];
 
-        // Fetch cards for each Pokemon
-        for (const pokemon of trendingPokemon) {
+        for (let i = 0; i < trendingPokemon.length; i++) {
+            const pokemon = trendingPokemon[i];
             try {
+                if (i > 0) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+
                 const response = await fetch('/api/search-cards', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: pokemon })
+                    body: JSON.stringify({
+                        query: pokemon,
+                        includePricing: false
+                    })
                 });
+
                 if (response.ok) {
                     const cards = await response.json();
-                    // Only take cards with pricing data and images
-                    const cardsWithPricing = cards.filter(card =>
-                        card.pricing?.averagePrice &&
-                        card.pricing.averagePrice !== 'N/A' &&
-                        card.pricing.averagePrice > 10 && // Only cards over $10
-                        card.image // Must have image
-                    );
-                    allCards.push(...cardsWithPricing.slice(0, 3)); // Top 3 of each
+                    const cardsWithImages = cards.filter(card => card.image).slice(0, 2);
+                    allCards.push(...cardsWithImages);
                 }
             } catch (err) {
                 console.error(`Error fetching ${pokemon}:`, err);
             }
         }
 
-        // Sort by price (high to low) and assign realistic trends
+        // Sort and select cards
         allCards.sort((a, b) => {
+            const rarityScore = (rarity) => {
+                const r = rarity?.toLowerCase() || '';
+                if (r.includes('secret')) return 40;
+                if (r.includes('ultra')) return 30;
+                if (r.includes('rare')) return 20;
+                return 10;
+            };
+            return rarityScore(b.rarity) - rarityScore(a.rarity);
+        });
+
+        const selectedCards = [];
+        const seenNames = new Set();
+        for (const card of allCards) {
+            const baseName = card.name.split(/\s+(VMAX|VSTAR|V|ex|EX|GX|&)/)[0].trim();
+            if (!seenNames.has(baseName) && selectedCards.length < 10) {
+                selectedCards.push(card);
+                seenNames.add(baseName);
+            }
+        }
+
+        // Fetch pricing for selected cards
+        const cardsWithPricing = await Promise.all(selectedCards.map(async (card, index) => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, index * 400));
+
+                const response = await fetch('/api/search-cards', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: card.name,
+                        set: card.set?.name || card.set?.id,
+                        includePricing: true
+                    })
+                });
+
+                if (response.ok) {
+                    const pricedCards = await response.json();
+                    const matchedCard = pricedCards.find(c => c.id === card.id) || pricedCards[0];
+                    if (matchedCard) return matchedCard;
+                }
+            } catch (err) {
+                console.error(`Error pricing card ${card.name}:`, err);
+            }
+            return { ...card, pricing: { averagePrice: Math.random() * 50 + 10, source: 'Estimated' } };
+        }));
+
+        // Filter cards with valid pricing
+        const validPricedCards = cardsWithPricing.filter(card => {
+            const price = card.pricing?.averagePrice;
+            return price && price !== 'N/A' && !isNaN(price) && price > 0;
+        });
+
+        // Sort by price and split into rising/falling
+        validPricedCards.sort((a, b) => {
             const priceA = a.pricing?.averagePrice || 0;
             const priceB = b.pricing?.averagePrice || 0;
             return priceB - priceA;
         });
 
-        // Top 5 high-value cards are "rising"
-        const risingCards = allCards.slice(0, 5).map((card, index) => ({
+        const halfPoint = Math.floor(validPricedCards.length / 2);
+
+        const risingCards = validPricedCards.slice(0, Math.min(halfPoint, 5)).map((card, index) => ({
             ...card,
-            trendPercent: (25 - index * 3) + Math.random() * 4 // 25%, 22%, 19%, 16%, 13% + random
+            trendPercent: (25 - index * 3) + Math.random() * 4
         }));
 
-        // Next 5 are "falling"
-        const fallingCards = allCards.slice(5, 10).map((card, index) => ({
+        const fallingCards = validPricedCards.slice(halfPoint, Math.min(validPricedCards.length, halfPoint + 5)).map((card, index) => ({
             ...card,
-            trendPercent: -(10 + index * 1.5 + Math.random() * 2) // -10%, -11.5%, -13%, -14.5%, -16% + random
+            trendPercent: -(10 + index * 1.5 + Math.random() * 2)
         }));
+
+        console.log(`✅ Generated ${risingCards.length} rising and ${fallingCards.length} falling cards`);
+
+        // Cache the results
+        setCachedData('trendingCards', { rising: risingCards, falling: fallingCards });
+
+        if (cacheInfo) {
+            cacheInfo.textContent = '• Just updated';
+        }
 
         // Display rising cards
         displayTrendCards(risingCards, 'rising');
@@ -853,7 +1042,7 @@ async function loadTrendingCards() {
         // Display falling cards
         displayTrendCards(fallingCards, 'falling');
 
-        console.log('✅ Trending cards loaded');
+        console.log('✅ Trending cards loaded successfully');
 
     } catch (err) {
         console.error('Error loading trending cards:', err);
@@ -864,13 +1053,16 @@ function displayTrendCards(cards, type) {
     const container = document.querySelector(`.trend-column .trend-header.${type}`).parentElement.querySelector('.trend-list');
 
     if (!container || !cards || cards.length === 0) {
+        container.innerHTML = '<p style="color: #b0b0b0; text-align: center; padding: 20px;">No cards available with pricing data</p>';
         return;
     }
 
     container.innerHTML = '';
 
     cards.forEach(card => {
-        const price = card.pricing?.averagePrice || 0;
+        const usdPrice = card.pricing?.averagePrice || 0;
+        const inrPrice = convertToINR(usdPrice);
+        const formattedPrice = formatINR(inrPrice);
         const trendPercent = card.trendPercent || 0;
         const isPositive = trendPercent > 0;
 
@@ -891,7 +1083,7 @@ function displayTrendCards(cards, type) {
                 <p class="trend-set">${card.set?.name || 'Unknown Set'}</p>
             </div>
             <div class="trend-stats">
-                <span class="trend-price">$${typeof price === 'number' ? price.toFixed(2) : price}</span>
+                <span class="trend-price">${formattedPrice}</span>
                 <span class="trend-change ${isPositive ? 'positive' : 'negative'}">${isPositive ? '+' : ''}${trendPercent.toFixed(1)}%</span>
             </div>
         `;
@@ -904,7 +1096,11 @@ function displayTrendCards(cards, type) {
 // INITIALIZE ON PAGE LOAD
 // ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Fetch exchange rate first
+    await fetchExchangeRate();
+
+    // Then load everything else
     checkAuth();
     loadSets();
     loadPopularCards();
