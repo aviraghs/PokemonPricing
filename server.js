@@ -806,6 +806,45 @@ async function getJustTCGSetByName(setName) {
   return set || null;
 }
 
+async function findRelatedSubsets(setId) {
+  // Ensure JustTCG sets cache is populated
+  await getJustTCGSetIdByName('dummy'); // This will initialize the cache if needed
+
+  if (!justTcgSetsCache || justTcgSetsCache.length === 0) {
+    return [];
+  }
+
+  // Find the original set
+  const originalSet = justTcgSetsCache.find(s => s.id === setId);
+  if (!originalSet || !originalSet.name) {
+    return [];
+  }
+
+  const originalName = originalSet.name.toLowerCase();
+
+  // Extract base set name (remove common suffixes like "pokemon", "tcg", etc.)
+  let baseName = originalName
+    .replace(/\s*-?\s*(pokemon|tcg|gallery|base|expansion|subset)\s*$/i, '')
+    .trim();
+
+  console.log(`   Base name for subset search: "${baseName}"`);
+
+  // Find all sets that share the same base name but have different IDs
+  const relatedSets = justTcgSetsCache.filter(s => {
+    if (s.id === setId) return false; // Skip the original set
+    if (!s.name) return false;
+
+    const setName = s.name.toLowerCase();
+
+    // Check if this set's name starts with or contains the base name
+    return setName.includes(baseName) || baseName.includes(setName.split('-')[0]);
+  });
+
+  console.log(`   Found ${relatedSets.length} related subsets`);
+
+  return relatedSets.map(s => s.id);
+}
+
 async function findCardOnJustTCG(cardQuery, justTcgSetId, tcgdexCardNumber) {
   try {
     const JUSTTCG_API_KEY = process.env.JUSTTCG_API_KEY;
@@ -817,6 +856,8 @@ async function findCardOnJustTCG(cardQuery, justTcgSetId, tcgdexCardNumber) {
     const cleanedCardName = extractCardName(cardQuery);
     let parts = cleanedCardName.split(' ');
     let name = parts[0];
+
+    // Try the provided set first
     const searchUrl = `https://api.justtcg.com/v1/cards?q=${name}&game=pokemon&set=${justTcgSetId}`;
     console.log(`🔍 Searching JustTCG with cleaned name: ${searchUrl}`);
 
@@ -830,11 +871,48 @@ async function findCardOnJustTCG(cardQuery, justTcgSetId, tcgdexCardNumber) {
     }
 
     const searchResults = await searchResponse.json();
-    const results = searchResults.data || searchResults;
+    let results = searchResults.data || searchResults;
 
+    // If no results found and this is a set with known subsets, try searching subsets
     if (!results || !Array.isArray(results) || results.length === 0) {
       console.log(`⚠️  No JustTCG results for card "${cleanedCardName}" in set ${justTcgSetId}`);
-      return null;
+
+      // Check if this is a set with known subsets (e.g., Crown Zenith)
+      const relatedSubsets = await findRelatedSubsets(justTcgSetId);
+
+      if (relatedSubsets && relatedSubsets.length > 0) {
+        console.log(`🔄 Trying ${relatedSubsets.length} related subsets...`);
+
+        for (const subsetId of relatedSubsets) {
+          console.log(`   Checking subset: ${subsetId}`);
+          const subsetUrl = `https://api.justtcg.com/v1/cards?q=${name}&game=pokemon&set=${subsetId}`;
+
+          try {
+            const subsetResponse = await fetch(subsetUrl, {
+              headers: { 'X-API-Key': JUSTTCG_API_KEY }
+            });
+
+            if (subsetResponse.ok) {
+              const subsetResults = await subsetResponse.json();
+              const subsetData = subsetResults.data || subsetResults;
+
+              if (subsetData && Array.isArray(subsetData) && subsetData.length > 0) {
+                console.log(`✅ Found results in subset: ${subsetId}`);
+                results = subsetData;
+                break; // Found results, stop searching
+              }
+            }
+          } catch (err) {
+            console.log(`   Failed to check subset ${subsetId}: ${err.message}`);
+          }
+        }
+      }
+
+      // If still no results after checking subsets, return null
+      if (!results || !Array.isArray(results) || results.length === 0) {
+        console.log(`⚠️  No results found in main set or related subsets`);
+        return null;
+      }
     }
 
     console.log(`✅ Found ${results.length} potential matches. Filtering by card number...`);
