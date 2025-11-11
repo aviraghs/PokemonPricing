@@ -37,13 +37,15 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     return () => window.removeEventListener('languageChange', handleLanguageChange);
   }, []);
 
-  // Use SWR for caching and automatic revalidation
+  // Use SWR - disable caching to ensure fresh data
   const { data: sets = [], isLoading: loading, error } = useSWR<SetData[]>(
     `/api/sets/${lang}`,
     (url: string) => fetch(url).then(res => res.json()),
     {
       revalidateOnFocus: false,
-      dedupingInterval: 300000, // 5 minutes
+      dedupingInterval: 0, // Disable deduping to prevent stale cache issues
+      focusThrottleInterval: 0,
+      revalidateOnReconnect: true,
     }
   );
 
