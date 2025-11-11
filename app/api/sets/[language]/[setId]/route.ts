@@ -360,6 +360,42 @@ export async function GET(
       }
     }
 
+    // If TCGdex doesn't have a logo, try to fetch from pokefetch
+    if (!setData.logo) {
+      try {
+        const POKEFETCH_API_KEY = process.env.POKEFETCH_API_KEY;
+        if (POKEFETCH_API_KEY) {
+          // Extract first word of set name and clean it for pokefetch API
+          const firstWord = setData.name.split(' ')[0];
+          const pokefetchSetParam = firstWord
+            .replace(/['']s$/, '') // Remove possessive 's
+            .toLowerCase(); // Convert to lowercase
+
+          console.log(`   Attempting to fetch logo from pokefetch for set: ${pokefetchSetParam}`);
+
+          const pokefetchUrl = `https://pokefetch.info/pokemon?query=*&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
+          const pokefetchResponse = await fetch(pokefetchUrl, {
+            headers: {
+              'Authorization': `Bearer ${POKEFETCH_API_KEY}`,
+            }
+          });
+
+          if (pokefetchResponse.ok) {
+            const pokefetchData = await pokefetchResponse.json();
+            if (pokefetchData.data && pokefetchData.data.length > 0) {
+              const card = pokefetchData.data[0];
+              if (card.set && card.set.logo_url) {
+                setData.logo = card.set.logo_url;
+                console.log(`   ✅ Using pokefetch logo for set: ${setData.logo}`);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.log(`   ⚠️  Could not fetch logo from pokefetch: ${(err as Error).message}`);
+      }
+    }
+
     console.log(`✅ Fetched set from TCGdex: ${setData.name} (${setData.cardCount?.total || setData.cards?.length || 0} cards)`);
     return NextResponse.json(setData);
 
