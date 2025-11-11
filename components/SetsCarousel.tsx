@@ -97,9 +97,9 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     router.push(`/set-details?set=${setId}&lang=${lang}`);
   };
 
-  if (error) return null;
-  if (displaySets.length === 0) return null;
+  if (error || (!loading && displaySets.length === 0)) return null;
 
+  // Show cached/loaded sets even while loading fresh data
   return (
     <div className={styles.setsSection}>
       <div className={styles.container}>
