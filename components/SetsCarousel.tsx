@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
-import PokemonLoader from './PokemonLoader';
 import styles from './SetsCarousel.module.css';
 
 interface SetData {
@@ -98,21 +97,8 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     router.push(`/set-details?set=${setId}&lang=${lang}`);
   };
 
-  if (loading) {
-    return (
-      <div className={styles.setsSection}>
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>📦 Browse Recent Sets</h2>
-            <p className={styles.sectionSubtitle}>Explore the latest Pokémon TCG expansions</p>
-          </div>
-          <PokemonLoader message="Loading sets..." size="medium" />
-        </div>
-      </div>
-    );
-  }
-
-  if (error || displaySets.length === 0) return null;
+  if (error) return null;
+  if (displaySets.length === 0) return null;
 
   return (
     <div className={styles.setsSection}>
