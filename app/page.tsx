@@ -32,11 +32,14 @@ async function MainContent() {
             {import('@/components/PopularCards').then(({ default: PopularCards }) => <PopularCards />)}
           </Suspense>
         </ErrorBoundary>
+        {/* MarketTrends disabled - requires pricing APIs which are slow */}
+        {/*
         <ErrorBoundary>
           <Suspense fallback={<div>Loading market trends...</div>}>
             {import('@/components/MarketTrends').then(({ default: MarketTrends }) => <MarketTrends />)}
           </Suspense>
         </ErrorBoundary>
+        */}
       </div>
     </>
   );

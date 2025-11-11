@@ -54,7 +54,7 @@ export function useMainPageCardData() {
     },
     {
       revalidateOnFocus: false,
-      dedupingInterval: 0, // Disable caching to prevent stale data
+      dedupingInterval: 60000, // 1 minute cache for PopularCards (fast enough for main page)
       keepPreviousData: true,
     }
   );
