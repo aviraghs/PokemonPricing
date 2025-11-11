@@ -11,6 +11,17 @@ interface Card {
   image: string;
   set: { name: string };
   rarity: string;
+  pricing?: {
+    tcgPlayer?: {
+      averagePrice: string | number;
+    };
+    pokemonPriceTracker?: {
+      averagePrice: string | number;
+    };
+    ebay?: {
+      averagePrice: string | number;
+    };
+  };
 }
 
 export default function PopularCards() {
@@ -29,7 +40,7 @@ export default function PopularCards() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             query: 'Charizard',
-            includePricing: false,
+            includePricing: true,
           }),
         });
 
@@ -122,6 +133,30 @@ export default function PopularCards() {
                     <h3 className={styles.cardName}>{card.name}</h3>
                     <p className={styles.cardSet}>{card.set?.name || 'Unknown Set'}</p>
                     {card.rarity && <span className={styles.cardRarity}>{card.rarity}</span>}
+                    {card.pricing && (
+                      <div className={styles.cardPricing}>
+                        {card.pricing.tcgPlayer && card.pricing.tcgPlayer.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A' && (
+                          <div className={styles.pricingItem}>
+                            <span className={styles.pricingSource}>TCG:</span>
+                            <span className={styles.pricingValue}>
+                              {typeof card.pricing.tcgPlayer.averagePrice === 'number'
+                                ? `₹${card.pricing.tcgPlayer.averagePrice.toFixed(0)}`
+                                : card.pricing.tcgPlayer.averagePrice}
+                            </span>
+                          </div>
+                        )}
+                        {card.pricing.pokemonPriceTracker && card.pricing.pokemonPriceTracker.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && (
+                          <div className={styles.pricingItem}>
+                            <span className={styles.pricingSource}>PPT:</span>
+                            <span className={styles.pricingValue}>
+                              {typeof card.pricing.pokemonPriceTracker.averagePrice === 'number'
+                                ? `₹${card.pricing.pokemonPriceTracker.averagePrice.toFixed(0)}`
+                                : card.pricing.pokemonPriceTracker.averagePrice}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

@@ -323,8 +323,8 @@ export async function GET(
 
     console.log(`✅ Filtered ${data.length - filteredData.length} Pocket sets`);
 
-    // Enhance with JustTCG images and ensure all sets have a logo
-    const enhancedData = await Promise.all(filteredData.map(async (set: any) => {
+    // Enhance with fixed logos
+    const enhancedData = filteredData.map((set: any) => {
         // Fix TCGdex logo URLs by adding .png extension if they don't have one
         let fixedLogo = set.logo;
         if (fixedLogo && !fixedLogo.match(/\.(png|jpg|jpeg|webp|svg)$/i)) {
@@ -339,15 +339,11 @@ export async function GET(
             }
         }
 
-        // Ensure releaseDate is included
-        const releaseDate = set.releaseDate || set.release_date || set.releasedAt || null;
-
         return {
             ...set,
-            logo: fixedLogo,
-            releaseDate: releaseDate
+            logo: fixedLogo
         };
-    }));
+    });
 
     // Get the last 50 sets (most recent) and reverse them so newest appears first
     const recentSets = enhancedData.slice(-50).reverse();

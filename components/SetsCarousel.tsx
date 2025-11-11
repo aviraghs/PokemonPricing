@@ -8,7 +8,6 @@ interface SetData {
   id: string;
   name: string;
   logo: string;
-  releaseDate?: string;
   cardCount?: { total: number };
 }
 
@@ -108,9 +107,6 @@ export default function SetsCarousel({}: SetsCarouselProps) {
                   </div>
                   <div className={styles.setInfo}>
                     <h3 className={styles.setName}>{set.name}</h3>
-                    {set.releaseDate && (
-                      <p className={styles.setDate}>📅 {set.releaseDate}</p>
-                    )}
                     <div className={styles.setStats}>
                       <span className={styles.setCount}>
                         🎴 {set.cardCount?.total || '???'} cards
