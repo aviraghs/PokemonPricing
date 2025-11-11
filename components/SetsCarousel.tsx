@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import useSWR from 'swr';
 import styles from './SetsCarousel.module.css';
 
 interface SetData {
@@ -19,13 +18,30 @@ export default function SetsCarousel({}: SetsCarouselProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lang, setLang] = useState(() => {
-    // Initialize from localStorage immediately, avoiding a second render
+    // Initialize from localStorage immediately
     if (typeof window !== 'undefined') {
       return localStorage.getItem('preferredLanguage') || 'en';
     }
     return 'en';
   });
+  const [sets, setSets] = useState<SetData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const setsToShow = 4;
+
+  // Fetch sets when language changes
+  useEffect(() => {
+    setIsLoading(true);
+    fetch(`/api/sets/${lang}`)
+      .then(res => res.json())
+      .then(data => {
+        setSets(Array.isArray(data) ? data : []);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch sets:', err);
+        setIsLoading(false);
+      });
+  }, [lang]);
 
   // Listen for language changes
   useEffect(() => {
@@ -37,16 +53,6 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     window.addEventListener('languageChange', handleLanguageChange);
     return () => window.removeEventListener('languageChange', handleLanguageChange);
   }, []);
-
-  // Simple SWR fetch without complex localStorage logic
-  const { data: sets = [], error, isLoading } = useSWR<SetData[]>(
-    `/api/sets/${lang}`,
-    (url: string) => fetch(url).then(res => res.json()),
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 60000,
-    }
-  );
 
   const displaySets = sets.slice(0, 12);
 
@@ -63,7 +69,7 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     router.push(`/set-details?set=${setId}&lang=${lang}`);
   };
 
-  if (error || (!isLoading && displaySets.length === 0)) return null;
+  if (!isLoading && displaySets.length === 0) return null;
 
   // Show cached/loaded sets even while loading fresh data
   return (
