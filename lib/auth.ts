@@ -22,14 +22,19 @@ export function verifyToken(token: string): UserPayload | null {
 }
 
 export async function getCurrentUser(): Promise<UserPayload | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('token')?.value;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('token')?.value;
 
-  if (!token) {
+    if (!token) {
+      return null;
+    }
+
+    return verifyToken(token);
+  } catch (err) {
+    // During build time or in contexts where cookies aren't available, return null
     return null;
   }
-
-  return verifyToken(token);
 }
 
 export async function requireAuth(): Promise<UserPayload> {
