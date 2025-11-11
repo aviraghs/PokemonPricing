@@ -41,13 +41,13 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     return () => window.removeEventListener('languageChange', handleLanguageChange);
   }, [lang]);
 
-  // Use SWR - disable caching to ensure fresh data
+  // Use SWR - minimal cache for instant loading on new tabs
   const { data: sets = [], isLoading: loading, error } = useSWR<SetData[]>(
     `/api/sets/${lang}`,
     (url: string) => fetch(url).then(res => res.json()),
     {
       revalidateOnFocus: false,
-      dedupingInterval: 0, // Disable deduping to prevent stale cache issues
+      dedupingInterval: 10000, // 10 seconds - allows instant load from cache on new tab
       focusThrottleInterval: 0,
       revalidateOnReconnect: true,
     }
