@@ -30,21 +30,22 @@ export default function PopularCards() {
   const cards = useMemo(() => {
     if (!allCards.length) return [];
 
-    // Filter by rarity to show more interesting cards first
-    const raredCards = allCards.filter((card: any) => {
-      const rarity = card.rarity?.toLowerCase() || '';
-      return rarity.includes('rare') || rarity.includes('holo') || rarity.includes('secret');
-    });
-
-    // Return unique cards by name, limit to 8
+    // Get unique cards by Pokemon name (base name without variants)
     const uniqueCards = [];
     const seenNames = new Set();
-    for (const card of raredCards.length > 0 ? raredCards : allCards) {
+
+    for (const card of allCards) {
       const baseName = card.name.split(/\s+(VMAX|VSTAR|V|ex|EX|GX|&)/)[0].trim();
-      if (!seenNames.has(baseName) && uniqueCards.length < 8) {
-        uniqueCards.push(card);
-        seenNames.add(baseName);
-      }
+
+      // Skip if we've already seen this Pokemon
+      if (seenNames.has(baseName)) continue;
+
+      // Add the card and mark the Pokemon as seen
+      uniqueCards.push(card);
+      seenNames.add(baseName);
+
+      // Limit to 12 cards to show good variety
+      if (uniqueCards.length >= 12) break;
     }
 
     return uniqueCards;
