@@ -345,42 +345,9 @@ export async function GET(
     // Get the last 50 sets (most recent) and reverse them so newest appears first
     const recentSets = enhancedData.slice(-50).reverse();
 
-    // Fetch full details for each recent set to get accurate release dates
-    // For non-English languages, dynamically translate set names using a translation service
-    const detailedSets = await Promise.all(recentSets.map(async (set: any) => {
-        try {
-            const setUrl = `https://api.tcgdex.net/v2/${language}/sets/${set.id}`;
-            const response = await fetch(setUrl);
-            if (!response.ok) {
-                // If fetching details fails, return the original set data
-                console.warn(`⚠️ Could not fetch details for set ${set.id}. Falling back to existing data.`);
-                return {
-                    ...set,
-                    releaseDate: releaseDateMap[set.name] || null
-                };
-            }
+    console.log(`📦 Returning ${recentSets.length} most recent sets (optimized - no individual fetches)`);
 
-            const detailedSetData = await response.json();
-            let result = {
-                ...set,
-                ...detailedSetData, // This will add/overwrite with more accurate data like releaseDate
-                logo: set.logo // Preserve the fixed logo from the initial fetch
-            };
-
-            return result;
-        } catch (err) {
-            console.error(`❌ Error fetching details for set ${set.id}:`, err);
-            // On error, return original set data with fallback release date
-            return {
-                ...set,
-                releaseDate: releaseDateMap[set.name] || null,
-            };
-        }
-    }));
-
-    console.log(`📦 Returning ${detailedSets.length} most recent sets with detailed data`);
-
-    return NextResponse.json(detailedSets, {
+    return NextResponse.json(recentSets, {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
       },
