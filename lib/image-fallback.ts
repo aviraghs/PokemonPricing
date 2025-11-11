@@ -1,12 +1,13 @@
 /**
  * Image fallback utility for Pokemon card images
  * Provides fallback image URLs from pokefetch.info when TCGdex images are unavailable
+ * Uses our secure API endpoint that handles authorization with Bearer token
  */
 
 /**
- * Generate pokefetch.info image URL as fallback
+ * Generate pokefetch.info image URL through our secure API endpoint
+ * This proxies the request through our backend which adds the Bearer token
  * pokefetch.info API: https://pokefetch.info/docs
- * Example: /api/v1/{setId}/{cardNumber}
  */
 export function generatePokefetchImageUrl(
   cardNumber: string | undefined,
@@ -20,11 +21,11 @@ export function generatePokefetchImageUrl(
   // Clean the card number (remove any leading zeros for setId if needed)
   const cleanCardNumber = cardNumber.replace(/^0+/, '') || cardNumber;
 
-  // pokefetch.info format: /api/v1/{setId}/{cardNumber}
-  const baseUrl = 'https://pokefetch.info/api/v1';
+  // Use our secure API endpoint that handles Bearer token authentication
+  // Format: /api/pokefetch-image?setId={setId}&cardNumber={cardNumber}
+  const apiUrl = `/api/pokefetch-image?setId=${encodeURIComponent(setId)}&cardNumber=${encodeURIComponent(cleanCardNumber)}`;
 
-  // Return the image URL - pokefetch provides webp by default
-  return `${baseUrl}/${setId}/${cleanCardNumber}`;
+  return apiUrl;
 }
 
 /**
