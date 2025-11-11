@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import PokemonLoader from './PokemonLoader';
 import styles from './SetsCarousel.module.css';
 
 interface SetData {
@@ -79,6 +80,9 @@ export default function SetsCarousel({}: SetsCarouselProps) {
           <p className={styles.sectionSubtitle}>Explore the latest Pokémon TCG expansions</p>
         </div>
 
+        {isLoading && displaySets.length === 0 ? (
+          <PokemonLoader message="Loading sets..." size="medium" />
+        ) : (
         <div className={styles.carouselContainer}>
           <button className={`${styles.carouselBtn} ${styles.prev}`} onClick={handlePrevious}>
             ‹
@@ -121,6 +125,7 @@ export default function SetsCarousel({}: SetsCarouselProps) {
             ›
           </button>
         </div>
+        )}
       </div>
     </div>
   );

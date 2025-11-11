@@ -95,9 +95,7 @@ export default function PopularCards() {
         </div>
 
         {isLoading ? (
-          <div style={{ padding: '40px', textAlign: 'center' }}>
-            <p>Loading popular cards...</p>
-          </div>
+          <PokemonLoader message="Loading popular cards..." size="medium" />
         ) : (
         <div className={styles.carouselContainer}>
           <button className={`${styles.carouselBtn} ${styles.prev}`} onClick={handlePrevious}>

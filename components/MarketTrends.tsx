@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import PokemonLoader from './PokemonLoader';
 import styles from './MarketTrends.module.css';
 
 interface Card {
@@ -95,9 +96,7 @@ export default function MarketTrends() {
         </div>
 
         {isLoading ? (
-          <div className={styles.loadingSpinner}>
-            <p>Loading trending cards...</p>
-          </div>
+          <PokemonLoader message="Loading trending cards..." size="medium" />
         ) : (
 
         <div className={styles.trendsGrid}>
