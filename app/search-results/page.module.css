@@ -24,6 +24,17 @@
   -webkit-text-fill-color: transparent;
 }
 
+@media (max-width: 1024px) {
+  .title {
+    font-size: 2.5em;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+}
+
 .subtitle {
   font-size: 1.2em;
   color: #b0b0b0;
@@ -205,18 +216,170 @@
 @media (max-width: 768px) {
   .page {
     padding-top: 80px;
+    padding: 80px 15px;
+  }
+
+  .container {
+    padding: 30px 15px;
+  }
+
+  .header {
+    margin-bottom: 30px;
   }
 
   .title {
-    font-size: 2em;
+    font-size: 1.8em;
+  }
+
+  .subtitle {
+    font-size: 1em;
   }
 
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 15px;
   }
 
+  .card {
+    border-radius: 12px;
+  }
+
   .cardImage {
-    height: 220px;
+    height: 200px;
+  }
+
+  .cardName {
+    font-size: 1.1em;
+  }
+
+  .cardSet {
+    font-size: 0.85em;
+  }
+
+  .cardMeta {
+    gap: 8px;
+  }
+
+  .cardNumber,
+  .cardRarity {
+    font-size: 0.75em;
+    padding: 3px 10px;
+  }
+
+  .pricingItem {
+    font-size: 0.75em;
+  }
+
+  .resultsCount {
+    font-size: 1em;
+  }
+
+  .backBtn {
+    padding: 10px 20px;
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding-top: 80px;
+    padding: 80px 12px;
+  }
+
+  .container {
+    padding: 20px 12px;
+  }
+
+  .header {
+    margin-bottom: 25px;
+  }
+
+  .title {
+    font-size: 1.4em;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 0.9em;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .card {
+    border-radius: 10px;
+    border: 0.5px solid #2d2d44;
+  }
+
+  .cardImage {
+    height: 170px;
+  }
+
+  .cardInfo {
+    padding: 12px;
+  }
+
+  .cardName {
+    font-size: 0.95em;
+    margin-bottom: 5px;
+  }
+
+  .cardSet {
+    font-size: 0.8em;
+    margin-bottom: 8px;
+  }
+
+  .cardMeta {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .cardNumber,
+  .cardRarity {
+    font-size: 0.7em;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .cardPricing {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  .pricingItem {
+    font-size: 0.7em;
+    margin-bottom: 2px;
+  }
+
+  .pricingSource,
+  .pricingValue {
+    font-size: 0.7em;
+  }
+
+  .resultsCount {
+    font-size: 0.95em;
+    margin-bottom: 20px;
+  }
+
+  .noResultsIcon {
+    font-size: 5em;
+    margin-bottom: 15px;
+  }
+
+  .noResults h2 {
+    font-size: 1.5em;
+    margin-bottom: 8px;
+  }
+
+  .noResults p {
+    font-size: 0.95em;
+    margin-bottom: 20px;
+  }
+
+  .backBtn {
+    padding: 10px 18px;
+    font-size: 0.9em;
   }
 }

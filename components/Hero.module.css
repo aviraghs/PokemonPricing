@@ -184,30 +184,211 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .heroSection {
+    padding: 40px 0;
+  }
+
   .logo {
-    font-size: 2.5em;
+    font-size: 3.5em;
+    letter-spacing: 2px;
   }
 
   .logoSubtitle {
-    font-size: 1em;
+    font-size: 1.1em;
   }
 
   .searchContainer {
-    padding: 25px;
+    max-width: 90%;
+    padding: 35px;
   }
 
   .searchTitle {
-    font-size: 1.4em;
+    font-size: 1.6em;
+  }
+
+  .searchFilters {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .filterSelect,
+  .searchInput {
+    font-size: 0.95em;
+  }
+
+  .heroAuth {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 30px 0;
+    min-height: 100vh;
+    justify-content: flex-start;
+    padding-top: 20px;
+  }
+
+  .logoContainer {
+    margin-bottom: 30px;
+  }
+
+  .logo {
+    font-size: 2.2em;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  .logoSubtitle {
+    font-size: 0.95em;
+    letter-spacing: 1px;
+  }
+
+  .searchContainer {
+    padding: 20px;
+    max-width: 100%;
+    width: 95%;
+    margin: 0 auto;
+  }
+
+  .searchTitle {
+    font-size: 1.3em;
+    margin-bottom: 20px;
+  }
+
+  .searchInput {
+    padding: 14px 18px;
+    padding-right: 45px;
+    font-size: 0.95em;
+  }
+
+  .searchIcon {
+    font-size: 1.2em;
+    right: 15px;
   }
 
   .searchFilters {
     grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .filterSelect {
+    padding: 10px 12px;
+    font-size: 0.9em;
+  }
+
+  .searchButton {
+    padding: 14px;
+    font-size: 1em;
+  }
+
+  .quickLinks {
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .quickLink {
+    padding: 6px 12px;
+    font-size: 0.8em;
   }
 
   .heroAuth {
-    top: 20px;
-    right: 20px;
-    gap: 10px;
+    top: 15px;
+    right: 15px;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    padding: 0;
+    min-height: auto;
+    padding-bottom: 20px;
+  }
+
+  .logoContainer {
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+
+  .logo {
+    font-size: 1.8em;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+
+  .logoSubtitle {
+    font-size: 0.85em;
+    letter-spacing: 0px;
+  }
+
+  .searchContainer {
+    padding: 16px;
+    width: 100%;
+    border-radius: 12px;
+    margin: 0;
+  }
+
+  .searchTitle {
+    font-size: 1.1em;
+    margin-bottom: 16px;
+  }
+
+  .searchBox {
+    margin-bottom: 15px;
+  }
+
+  .searchInput {
+    padding: 12px 14px;
+    padding-right: 38px;
+    font-size: 0.9em;
+  }
+
+  .searchIcon {
+    font-size: 1em;
+    right: 12px;
+  }
+
+  .searchFilters {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .filterSelect {
+    padding: 9px 10px;
+    font-size: 0.85em;
+    border-radius: 6px;
+  }
+
+  .filterGroup label {
+    font-size: 0.8em;
+    margin-bottom: 5px;
+  }
+
+  .searchButton {
+    padding: 12px;
+    font-size: 0.95em;
+  }
+
+  .quickLinks {
+    gap: 8px;
+    margin-top: 15px;
+  }
+
+  .quickLink {
+    padding: 5px 10px;
+    font-size: 0.75em;
+    border-radius: 16px;
+  }
+
+  .heroAuth {
+    top: 12px;
+    right: 12px;
+    gap: 6px;
+    flex-direction: column;
+    align-items: flex-end;
   }
 }

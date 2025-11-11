@@ -3,6 +3,24 @@
   background: #0f0f23;
 }
 
+@media (max-width: 1024px) {
+  .popularSection {
+    padding: 40px 15px 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .popularSection {
+    padding: 30px 15px 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .popularSection {
+    padding: 25px 12px 40px;
+  }
+}
+
 .container {
   max-width: 1400px;
   margin: 0 auto;
@@ -27,6 +45,38 @@
   font-size: 1.1em;
   color: #b0b0b0;
   font-weight: 300;
+}
+
+@media (max-width: 1024px) {
+  .sectionTitle {
+    font-size: 2.2em;
+  }
+
+  .sectionSubtitle {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 768px) {
+  .sectionTitle {
+    font-size: 1.8em;
+    margin-bottom: 8px;
+  }
+
+  .sectionSubtitle {
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionTitle {
+    font-size: 1.4em;
+    margin-bottom: 5px;
+  }
+
+  .sectionSubtitle {
+    font-size: 0.85em;
+  }
 }
 
 .loadingSpinner {
@@ -192,13 +242,55 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .sectionHeader {
+    margin-bottom: 30px;
+  }
+
   .card {
     min-width: calc(50% - 12.5px);
   }
 
   .cardImage {
-    height: 220px;
+    height: 240px;
+  }
+
+  .carouselBtn {
+    width: 45px;
+    height: 45px;
+    font-size: 1.5em;
+  }
+}
+
+@media (max-width: 768px) {
+  .sectionHeader {
+    margin-bottom: 30px;
+  }
+
+  .card {
+    min-width: calc(50% - 12.5px);
+  }
+
+  .cardImage {
+    height: 200px;
+  }
+
+  .cardName {
+    font-size: 1.1em;
+  }
+
+  .cardSet {
+    font-size: 0.85em;
+  }
+
+  .pricingItem {
+    font-size: 0.8em;
+  }
+
+  .carouselBtn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3em;
   }
 
   .carouselBtn.prev {
@@ -211,7 +303,56 @@
 }
 
 @media (max-width: 480px) {
+  .sectionHeader {
+    margin-bottom: 25px;
+  }
+
   .card {
     min-width: 100%;
+  }
+
+  .cardImage {
+    height: 180px;
+  }
+
+  .cardInfo {
+    padding: 15px;
+  }
+
+  .cardName {
+    font-size: 1em;
+  }
+
+  .cardSet {
+    font-size: 0.8em;
+  }
+
+  .cardRarity {
+    padding: 3px 10px;
+    font-size: 0.75em;
+  }
+
+  .cardPricing {
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  .pricingItem {
+    font-size: 0.75em;
+    margin-bottom: 3px;
+  }
+
+  .carouselBtn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2em;
+  }
+
+  .carouselBtn.prev {
+    left: 0;
+  }
+
+  .carouselBtn.next {
+    right: 0;
   }
 }

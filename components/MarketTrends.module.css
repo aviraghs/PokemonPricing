@@ -3,6 +3,24 @@
   background: #0f0f23;
 }
 
+@media (max-width: 1024px) {
+  .trendsSection {
+    padding: 60px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .trendsSection {
+    padding: 50px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .trendsSection {
+    padding: 40px 12px;
+  }
+}
+
 .container {
   max-width: 1400px;
   margin: 0 auto;
@@ -27,6 +45,38 @@
   font-size: 1.1em;
   color: #b0b0b0;
   font-weight: 300;
+}
+
+@media (max-width: 1024px) {
+  .sectionTitle {
+    font-size: 2.2em;
+  }
+
+  .sectionSubtitle {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 768px) {
+  .sectionTitle {
+    font-size: 1.8em;
+    margin-bottom: 8px;
+  }
+
+  .sectionSubtitle {
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionTitle {
+    font-size: 1.4em;
+    margin-bottom: 5px;
+  }
+
+  .sectionSubtitle {
+    font-size: 0.85em;
+  }
 }
 
 .loadingSpinner,
@@ -162,13 +212,119 @@
   font-weight: 600;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .sectionHeader {
+    margin-bottom: 30px;
+  }
+
   .trendsGrid {
-    grid-template-columns: 1fr;
     gap: 30px;
   }
-  
+
+  .trendHeader {
+    font-size: 1.3em;
+  }
+}
+
+@media (max-width: 768px) {
+  .sectionHeader {
+    margin-bottom: 25px;
+  }
+
+  .trendsGrid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .trendColumn {
+    padding: 20px;
+  }
+
   .trendHeader {
     font-size: 1.2em;
+    margin-bottom: 15px;
+  }
+
+  .trendItem {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .trendCardInfo h4 {
+    font-size: 0.95em;
+  }
+
+  .trendSet {
+    font-size: 0.8em;
+  }
+
+  .trendPrice {
+    font-size: 0.9em;
+  }
+
+  .trendChange {
+    font-size: 0.85em;
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionHeader {
+    margin-bottom: 20px;
+  }
+
+  .trendsGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .trendColumn {
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  .trendHeader {
+    font-size: 1.1em;
+    margin-bottom: 12px;
+  }
+
+  .trendList {
+    gap: 12px;
+  }
+
+  .trendItem {
+    padding: 8px;
+    gap: 8px;
+    border-radius: 10px;
+  }
+
+  .trendCardThumbnail img {
+    width: 45px !important;
+    height: 60px !important;
+  }
+
+  .trendCardInfo h4 {
+    font-size: 0.85em;
+    margin-bottom: 2px;
+  }
+
+  .trendSet {
+    font-size: 0.75em;
+  }
+
+  .trendStats {
+    gap: 1px;
+  }
+
+  .trendPrice {
+    font-size: 0.8em;
+  }
+
+  .trendChange {
+    font-size: 0.75em;
+  }
+
+  .noData {
+    padding: 15px;
+    font-size: 0.95em;
   }
 }
