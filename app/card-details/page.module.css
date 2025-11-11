@@ -1,0 +1,501 @@
+.page {
+  min-height: 100vh;
+  background: #0f0f23;
+  padding-top: 100px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  border: 4px solid #2d2d44;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error {
+  color: #ef4444;
+}
+
+.backBtn,
+.backButton {
+  padding: 10px 20px;
+  background: #2d2d44;
+  color: #e0e0e0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-poppins);
+  margin-bottom: 30px;
+  transition: background 0.2s;
+}
+
+.backButton:hover {
+  background: #3d3d54;
+}
+
+.cardContainer {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 40px;
+  background: #1a1a2e;
+  border-radius: 16px;
+  padding: 40px;
+  border: 1px solid #2d2d44;
+}
+
+.imageSection {
+  display: flex;
+  justify-content: center;
+}
+
+.cardImageWrapper {
+  width: 100%;
+  max-width: 350px;
+  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #2d2d44;
+}
+
+.cardImage {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.placeholder {
+  width: 100%;
+  aspect-ratio: 2.5 / 3.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6em;
+  opacity: 0.3;
+}
+
+.detailsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.cardName {
+  font-family: var(--font-orbitron);
+  font-size: 2.5em;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.cardNumber {
+  font-size: 1.5em;
+  color: #667eea;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.metaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.metaItem {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.metaLabel {
+  color: #b0b0b0;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.metaValue {
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+.types {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.type {
+  padding: 4px 12px;
+  background: #16213e;
+  border-radius: 12px;
+  font-size: 0.9em;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.section {
+  background: #16213e;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #2d2d44;
+}
+
+.sectionTitle {
+  font-family: var(--font-orbitron);
+  font-size: 1.3em;
+  color: #e0e0e0;
+  margin-bottom: 15px;
+}
+
+.attack {
+  padding: 15px;
+  background: #1a1a2e;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #2d2d44;
+}
+
+.attack:last-child {
+  margin-bottom: 0;
+}
+
+.attackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.attackName {
+  font-weight: 600;
+  color: #e0e0e0;
+  font-size: 1.1em;
+}
+
+.attackDamage {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.attackEffect {
+  color: #b0b0b0;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.battleStats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.statGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statLabel {
+  color: #b0b0b0;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.stat {
+  padding: 4px 12px;
+  background: #1a1a2e;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+.description {
+  color: #e0e0e0;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Modern Pricing Section */
+.pricingSection {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.pricingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.priceCard {
+  position: relative;
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 2px solid;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.priceCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--card-gradient));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.priceCard:hover::before {
+  opacity: 1;
+}
+
+.priceCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.priceCard.tcgplayer {
+  border-color: rgba(102, 126, 234, 0.3);
+  --card-gradient: #667eea, #764ba2;
+}
+
+.priceCard.pokemon {
+  border-color: rgba(255, 154, 158, 0.3);
+  --card-gradient: #ff9a9e, #fecfef;
+}
+
+.priceCard.ebay {
+  border-color: rgba(168, 237, 234, 0.3);
+  --card-gradient: #a8edea, #fed6e3;
+}
+
+.priceCard.cardmarket {
+  border-color: rgba(34, 197, 94, 0.3);
+  --card-gradient: #22c55e, #10b981;
+}
+
+.priceCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.priceIcon {
+  font-size: 1.4em;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.priceSource {
+  margin: 0;
+  font-family: var(--font-orbitron);
+  font-size: 0.85em;
+  font-weight: 600;
+  color: #e0e0e0;
+  letter-spacing: 0.5px;
+}
+
+.priceAmount {
+  font-size: 1.5em;
+  font-weight: 800;
+  font-family: var(--font-orbitron);
+  margin: 8px 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.priceCard.pokemon .priceAmount {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.priceCard.ebay .priceAmount {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.priceCard.cardmarket .priceAmount {
+  background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Variants styling */
+.variants {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.variant {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8em;
+}
+
+.variantLabel {
+  color: #b0b0b0;
+  font-weight: 500;
+}
+
+.variantPrice {
+  color: #e0e0e0;
+  font-weight: 600;
+  font-family: var(--font-orbitron);
+}
+
+/* eBay Listings */
+.ebayListings {
+  margin-top: 20px;
+}
+
+.ebayItem {
+  background: #16213e;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid #2d2d44;
+  transition: all 0.2s;
+}
+
+.ebayItem:hover {
+  background: #1a2640;
+  border-color: #667eea;
+}
+
+.ebayItem a {
+  color: #b0b0b0;
+  text-decoration: none;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.ebayItem a:hover {
+  color: #667eea;
+}
+
+.ebayPrice {
+  font-weight: 700;
+  color: #667eea;
+  white-space: nowrap;
+  font-family: var(--font-orbitron);
+}
+
+/* Clickable eBay card styles */
+.priceCard.ebay[style*="cursor: pointer"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.priceCard.ebay[style*="cursor: pointer"]:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 968px) {
+  .cardContainer {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 30px 20px;
+  }
+
+  .cardImageWrapper {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .cardName {
+    font-size: 2em;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-top: 80px;
+  }
+
+  .cardName {
+    font-size: 1.6em;
+  }
+
+  .metaLabel {
+    min-width: 80px;
+  }
+
+  .statLabel {
+    min-width: 80px;
+  }
+
+  .pricingGrid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .priceCard {
+    padding: 12px;
+  }
+
+  .priceIcon {
+    font-size: 1.2em;
+  }
+
+  .priceSource {
+    font-size: 0.75em;
+  }
+
+  .priceAmount {
+    font-size: 1.2em;
+  }
+}

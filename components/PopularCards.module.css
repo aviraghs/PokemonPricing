@@ -1,0 +1,217 @@
+.popularSection {
+  padding: 40px 20px 80px;
+  background: #0f0f23;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-family: var(--font-orbitron);
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sectionSubtitle {
+  font-size: 1.1em;
+  color: #b0b0b0;
+  font-weight: 300;
+}
+
+.loadingSpinner {
+  text-align: center;
+  padding: 40px;
+  color: #b0b0b0;
+}
+
+.carouselContainer {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.carouselWrapper {
+  overflow: hidden;
+  padding: 20px 0;
+}
+
+.carouselTrack {
+  display: flex;
+  gap: 25px;
+  transition: transform 0.5s ease;
+  padding: 0 10px;
+}
+
+.card {
+  min-width: calc(25% - 19px);
+  background: #1a1a2e;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #2d2d44;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+  border-color: #667eea;
+}
+
+.cardImage {
+  height: 280px;
+  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.placeholder {
+  font-size: 5em;
+  opacity: 0.3;
+}
+
+.cardInfo {
+  padding: 20px;
+  text-align: center;
+}
+
+.cardName {
+  font-size: 1.2em;
+  margin-bottom: 8px;
+  color: #e0e0e0;
+}
+
+.cardSet {
+  font-size: 0.9em;
+  color: #b0b0b0;
+  margin-bottom: 8px;
+}
+
+.cardRarity {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #16213e;
+  border-radius: 12px;
+  font-size: 0.8em;
+  color: #667eea;
+}
+
+.cardPricing {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #2d2d44;
+}
+
+.pricingItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 0.85em;
+}
+
+.pricingSource {
+  color: #667eea;
+  font-weight: 500;
+}
+
+.pricingValue {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.carouselBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  font-size: 2em;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carouselBtn:hover {
+  transform: translateY(-50%) scale(1.15);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+}
+
+.carouselBtn.prev {
+  left: -30px;
+}
+
+.carouselBtn.next {
+  right: -30px;
+}
+
+@media (max-width: 1024px) {
+  .card {
+    min-width: calc(33.333% - 17px);
+  }
+
+  .carouselBtn {
+    width: 45px;
+    height: 45px;
+    font-size: 1.5em;
+  }
+
+  .carouselBtn.prev {
+    left: -22px;
+  }
+
+  .carouselBtn.next {
+    right: -22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    min-width: calc(50% - 12.5px);
+  }
+
+  .cardImage {
+    height: 220px;
+  }
+
+  .carouselBtn.prev {
+    left: 0;
+  }
+
+  .carouselBtn.next {
+    right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    min-width: 100%;
+  }
+}

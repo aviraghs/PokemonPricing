@@ -1,0 +1,174 @@
+.trendsSection {
+  padding: 80px 20px;
+  background: #0f0f23;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-family: var(--font-orbitron);
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sectionSubtitle {
+  font-size: 1.1em;
+  color: #b0b0b0;
+  font-weight: 300;
+}
+
+.loadingSpinner,
+.comingSoon {
+  text-align: center;
+  padding: 40px;
+  color: #b0b0b0;
+  font-size: 1.2em;
+}
+
+.trendsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.trendColumn {
+  background: #1a1a2e;
+  border-radius: 16px;
+  padding: 25px;
+  border: 1px solid #2d2d44;
+}
+
+.trendHeader {
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  text-align: center;
+  font-family: var(--font-orbitron);
+}
+
+.trendHeader.rising {
+  color: #4ade80; /* Green for rising */
+}
+
+.trendHeader.falling {
+  color: #f87171; /* Red for falling */
+}
+
+.trendList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.trendItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: #16213e;
+  border-radius: 12px;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trendItem:hover {
+  background: #2d2d44;
+  transform: translateX(5px);
+}
+
+.trendCardThumbnail {
+  flex-shrink: 0;
+}
+
+.trendCardThumbnail img {
+  border-radius: 8px;
+}
+
+.trendCardInfo {
+  flex-grow: 1;
+}
+
+.trendCardInfo h4 {
+  margin: 0 0 4px 0;
+  color: #e0e0e0;
+  font-size: 1em;
+}
+
+.trendSet {
+  margin: 0;
+  font-size: 0.85em;
+  color: #b0b0b0;
+}
+
+.trendStats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.trendPrice {
+  font-weight: 600;
+  color: #e0e0e0;
+  font-size: 0.95em;
+}
+
+.trendChange {
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.trendChange.positive {
+  color: #4ade80;
+}
+
+.trendChange.negative {
+  color: #f87171;
+}
+
+.noData {
+  text-align: center;
+  color: #b0b0b0;
+  font-style: italic;
+  padding: 20px;
+}
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: #ef4444;
+}
+
+.retryBtn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-poppins);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .trendsGrid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .trendHeader {
+    font-size: 1.2em;
+  }
+}

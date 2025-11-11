@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "Bash(npm run build:*)",
+      "Bash(netstat:*)"
     ],
     "deny": [],
     "ask": []

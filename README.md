@@ -101,7 +101,7 @@ your-project/
 ├── server.js
 ├── index.html
 ├── search-results.html
-├── admin.html
+├── mycollection.html
 ├── app.js          # NEW FILE!
 ├── .env
 └── package.json

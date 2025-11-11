@@ -1,0 +1,58 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --font-poppins: 'Poppins', sans-serif;
+  --font-orbitron: 'Orbitron', sans-serif;
+}
+
+body {
+  font-family: var(--font-poppins);
+  background: #0f0f23;
+  color: #e0e0e0;
+  overflow-x: hidden;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f0f23;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2d2d44;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #667eea;
+}
+
+/* Global button reset */
+button {
+  font-family: var(--font-poppins);
+}
+
+/* Global input reset */
+input,
+select,
+textarea {
+  font-family: var(--font-poppins);
+}
+
+/* Focus outline for accessibility */
+*:focus-visible {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
