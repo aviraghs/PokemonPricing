@@ -26,6 +26,7 @@ export default function SetsCarousel({}: SetsCarouselProps) {
   // Use SWR for caching and automatic revalidation
   const { data: sets = [], isLoading: loading, error } = useSWR<SetData[]>(
     `/api/sets/${lang}`,
+    (url: string) => fetch(url).then(res => res.json()),
     {
       revalidateOnFocus: false,
       dedupingInterval: 300000, // 5 minutes
