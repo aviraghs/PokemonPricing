@@ -21,64 +21,29 @@ export default function SetsCarousel({}: SetsCarouselProps) {
   const [lang, setLang] = useState('en');
   const setsToShow = 4;
 
-  // Get language from localStorage on client mount and listen for changes
+  // Get initial language and listen for changes
   useEffect(() => {
-    // Set initial language immediately from localStorage
-    const initialLang = localStorage.getItem('preferredLanguage') || 'en';
-    setLang(initialLang);
+    const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+    setLang(savedLang);
 
-    // Listen for language change events from LanguageSelector
     const handleLanguageChange = (e: Event) => {
       const customEvent = e as CustomEvent;
       setLang(customEvent.detail);
     };
 
     window.addEventListener('languageChange', handleLanguageChange);
-
     return () => window.removeEventListener('languageChange', handleLanguageChange);
   }, []);
 
-  // Use SWR with localStorage persistence for instant loading on new tabs
-  const { data: sets = [], isLoading: loading, error } = useSWR<SetData[]>(
+  // Simple SWR fetch without complex localStorage logic
+  const { data: sets = [], error, isLoading } = useSWR<SetData[]>(
     `/api/sets/${lang}`,
-    async (url: string) => {
-      // Try to get from localStorage first
-      const cacheKey = `sets-cache-${lang}`;
-      const cached = localStorage.getItem(cacheKey);
-
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          // Check if cache is still fresh (less than 5 minutes)
-          if (Date.now() - parsed.timestamp < 300000) {
-            return parsed.data;
-          }
-        } catch (e) {
-          // Invalid cache, proceed to fetch
-        }
-      }
-
-      // Fetch fresh data
-      const res = await fetch(url);
-      const data = await res.json();
-
-      // Store in localStorage
-      localStorage.setItem(cacheKey, JSON.stringify({
-        data,
-        timestamp: Date.now()
-      }));
-
-      return data;
-    },
+    (url: string) => fetch(url).then(res => res.json()),
     {
       revalidateOnFocus: false,
-      dedupingInterval: 60000, // 1 minute dedup in memory
-      focusThrottleInterval: 0,
-      revalidateOnReconnect: true,
+      dedupingInterval: 60000,
     }
   );
-
-
 
   const displaySets = sets.slice(0, 12);
 
@@ -95,7 +60,7 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     router.push(`/set-details?set=${setId}&lang=${lang}`);
   };
 
-  if (error || (!loading && displaySets.length === 0)) return null;
+  if (error || (!isLoading && displaySets.length === 0)) return null;
 
   // Show cached/loaded sets even while loading fresh data
   return (
