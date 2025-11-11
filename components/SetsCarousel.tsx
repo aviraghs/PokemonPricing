@@ -41,13 +41,41 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     return () => window.removeEventListener('languageChange', handleLanguageChange);
   }, [lang]);
 
-  // Use SWR - minimal cache for instant loading on new tabs
+  // Use SWR with localStorage persistence for instant loading on new tabs
   const { data: sets = [], isLoading: loading, error } = useSWR<SetData[]>(
     `/api/sets/${lang}`,
-    (url: string) => fetch(url).then(res => res.json()),
+    async (url: string) => {
+      // Try to get from localStorage first
+      const cacheKey = `sets-cache-${lang}`;
+      const cached = localStorage.getItem(cacheKey);
+
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          // Check if cache is still fresh (less than 5 minutes)
+          if (Date.now() - parsed.timestamp < 300000) {
+            return parsed.data;
+          }
+        } catch (e) {
+          // Invalid cache, proceed to fetch
+        }
+      }
+
+      // Fetch fresh data
+      const res = await fetch(url);
+      const data = await res.json();
+
+      // Store in localStorage
+      localStorage.setItem(cacheKey, JSON.stringify({
+        data,
+        timestamp: Date.now()
+      }));
+
+      return data;
+    },
     {
       revalidateOnFocus: false,
-      dedupingInterval: 10000, // 10 seconds - allows instant load from cache on new tab
+      dedupingInterval: 60000, // 1 minute dedup in memory
       focusThrottleInterval: 0,
       revalidateOnReconnect: true,
     }
