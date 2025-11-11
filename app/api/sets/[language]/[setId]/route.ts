@@ -373,7 +373,8 @@ export async function GET(
 
           console.log(`   Attempting to fetch logo from pokefetch for set: ${pokefetchSetParam}`);
 
-          const pokefetchUrl = `https://pokefetch.info/pokemon?query=*&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
+          // Use 'a' as a generic query to get any card from the set and extract the logo
+          const pokefetchUrl = `https://pokefetch.info/pokemon?query=a&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
           const pokefetchResponse = await fetch(pokefetchUrl, {
             headers: {
               'Authorization': `Bearer ${POKEFETCH_API_KEY}`,
