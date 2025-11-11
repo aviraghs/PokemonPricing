@@ -1,4 +1,3 @@
-import { unstable_cache as cache } from 'next/cache';
 import { Suspense } from 'react';
 import Hero from '@/components/Hero';
 import SetsCarousel from '@/components/SetsCarousel';
@@ -6,27 +5,7 @@ import StickyHeader from '@/components/StickyHeader';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import styles from './page.module.css';
 
-// Preload English sets on page load
-const preloadEnglishSets = cache(async () => {
-  try {
-    const response = await fetch('https://api.tcgdex.net/v2/en/sets', {
-      next: { revalidate: 3600 } // Cache for 1 hour
-    });
-    const sets = await response.json();
-    return sets;
-  } catch (error) {
-    console.error('Failed to preload English sets:', error);
-    return [];
-  }
-}, ['preload-english-sets'], {
-  revalidate: 3600,
-  tags: ['sets-data']
-});
-
-async function MainContent() {
-  // Preload English sets on the server at page build/load time
-  await preloadEnglishSets();
-
+function MainContent() {
   return (
     <>
       <Hero />
@@ -35,11 +14,14 @@ async function MainContent() {
         <ErrorBoundary>
           <SetsCarousel />
         </ErrorBoundary>
+        {/* PopularCards disabled - makes 6 sequential API calls causing delays */}
+        {/*
         <ErrorBoundary>
           <Suspense fallback={<div>Loading popular cards...</div>}>
             {import('@/components/PopularCards').then(({ default: PopularCards }) => <PopularCards />)}
           </Suspense>
         </ErrorBoundary>
+        */}
         {/* MarketTrends disabled - requires pricing APIs which are slow */}
         {/*
         <ErrorBoundary>
