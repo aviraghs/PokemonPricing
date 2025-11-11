@@ -10,6 +10,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const setId = searchParams.get('setId');
     const cardNumber = searchParams.get('cardNumber');
+    const cardName = searchParams.get('cardName');
+    const setName = searchParams.get('setName');
 
     // Validate parameters
     if (!setId || !cardNumber) {
@@ -28,10 +30,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Search for card in pokefetch.info using setId and card number
-    // Format: setId-cardNumber (e.g., sv06.5-039)
-    const cardIdentifier = `${setId}-${cardNumber}`;
-    const searchUrl = `https://pokefetch.info/pokemon?query=${encodeURIComponent(cardIdentifier)}&limit=1`;
+    // Extract first word from set name and clean it for pokefetch API
+    // "Macdonald's Collection 2018" -> "mcdonald"
+    let pokefetchSetParam = setId;
+    if (setName) {
+      const firstWord = setName.split(' ')[0]; // Get first word: "Macdonald's"
+      pokefetchSetParam = firstWord
+        .replace(/['']s$/, '') // Remove possessive 's: "Macdonald"
+        .toLowerCase(); // Convert to lowercase: "macdonald"
+    }
+
+    // Search for card in pokefetch.info using card name/number and set
+    // Format: https://pokefetch.info/pokemon?query={cardName}&limit=10&set={setParam}
+    const searchUrl = `https://pokefetch.info/pokemon?query=${encodeURIComponent(cardName || cardNumber)}&limit=10&set=${encodeURIComponent(pokefetchSetParam)}`;
 
     const searchResponse = await fetch(searchUrl, {
       method: 'GET',
@@ -58,7 +69,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const card = searchData.data[0];
+    // Find card by matching card number if multiple results
+    let card = searchData.data[0];
+    if (searchData.data.length > 1 && cardNumber) {
+      const matchedCard = searchData.data.find((c: any) => {
+        const num = c.cardNumber || c.number || c.id || '';
+        return num.toString() === cardNumber.toString();
+      });
+      if (matchedCard) {
+        card = matchedCard;
+      }
+    }
     const imageUrl = card.images?.large || card.images?.small;
 
     if (!imageUrl) {
