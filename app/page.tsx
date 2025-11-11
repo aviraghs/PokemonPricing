@@ -6,19 +6,27 @@ import StickyHeader from '@/components/StickyHeader';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import styles from './page.module.css';
 
-// Cache the main page content for 10 minutes (600 seconds)
-const getCachedMainContent = cache(async () => {
-  // This function would fetch any data needed for the main page if needed
-  // For now, we're just using it to enable caching
-  return { timestamp: Date.now() };
-}, ['main-page-cache'], {
-  revalidate: 600, // Cache for 10 minutes
-  tags: ['main-page']
+// Preload English sets on page load
+const preloadEnglishSets = cache(async () => {
+  try {
+    const response = await fetch('https://api.tcgdex.net/v2/en/sets', {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    });
+    const sets = await response.json();
+    return sets;
+  } catch (error) {
+    console.error('Failed to preload English sets:', error);
+    return [];
+  }
+}, ['preload-english-sets'], {
+  revalidate: 3600,
+  tags: ['sets-data']
 });
 
 async function MainContent() {
-  await getCachedMainContent();
-  
+  // Preload English sets on the server at page build/load time
+  await preloadEnglishSets();
+
   return (
     <>
       <Hero />
