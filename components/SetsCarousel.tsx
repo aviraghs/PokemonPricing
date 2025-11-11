@@ -18,14 +18,17 @@ interface SetsCarouselProps {}
 export default function SetsCarousel({}: SetsCarouselProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState(() => {
+    // Initialize from localStorage immediately, avoiding a second render
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('preferredLanguage') || 'en';
+    }
+    return 'en';
+  });
   const setsToShow = 4;
 
-  // Get initial language and listen for changes
+  // Listen for language changes
   useEffect(() => {
-    const savedLang = localStorage.getItem('preferredLanguage') || 'en';
-    setLang(savedLang);
-
     const handleLanguageChange = (e: Event) => {
       const customEvent = e as CustomEvent;
       setLang(customEvent.detail);
