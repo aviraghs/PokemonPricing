@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PokemonLoader from './PokemonLoader';
+import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './MarketTrends.module.css';
 
 interface Card {
   id: string;
   name: string;
   image: string;
-  set: { name: string };
+  set: { name: string; id: string };
   rarity: string;
   trendPercent?: number;
   pricing?: {
@@ -123,9 +124,17 @@ export default function MarketTrends() {
                           src={`${card.image}/low.webp`}
                           alt={card.name}
                           style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
-                          onError={(e) => { 
-                            const parentElement = e.currentTarget.parentElement?.parentElement;
-                            if (parentElement) parentElement.style.display = 'none'; 
+                          onError={(e) => {
+                            if (e.currentTarget.src.includes('/low.webp')) {
+                              // Try pokefetch.info as fallback
+                              const pokefetchUrl = getFallbackImage(card.id?.split('-')[1], card.set?.id);
+                              if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
+                                e.currentTarget.src = pokefetchUrl;
+                              } else {
+                                const parentElement = e.currentTarget.parentElement?.parentElement;
+                                if (parentElement) parentElement.style.display = 'none';
+                              }
+                            }
                           }}
                         />
                       ) : (
@@ -173,9 +182,17 @@ export default function MarketTrends() {
                           src={`${card.image}/low.webp`}
                           alt={card.name}
                           style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
-                          onError={(e) => { 
-                            const parentElement = e.currentTarget.parentElement?.parentElement;
-                            if (parentElement) parentElement.style.display = 'none'; 
+                          onError={(e) => {
+                            if (e.currentTarget.src.includes('/low.webp')) {
+                              // Try pokefetch.info as fallback
+                              const pokefetchUrl = getFallbackImage(card.id?.split('-')[1], card.set?.id);
+                              if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
+                                e.currentTarget.src = pokefetchUrl;
+                              } else {
+                                const parentElement = e.currentTarget.parentElement?.parentElement;
+                                if (parentElement) parentElement.style.display = 'none';
+                              }
+                            }
                           }}
                         />
                       ) : (

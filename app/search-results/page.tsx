@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
 import PokemonLoader from '@/components/PokemonLoader';
+import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
 
 interface Card {
@@ -142,11 +143,30 @@ function SearchResultsContent() {
                             src={`${card.image}/high.webp`}
                             alt={card.name}
                             onError={(e) => {
-                              e.currentTarget.src = `${card.image}/low.webp`;
+                              // Fallback to low quality TCGdex image
+                              if (e.currentTarget.src.includes('/high.webp')) {
+                                e.currentTarget.src = `${card.image}/low.webp`;
+                              } else {
+                                // If low.webp also fails, try pokefetch.info
+                                const pokefetchUrl = getFallbackImage(card.localId, card.set?.id);
+                                if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
+                                  e.currentTarget.src = pokefetchUrl;
+                                } else {
+                                  // If all fail, show placeholder
+                                  e.currentTarget.style.display = 'none';
+                                }
+                              }
                             }}
                           />
                         ) : (
-                          <div className={styles.placeholder}>🎴</div>
+                          // If no TCGdex image, try pokefetch.info directly
+                          <img
+                            src={getFallbackImage(card.localId, card.set?.id) || ''}
+                            alt={card.name}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
                         )}
                       </div>
                       <div className={styles.cardInfo}>

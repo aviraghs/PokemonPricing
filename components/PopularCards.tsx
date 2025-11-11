@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PokemonLoader from './PokemonLoader';
+import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './PopularCards.module.css';
 
 interface Card {
   id: string;
   name: string;
   image: string;
-  set: { name: string };
+  set: { name: string; id: string };
   rarity: string;
   pricing?: {
     tcgPlayer?: {
@@ -126,7 +127,17 @@ export default function PopularCards() {
                         src={`${card.image}/high.webp`}
                         alt={card.name}
                         onError={(e) => {
-                          e.currentTarget.src = `${card.image}/low.webp`;
+                          if (e.currentTarget.src.includes('/high.webp')) {
+                            e.currentTarget.src = `${card.image}/low.webp`;
+                          } else {
+                            // Try pokefetch.info as fallback
+                            const pokefetchUrl = getFallbackImage(card.id?.split('-')[1], card.set?.id);
+                            if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
+                              e.currentTarget.src = pokefetchUrl;
+                            } else {
+                              e.currentTarget.style.display = 'none';
+                            }
+                          }
                         }}
                       />
                     ) : (
