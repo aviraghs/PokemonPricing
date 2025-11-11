@@ -1305,18 +1305,18 @@ export async function POST(request: NextRequest) {
       // Convert pricing data to INR
       function convertPricingToINR(pricing: any): any {
         if (!pricing) return pricing;
-        
+
         const convertedPricing: any = { ...pricing };
-        
+
         if (pricing.tcgPlayer) {
           // Create a copy of tcgPlayer to avoid modifying original
           const tcgPlayer = { ...pricing.tcgPlayer };
-          
+
           // Convert main averagePrice if it's a number
           if (typeof tcgPlayer.averagePrice === 'number') {
             tcgPlayer.averagePrice = formatINR(convertToINR(tcgPlayer.averagePrice));
           }
-          
+
           // Process variant pricing (holofoil, reverse-holofoil, normal, etc.)
           // Define the pricing variants to process (both camelCase and dash formats)
           const variants = [
@@ -1324,39 +1324,39 @@ export async function POST(request: NextRequest) {
             { original: 'reverse-holofoil', alternate: 'reverseHolofoil' },
             { original: 'normal', alternate: 'normal' }
           ];
-          
+
           for (const variant of variants) {
             // Check for original format first, then alternate
             const variantKey = tcgPlayer[variant.original] ? variant.original : tcgPlayer[variant.alternate] ? variant.alternate : null;
-            
+
             if (variantKey && tcgPlayer[variantKey]) {
               const variantData = { ...tcgPlayer[variantKey] };
-              
+
               // Convert specific pricing fields
               const priceFields = ['lowPrice', 'midPrice', 'highPrice', 'marketPrice', 'directLowPrice'];
-              
+
               for (const field of priceFields) {
                 if (typeof variantData[field] === 'number') {
                   variantData[field] = formatINR(convertToINR(variantData[field]));
                 }
               }
-              
+
               tcgPlayer[variantKey] = variantData;
             }
           }
-          
+
           convertedPricing.tcgPlayer = tcgPlayer;
         }
-        
-        if (pricing.cardmarket) {
+
+        if (pricing && 'cardmarket' in pricing && pricing.cardmarket) {
           // Create a copy of cardmarket to avoid modifying original
           const cardmarket = { ...pricing.cardmarket };
-          
+
           // Convert main averagePrice if it's a number
           if (typeof cardmarket.averagePrice === 'number') {
             cardmarket.averagePrice = formatINR(convertToINR(cardmarket.averagePrice));
           }
-          
+
           // Process variant pricing (holofoil, reverse-holofoil, normal, etc.)
           // Define the pricing variants to process (both camelCase and dash formats)
           const variants = [
@@ -1364,48 +1364,48 @@ export async function POST(request: NextRequest) {
             { original: 'reverse-holofoil', alternate: 'reverseHolofoil' },
             { original: 'normal', alternate: 'normal' }
           ];
-          
+
           for (const variant of variants) {
             // Check for original format first, then alternate
             const variantKey = cardmarket[variant.original] ? variant.original : cardmarket[variant.alternate] ? variant.alternate : null;
-            
+
             if (variantKey && cardmarket[variantKey]) {
               const variantData = { ...cardmarket[variantKey] };
-              
+
               // Convert specific pricing fields
               const priceFields = ['lowPrice', 'midPrice', 'highPrice', 'marketPrice', 'directLowPrice'];
-              
+
               for (const field of priceFields) {
                 if (typeof variantData[field] === 'number') {
                   variantData[field] = formatINR(convertToINR(variantData[field]));
                 }
               }
-              
+
               cardmarket[variantKey] = variantData;
             }
           }
-          
+
           convertedPricing.cardmarket = cardmarket;
-      }
-      
+        }
+
       if (pricing.pokemonPriceTracker) {
           convertedPricing.pokemonPriceTracker = {
             ...pricing.pokemonPriceTracker,
-            averagePrice: typeof pricing.pokemonPriceTracker.averagePrice === 'number' 
+            averagePrice: typeof pricing.pokemonPriceTracker.averagePrice === 'number'
               ? formatINR(convertToINR(pricing.pokemonPriceTracker.averagePrice))
               : pricing.pokemonPriceTracker.averagePrice
           };
         }
-        
+
         if (pricing.ebay) {
           convertedPricing.ebay = {
             ...pricing.ebay,
-            averagePrice: typeof pricing.ebay.averagePrice === 'number' 
+            averagePrice: typeof pricing.ebay.averagePrice === 'number'
               ? formatINR(convertToINR(pricing.ebay.averagePrice))
               : pricing.ebay.averagePrice
           };
         }
-        
+
         return convertedPricing;
       }
       

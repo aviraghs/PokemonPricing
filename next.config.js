@@ -16,14 +16,6 @@ const nextConfig = {
       },
     ],
   },
-  // Add allowedDevOrigins for development
-  experimental: {
-    allowedDevOrigins: [
-      'https://236c0b5c-307a-4b34-ba19-266ef4eac30a-00-3w585d9y9499c.sisko.replit.dev',
-      /.*\.replit\.dev$/,
-      /.*\.repl\.co$/,
-    ],
-  },
 };
 
 module.exports = nextConfig;

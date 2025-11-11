@@ -245,11 +245,12 @@ async function fetchTCGPlayerDataFromTCGAPI(title: string, cardId: string | null
         const justTcgResult = await fetchJustTCGData(title, cardNumber, set);
         if (justTcgResult.averagePrice && justTcgResult.averagePrice !== 'N/A') {
           // JustTCG found a price, but also include cardmarket data if available
+          const result: any = { ...justTcgResult };
           if (cardMarketDataExtracted) {
-            justTcgResult.cardmarket = cardMarketDataExtracted;
+            result.cardmarket = cardMarketDataExtracted;
             console.log(`✅ CardMarket data found:`, cardMarketDataExtracted);
           }
-          return justTcgResult;
+          return result;
         }
       }
       // No price from TCGdex or JustTCG, but return cardmarket data if available
