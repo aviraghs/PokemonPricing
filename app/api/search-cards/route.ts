@@ -1058,10 +1058,11 @@ export async function POST(request: NextRequest) {
     console.log(`Language: ${language}`);
     console.log(`Include Pricing: ${includePricing}`);
     console.log(`Refresh: ${refresh}`);
+    console.log(`Use JustTCG Fallback: ${useJustTCGFallback}`);
     console.log(`${'='.repeat(50)}\n`);
 
     // Check cache first
-    const cacheKey = `search:${query}:${set}:${rarity}:${type}:${language}:${includePricing}`;
+    const cacheKey = `search:${query}:${set}:${rarity}:${type}:${language}:${includePricing}:${useJustTCGFallback}`;
     const cachedData = cardDataCache.get(cacheKey);
 
     if (
