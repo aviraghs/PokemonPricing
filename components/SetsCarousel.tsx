@@ -24,8 +24,11 @@ export default function SetsCarousel({}: SetsCarouselProps) {
 
   // Get language from localStorage on client mount and listen for changes
   useEffect(() => {
+    // Set initial language immediately from localStorage
     const initialLang = localStorage.getItem('preferredLanguage') || 'en';
-    setLang(initialLang);
+    if (initialLang !== lang) {
+      setLang(initialLang);
+    }
 
     // Listen for language change events from LanguageSelector
     const handleLanguageChange = (e: Event) => {
@@ -34,8 +37,9 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     };
 
     window.addEventListener('languageChange', handleLanguageChange);
+
     return () => window.removeEventListener('languageChange', handleLanguageChange);
-  }, []);
+  }, [lang]);
 
   // Use SWR - disable caching to ensure fresh data
   const { data: sets = [], isLoading: loading, error } = useSWR<SetData[]>(
