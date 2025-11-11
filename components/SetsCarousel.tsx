@@ -19,9 +19,13 @@ interface SetsCarouselProps {}
 export default function SetsCarousel({}: SetsCarouselProps) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [lang, setLang] = useState('en');
   const setsToShow = 4;
 
-  const lang = typeof window !== 'undefined' ? localStorage.getItem('preferredLanguage') || 'en' : 'en';
+  // Get language from localStorage on client mount only
+  useEffect(() => {
+    setLang(localStorage.getItem('preferredLanguage') || 'en');
+  }, []);
 
   // Use SWR for caching and automatic revalidation
   const { data: sets = [], isLoading: loading, error } = useSWR<SetData[]>(
@@ -47,7 +51,6 @@ export default function SetsCarousel({}: SetsCarouselProps) {
   };
 
   const handleSetClick = (setId: string) => {
-    const lang = typeof window !== 'undefined' ? localStorage.getItem('preferredLanguage') || 'en' : 'en';
     router.push(`/set-details?set=${setId}&lang=${lang}`);
   };
 
