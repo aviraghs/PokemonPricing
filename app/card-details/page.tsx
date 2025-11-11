@@ -277,6 +277,78 @@ function CardDetailsContent() {
           return normalized;
         };
 
+      // Sanitize pricing data to remove unreasonable values
+      const sanitizePricing = (pricing: any) => {
+        if (!pricing) return pricing;
+
+        const sanitized = JSON.parse(JSON.stringify(pricing));
+
+        // Helper function to clean variant pricing
+        const cleanVariantPricing = (variant: any) => {
+          if (!variant) return variant;
+
+          const cleaned = { ...variant };
+          const priceFields = ['lowPrice', 'midPrice', 'highPrice', 'marketPrice', 'directLowPrice', 'avg', 'averagePrice'];
+
+          for (const field of priceFields) {
+            const value = cleaned[field];
+            // Remove prices that are unreasonably high (> $5000) or invalid
+            if (value && typeof value === 'string' && value.includes('₹')) {
+              // Already formatted as INR, try to extract the numeric value
+              const numericValue = parseFloat(value.replace(/[₹,]/g, ''));
+              if (numericValue > 500000) { // Cap INR at 500k
+                delete cleaned[field];
+              }
+            } else if (typeof value === 'number' && value > 5000) {
+              // USD value over $5000 is likely an error
+              delete cleaned[field];
+            }
+          }
+
+          return cleaned;
+        };
+
+        // Clean TCGPlayer pricing
+        if (sanitized.tcgPlayer) {
+          const tcgPlayer = { ...sanitized.tcgPlayer };
+
+          // Clean main price if unreasonable
+          if (tcgPlayer.averagePrice && typeof tcgPlayer.averagePrice === 'string' && tcgPlayer.averagePrice.includes('₹')) {
+            const numVal = parseFloat(tcgPlayer.averagePrice.replace(/[₹,]/g, ''));
+            if (numVal > 500000) tcgPlayer.averagePrice = 'N/A';
+          }
+
+          // Clean variants
+          for (const variantKey of ['holofoil', 'reverseHolofoil', 'reverse-holofoil', 'normal']) {
+            if (tcgPlayer[variantKey]) {
+              tcgPlayer[variantKey] = cleanVariantPricing(tcgPlayer[variantKey]);
+            }
+          }
+
+          sanitized.tcgPlayer = tcgPlayer;
+        }
+
+        // Clean Cardmarket pricing similarly
+        if (sanitized.cardmarket) {
+          const cardmarket = { ...sanitized.cardmarket };
+
+          if (cardmarket.averagePrice && typeof cardmarket.averagePrice === 'string' && cardmarket.averagePrice.includes('₹')) {
+            const numVal = parseFloat(cardmarket.averagePrice.replace(/[₹,]/g, ''));
+            if (numVal > 500000) cardmarket.averagePrice = 'N/A';
+          }
+
+          for (const variantKey of ['holofoil', 'reverseHolofoil', 'reverse-holofoil', 'normal']) {
+            if (cardmarket[variantKey]) {
+              cardmarket[variantKey] = cleanVariantPricing(cardmarket[variantKey]);
+            }
+          }
+
+          sanitized.cardmarket = cardmarket;
+        }
+
+        return sanitized;
+      };
+
       const pricingResponse = await fetch('/api/advanced-search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -294,33 +366,35 @@ function CardDetailsContent() {
 
         // Combine card details with comprehensive pricing data
         // Preserve TCGdex detailed pricing (which has dash format) but add other sources
+        const combinedPricing = normalizePricing({
+          // Use advanced search pricing if cardDetails has no valid price (N/A)
+          tcgPlayer: (cardDetails.pricing?.tcgPlayer?.averagePrice &&
+                     cardDetails.pricing?.tcgPlayer?.averagePrice !== 'N/A' &&
+                     cardDetails.pricing?.tcgPlayer?.averagePrice !== 'N/S')
+            ? cardDetails.pricing.tcgPlayer
+            : pricingData.tcgPlayer,
+          // Add other pricing sources from advanced search
+          cardmarket: pricingData.cardmarket,
+          pokemonPriceTracker: pricingData.pokemonPriceTracker,
+          ebay: pricingData.ebay
+        });
+
         setCardData({
           ...cardDetails,
-          pricing: normalizePricing({
-            // Use advanced search pricing if cardDetails has no valid price (N/A)
-            tcgPlayer: (cardDetails.pricing?.tcgPlayer?.averagePrice &&
-                       cardDetails.pricing?.tcgPlayer?.averagePrice !== 'N/A' &&
-                       cardDetails.pricing?.tcgPlayer?.averagePrice !== 'N/S')
-              ? cardDetails.pricing.tcgPlayer
-              : pricingData.tcgPlayer,
-            // Add other pricing sources from advanced search
-            cardmarket: pricingData.cardmarket,
-            pokemonPriceTracker: pricingData.pokemonPriceTracker,
-            ebay: pricingData.ebay
-          })
+          pricing: sanitizePricing(combinedPricing)
         });
       } else {
-        // Normalize card details pricing if it exists
+        // Normalize and sanitize card details pricing if it exists
         const normalizeCardDetailsPricing = (card: any) => {
           if (!card.pricing) return card;
-          
+
           return {
             ...card,
-            pricing: normalizePricing(card.pricing)
+            pricing: sanitizePricing(normalizePricing(card.pricing))
           };
         };
-        
-        // If advanced pricing fails, still show basic card details (with normalized pricing if it exists)
+
+        // If advanced pricing fails, still show basic card details (with normalized and sanitized pricing if it exists)
         setCardData(normalizeCardDetailsPricing(cardDetails));
       }
     } catch (err) {
