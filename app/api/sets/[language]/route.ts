@@ -339,7 +339,14 @@ export async function GET(
             }
         }
 
-        return { ...set, logo: fixedLogo };
+        // Ensure releaseDate is included
+        const releaseDate = set.releaseDate || set.release_date || set.releasedAt || null;
+
+        return {
+            ...set,
+            logo: fixedLogo,
+            releaseDate: releaseDate
+        };
     }));
 
     // Get the last 50 sets (most recent) and reverse them so newest appears first

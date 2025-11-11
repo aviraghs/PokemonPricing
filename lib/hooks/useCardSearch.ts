@@ -61,7 +61,7 @@ export function useBulkCardSearch(pokemonList: string[], includePricing: boolean
     },
     {
       revalidateOnFocus: false,
-      dedupingInterval: 300000, // 5 minutes
+      dedupingInterval: 0, // Disable caching to prevent stale data
       keepPreviousData: true,
     }
   );

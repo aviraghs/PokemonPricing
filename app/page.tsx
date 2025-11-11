@@ -27,8 +27,6 @@ async function MainContent() {
         <ErrorBoundary>
           <SetsCarousel />
         </ErrorBoundary>
-        {/* PopularCards and MarketTrends disabled temporarily - focus on sets loading first */}
-        {/*
         <ErrorBoundary>
           <Suspense fallback={<div>Loading popular cards...</div>}>
             {import('@/components/PopularCards').then(({ default: PopularCards }) => <PopularCards />)}
@@ -39,7 +37,6 @@ async function MainContent() {
             {import('@/components/MarketTrends').then(({ default: MarketTrends }) => <MarketTrends />)}
           </Suspense>
         </ErrorBoundary>
-        */}
       </div>
     </>
   );

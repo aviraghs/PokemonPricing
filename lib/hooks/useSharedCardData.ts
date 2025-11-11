@@ -54,7 +54,7 @@ export function useMainPageCardData() {
     },
     {
       revalidateOnFocus: false,
-      dedupingInterval: 600000, // 10 minutes - main page doesn't need frequent updates
+      dedupingInterval: 0, // Disable caching to prevent stale data
       keepPreviousData: true,
     }
   );
