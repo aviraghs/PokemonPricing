@@ -3,7 +3,9 @@
     "allow": [
       "Bash(kill:*)",
       "Bash(npm run build:*)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

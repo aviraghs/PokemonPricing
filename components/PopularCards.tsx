@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSharedCardData } from '@/lib/hooks/useSharedCardData';
+import { useMainPageCardData } from '@/lib/hooks/useSharedCardData';
 import PokemonLoader from './PokemonLoader';
 import styles from './PopularCards.module.css';
 
@@ -23,23 +23,31 @@ export default function PopularCards() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const cardsToShow = 4;
 
-  // Use shared SWR hook - same data source as MarketTrends (no duplicate API calls)
-  const { data: allCards = [], isLoading: loading, error } = useSharedCardData();
+  // Use optimized hook for main page - TCGdex data only (fast loading)
+  const { data: allCards = [], isLoading: loading, error } = useMainPageCardData();
 
-  // Filter and limit cards with pricing
+  // Filter and limit popular cards (no pricing needed for main page)
   const cards = useMemo(() => {
     if (!allCards.length) return [];
 
-    const cardsWithPricing = allCards.filter((card: any) => {
-      const hasTcgPlayerPrice = card.pricing?.tcgPlayer?.averagePrice !== 'N/A' &&
-                               card.pricing?.tcgPlayer?.averagePrice !== undefined;
-      const hasPokemonTrackerPrice = card.pricing?.pokemonPriceTracker?.averagePrice !== 'N/A' &&
-                                   card.pricing?.pokemonPriceTracker?.averagePrice !== undefined;
-
-      return hasTcgPlayerPrice || hasPokemonTrackerPrice;
+    // Filter by rarity to show more interesting cards first
+    const raredCards = allCards.filter((card: any) => {
+      const rarity = card.rarity?.toLowerCase() || '';
+      return rarity.includes('rare') || rarity.includes('holo') || rarity.includes('secret');
     });
 
-    return cardsWithPricing.slice(0, 8);
+    // Return unique cards by name, limit to 8
+    const uniqueCards = [];
+    const seenNames = new Set();
+    for (const card of raredCards.length > 0 ? raredCards : allCards) {
+      const baseName = card.name.split(/\s+(VMAX|VSTAR|V|ex|EX|GX|&)/)[0].trim();
+      if (!seenNames.has(baseName) && uniqueCards.length < 8) {
+        uniqueCards.push(card);
+        seenNames.add(baseName);
+      }
+    }
+
+    return uniqueCards;
   }, [allCards]);
 
   const handlePrevious = () => {
