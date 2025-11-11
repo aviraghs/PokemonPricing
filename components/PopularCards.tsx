@@ -46,13 +46,19 @@ export default function PopularCards() {
 
         if (response.ok) {
           const data = await response.json();
-          // Limit to first 12 unique Pokemon
+          // Limit to first 12 unique Pokemon with pricing
           const uniqueCards: Card[] = [];
           const seenNames = new Set();
 
           for (const card of data) {
             const baseName = card.name.split(/\s+(VMAX|VSTAR|V|ex|EX|GX|&)/)[0].trim();
-            if (!seenNames.has(baseName)) {
+
+            // Only include cards that have valid pricing
+            const hasValidPrice =
+              (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
+              (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
+
+            if (!seenNames.has(baseName) && hasValidPrice) {
               uniqueCards.push(card);
               seenNames.add(baseName);
               if (uniqueCards.length >= 12) break;
