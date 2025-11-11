@@ -22,9 +22,19 @@ export default function SetsCarousel({}: SetsCarouselProps) {
   const [lang, setLang] = useState('en');
   const setsToShow = 4;
 
-  // Get language from localStorage on client mount only
+  // Get language from localStorage on client mount and listen for changes
   useEffect(() => {
-    setLang(localStorage.getItem('preferredLanguage') || 'en');
+    const initialLang = localStorage.getItem('preferredLanguage') || 'en';
+    setLang(initialLang);
+
+    // Listen for language change events from LanguageSelector
+    const handleLanguageChange = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setLang(customEvent.detail);
+    };
+
+    window.addEventListener('languageChange', handleLanguageChange);
+    return () => window.removeEventListener('languageChange', handleLanguageChange);
   }, []);
 
   // Use SWR for caching and automatic revalidation
