@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Poppins, Orbitron } from 'next/font/google';
-import SWRProvider from '@/components/SWRProvider';
 import './globals.css';
 
 const poppins = Poppins({
@@ -33,7 +32,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://open.er-api.com" />
       </head>
       <body className={`${poppins.variable} ${orbitron.variable}`}>
-        <SWRProvider>{children}</SWRProvider>
+        {children}
       </body>
     </html>
   );
