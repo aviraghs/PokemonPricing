@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * API endpoint for pokefetch.info image fetching with authentication
- * Handles image requests with Bearer token authorization
+ * Uses the pokefetch.info search API to find cards and retrieve their images
+ * pokefetch.info API: https://pokefetch.info/pokemon?query={setId}-{cardNumber}
  */
 export async function GET(request: NextRequest) {
   try {
@@ -27,27 +28,60 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch image from pokefetch.info with Bearer token
-    const pokefetchUrl = `https://pokefetch.info/api/v1/${setId}/${cardNumber}`;
+    // Search for card in pokefetch.info using setId and card number
+    // Format: setId-cardNumber (e.g., sv06.5-039)
+    const cardIdentifier = `${setId}-${cardNumber}`;
+    const searchUrl = `https://pokefetch.info/pokemon?query=${encodeURIComponent(cardIdentifier)}&limit=1`;
 
-    const response = await fetch(pokefetchUrl, {
+    const searchResponse = await fetch(searchUrl, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${pokefetchApiKey}`,
-        'Accept': 'image/webp,image/png,image/*',
       },
     });
 
-    if (!response.ok) {
+    if (!searchResponse.ok) {
+      console.error(`Pokefetch search failed: ${searchResponse.status}`);
       return NextResponse.json(
-        { error: `Pokefetch API error: ${response.status}` },
-        { status: response.status }
+        { error: `Pokefetch search error: ${searchResponse.status}` },
+        { status: searchResponse.status }
+      );
+    }
+
+    const searchData = await searchResponse.json();
+
+    // Check if card was found
+    if (!searchData.data || searchData.data.length === 0) {
+      return NextResponse.json(
+        { error: 'Card not found in pokefetch.info' },
+        { status: 404 }
+      );
+    }
+
+    const card = searchData.data[0];
+    const imageUrl = card.images?.large || card.images?.small;
+
+    if (!imageUrl) {
+      return NextResponse.json(
+        { error: 'No image available for this card' },
+        { status: 404 }
+      );
+    }
+
+    // Fetch the actual image from the URL provided by pokefetch.info
+    const imageResponse = await fetch(imageUrl);
+
+    if (!imageResponse.ok) {
+      console.error(`Failed to fetch image from ${imageUrl}: ${imageResponse.status}`);
+      return NextResponse.json(
+        { error: 'Failed to fetch image' },
+        { status: imageResponse.status }
       );
     }
 
     // Get the image data
-    const imageData = await response.arrayBuffer();
-    const contentType = response.headers.get('content-type') || 'image/webp';
+    const imageData = await imageResponse.arrayBuffer();
+    const contentType = imageResponse.headers.get('content-type') || 'image/png';
 
     // Return image with proper headers
     return new NextResponse(imageData, {

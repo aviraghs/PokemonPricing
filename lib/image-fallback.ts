@@ -8,6 +8,9 @@
  * Generate pokefetch.info image URL through our secure API endpoint
  * This proxies the request through our backend which adds the Bearer token
  * pokefetch.info API: https://pokefetch.info/docs
+ *
+ * Note: pokefetch.info uses different setId format than TCGdex
+ * TCGdex: sv06.5 -> pokefetch: sv6pt5 (dot becomes "pt")
  */
 export function generatePokefetchImageUrl(
   cardNumber: string | undefined,
@@ -21,9 +24,16 @@ export function generatePokefetchImageUrl(
   // Clean the card number (remove any leading zeros for setId if needed)
   const cleanCardNumber = cardNumber.replace(/^0+/, '') || cardNumber;
 
+  // Convert TCGdex setId format to pokefetch.info format
+  // Example: sv06.5 -> sv6pt5 (remove leading zero after sv, replace . with pt)
+  const pokefetchSetId = setId
+    .replace(/^(sv)0(\d+)\.(\d+)$/, '$1$2pt$3') // sv06.5 -> sv6pt5
+    .replace(/^(sv)(\d+)\.(\d+)$/, '$1$2pt$3')   // sv4.5 -> sv4pt5
+    .replace(/(\d)\.(\d)/g, '$1pt$2');             // generic fallback for other patterns
+
   // Use our secure API endpoint that handles Bearer token authentication
   // Format: /api/pokefetch-image?setId={setId}&cardNumber={cardNumber}
-  const apiUrl = `/api/pokefetch-image?setId=${encodeURIComponent(setId)}&cardNumber=${encodeURIComponent(cleanCardNumber)}`;
+  const apiUrl = `/api/pokefetch-image?setId=${encodeURIComponent(pokefetchSetId)}&cardNumber=${encodeURIComponent(cleanCardNumber)}`;
 
   return apiUrl;
 }
