@@ -457,7 +457,7 @@ function CardDetailsContent() {
                         e.currentTarget.src = `${cardData.image}/low.webp`;
                       } else {
                         // If low.webp also fails, try pokefetch.info
-                        const pokefetchUrl = getFallbackImage(cardData.localId, cardData.set?.id);
+                        const pokefetchUrl = getFallbackImage(cardData.localId, cardData.set?.id, cardData.name, cardData.set?.name);
                         if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                           e.currentTarget.src = pokefetchUrl;
                         } else {
@@ -470,7 +470,7 @@ function CardDetailsContent() {
                 ) : (
                   // If no TCGdex image, try pokefetch.info directly
                   <img
-                    src={getFallbackImage(cardData.localId, cardData.set?.id) || ''}
+                    src={getFallbackImage(cardData.localId, cardData.set?.id, cardData.name, cardData.set?.name) || ''}
                     alt={cardData.name}
                     className={styles.cardImage}
                     onError={(e) => {

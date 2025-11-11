@@ -148,7 +148,7 @@ function SearchResultsContent() {
                                 e.currentTarget.src = `${card.image}/low.webp`;
                               } else {
                                 // If low.webp also fails, try pokefetch.info
-                                const pokefetchUrl = getFallbackImage(card.localId, card.set?.id);
+                                const pokefetchUrl = getFallbackImage(card.localId, card.set?.id, card.name, card.set?.name);
                                 if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                                   e.currentTarget.src = pokefetchUrl;
                                 } else {
@@ -161,7 +161,7 @@ function SearchResultsContent() {
                         ) : (
                           // If no TCGdex image, try pokefetch.info directly
                           <img
-                            src={getFallbackImage(card.localId, card.set?.id) || ''}
+                            src={getFallbackImage(card.localId, card.set?.id, card.name, card.set?.name) || ''}
                             alt={card.name}
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
