@@ -227,11 +227,13 @@
     padding: 30px 0;
     min-height: 100vh;
     justify-content: flex-start;
-    padding-top: 20px;
+    padding-top: 80px;
+    position: relative;
   }
 
   .logoContainer {
     margin-bottom: 30px;
+    padding: 0 20px;
   }
 
   .logo {
@@ -295,9 +297,18 @@
   }
 
   .heroAuth {
-    top: 15px;
-    right: 15px;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
     gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    background: rgba(26, 26, 46, 0.95);
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #2d2d44;
+    backdrop-filter: blur(10px);
   }
 }
 
@@ -306,11 +317,30 @@
     padding: 0;
     min-height: auto;
     padding-bottom: 20px;
+    padding-top: 80px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .heroAuth {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+    gap: 5px;
+    flex-direction: row;
+    align-items: center;
+    background: rgba(26, 26, 46, 0.95);
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #2d2d44;
+    backdrop-filter: blur(10px);
   }
 
   .logoContainer {
-    margin-bottom: 20px;
-    margin-top: 10px;
+    margin-bottom: 15px;
+    margin-top: 5px;
+    padding: 0 12px;
   }
 
   .logo {
@@ -325,10 +355,11 @@
   }
 
   .searchContainer {
-    padding: 16px;
+    padding: 16px 12px;
     width: 100%;
-    border-radius: 12px;
+    border-radius: 0;
     margin: 0;
+    background: #0f0f23;
   }
 
   .searchTitle {
@@ -382,13 +413,5 @@
     padding: 5px 10px;
     font-size: 0.75em;
     border-radius: 16px;
-  }
-
-  .heroAuth {
-    top: 12px;
-    right: 12px;
-    gap: 6px;
-    flex-direction: column;
-    align-items: flex-end;
   }
 }
