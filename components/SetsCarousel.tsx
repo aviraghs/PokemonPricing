@@ -25,9 +25,7 @@ export default function SetsCarousel({}: SetsCarouselProps) {
   useEffect(() => {
     // Set initial language immediately from localStorage
     const initialLang = localStorage.getItem('preferredLanguage') || 'en';
-    if (initialLang !== lang) {
-      setLang(initialLang);
-    }
+    setLang(initialLang);
 
     // Listen for language change events from LanguageSelector
     const handleLanguageChange = (e: Event) => {
@@ -38,7 +36,7 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     window.addEventListener('languageChange', handleLanguageChange);
 
     return () => window.removeEventListener('languageChange', handleLanguageChange);
-  }, [lang]);
+  }, []);
 
   // Use SWR with localStorage persistence for instant loading on new tabs
   const { data: sets = [], isLoading: loading, error } = useSWR<SetData[]>(
