@@ -365,30 +365,41 @@ export async function GET(
       try {
         const POKEFETCH_API_KEY = process.env.POKEFETCH_API_KEY;
         if (POKEFETCH_API_KEY) {
-          // Extract first word of set name and clean it for pokefetch API
-          const firstWord = setData.name.split(' ')[0];
-          const pokefetchSetParam = firstWord
-            .replace(/['']s$/, '') // Remove possessive 's
-            .toLowerCase(); // Convert to lowercase
+          // Try multiple set name variations for pokefetch
+          const setNameVariations = [
+            // Full set name with hyphens
+            setData.name.toLowerCase().replace(/[''']/g, '').replace(/\s+/g, '-'),
+            // Full set name with spaces replaced by hyphens, no special chars
+            setData.name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-'),
+            // First word only
+            setData.name.split(' ')[0].replace(/['']s$/, '').toLowerCase(),
+          ];
 
-          console.log(`   Attempting to fetch logo from pokefetch for set: ${pokefetchSetParam}`);
+          console.log(`   Attempting to fetch logo from pokefetch with variations:`, setNameVariations);
 
-          // Use 'a' as a generic query to get any card from the set and extract the logo
-          const pokefetchUrl = `https://pokefetch.info/pokemon?query=a&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
-          const pokefetchResponse = await fetch(pokefetchUrl, {
-            headers: {
-              'Authorization': `Bearer ${POKEFETCH_API_KEY}`,
-            }
-          });
+          for (const pokefetchSetParam of setNameVariations) {
+            try {
+              // Use 'a' as a generic query to get any card from the set and extract the logo
+              const pokefetchUrl = `https://pokefetch.info/pokemon?query=a&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
+              const pokefetchResponse = await fetch(pokefetchUrl, {
+                headers: {
+                  'Authorization': `Bearer ${POKEFETCH_API_KEY}`,
+                }
+              });
 
-          if (pokefetchResponse.ok) {
-            const pokefetchData = await pokefetchResponse.json();
-            if (pokefetchData.data && pokefetchData.data.length > 0) {
-              const card = pokefetchData.data[0];
-              if (card.set && card.set.logo_url) {
-                setData.logo = card.set.logo_url;
-                console.log(`   ✅ Using pokefetch logo for set: ${setData.logo}`);
+              if (pokefetchResponse.ok) {
+                const pokefetchData = await pokefetchResponse.json();
+                if (pokefetchData.data && pokefetchData.data.length > 0) {
+                  const card = pokefetchData.data[0];
+                  if (card.set && card.set.logo_url) {
+                    setData.logo = card.set.logo_url;
+                    console.log(`   ✅ Using pokefetch logo for set (variation: ${pokefetchSetParam}): ${setData.logo}`);
+                    break; // Found a logo, stop trying variations
+                  }
+                }
               }
+            } catch (err) {
+              console.log(`   ⚠️  Variation ${pokefetchSetParam} failed: ${(err as Error).message}`);
             }
           }
         }

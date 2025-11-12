@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
 import PokemonLoader from '@/components/PokemonLoader';
+import AddToCollectionButton from '@/components/AddToCollectionButton';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
 
@@ -135,9 +136,8 @@ function SearchResultsContent() {
                     <div
                       key={card.id}
                       className={styles.card}
-                      onClick={() => handleCardClick(card.id)}
                     >
-                      <div className={styles.cardImage}>
+                      <div className={styles.cardImage} onClick={() => handleCardClick(card.id)}>
                         {card.image ? (
                           <img
                             src={`${card.image}/high.webp`}
@@ -169,7 +169,7 @@ function SearchResultsContent() {
                           />
                         )}
                       </div>
-                      <div className={styles.cardInfo}>
+                      <div className={styles.cardInfo} onClick={() => handleCardClick(card.id)}>
                         <h3 className={styles.cardName}>{card.name}</h3>
                         <p className={styles.cardSet}>{card.set?.name || 'Unknown Set'}</p>
                         <div className={styles.cardMeta}>
@@ -187,8 +187,8 @@ function SearchResultsContent() {
                               <div className={styles.pricingItem}>
                                 <span className={styles.pricingSource}>TCGPLR:</span>
                                 <span className={styles.pricingValue}>
-                                  {typeof card.pricing.tcgPlayer.averagePrice === 'number' 
-                                    ? `$${card.pricing.tcgPlayer.averagePrice.toFixed(2)}` 
+                                  {typeof card.pricing.tcgPlayer.averagePrice === 'number'
+                                    ? `$${card.pricing.tcgPlayer.averagePrice.toFixed(2)}`
                                     : card.pricing.tcgPlayer.averagePrice}
                                 </span>
                               </div>
@@ -197,8 +197,8 @@ function SearchResultsContent() {
                               <div className={styles.pricingItem}>
                                 <span className={styles.pricingSource}>PKMN:</span>
                                 <span className={styles.pricingValue}>
-                                  {typeof card.pricing.pokemonPriceTracker.averagePrice === 'number' 
-                                    ? `$${card.pricing.pokemonPriceTracker.averagePrice.toFixed(2)}` 
+                                  {typeof card.pricing.pokemonPriceTracker.averagePrice === 'number'
+                                    ? `$${card.pricing.pokemonPriceTracker.averagePrice.toFixed(2)}`
                                     : card.pricing.pokemonPriceTracker.averagePrice}
                                 </span>
                               </div>
@@ -206,6 +206,18 @@ function SearchResultsContent() {
                           </div>
                         )}
                       </div>
+                      <AddToCollectionButton
+                        cardData={{
+                          id: card.id,
+                          name: card.name,
+                          set: {
+                            id: card.set?.id || '',
+                            name: card.set?.name || 'Unknown Set',
+                          },
+                          localId: card.localId || '',
+                        }}
+                        language={lang}
+                      />
                     </div>
                   ))}
                 </div>

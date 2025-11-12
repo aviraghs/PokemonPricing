@@ -107,13 +107,18 @@ function SetDetailsContent() {
             </button>
 
             <div className={styles.setInfo}>
-              {setData.logo && (
+              {(setData.logo || setData.symbol) && (
                 <div className={styles.setLogo}>
                   <img
-                    src={setData.logo}
+                    src={setData.logo || setData.symbol}
                     alt={setData.name}
                     onError={(e) => {
-                      e.currentTarget.style.display = 'none';
+                      // If logo fails and we have a symbol, try the symbol
+                      if (setData.logo && setData.symbol && e.currentTarget.src === setData.logo) {
+                        e.currentTarget.src = setData.symbol;
+                      } else {
+                        e.currentTarget.style.display = 'none';
+                      }
                     }}
                   />
                 </div>

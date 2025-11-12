@@ -1,0 +1,55 @@
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  cursor: pointer;
+  animation: slideIn 0.3s ease-out;
+  max-width: 400px;
+  font-family: var(--font-poppins);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast.success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.toast.info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.icon {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.message {
+  flex: 1;
+}
+
+.toast:hover {
+  opacity: 0.9;
+}

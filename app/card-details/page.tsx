@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
 import PokemonLoader from '@/components/PokemonLoader';
+import AddToCollectionButton from '@/components/AddToCollectionButton';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
 
@@ -487,6 +488,19 @@ function CardDetailsContent() {
                 <h1 className={styles.cardName}>{cardData.name}</h1>
                 <div className={styles.cardNumber}>#{cardData.localId}</div>
               </div>
+
+              <AddToCollectionButton
+                cardData={{
+                  id: cardData.id,
+                  name: cardData.name,
+                  set: {
+                    id: cardData.set.id,
+                    name: cardData.set.name,
+                  },
+                  localId: cardData.localId,
+                }}
+                language={lang}
+              />
 
               {/* Pricing - Moved to top */}
               {cardData.pricing && (

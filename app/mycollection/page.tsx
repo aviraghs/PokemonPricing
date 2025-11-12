@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
 import PokemonLoader from '@/components/PokemonLoader';
+import { useToast } from '@/components/ToastProvider';
+import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
 
 interface Card {
@@ -21,10 +23,12 @@ interface Card {
 
 export default function MyCollection() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState<any>(null);
+  const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
 
   useEffect(() => {
     checkAuth();
@@ -71,10 +75,8 @@ export default function MyCollection() {
     }
   };
 
-  const handleDeleteCard = async (cardId: string) => {
-    if (!confirm('Are you sure you want to remove this card from your collection?')) {
-      return;
-    }
+  const handleDeleteCard = async (cardId: string, cardTitle: string) => {
+    setDeletingCardId(cardId);
 
     try {
       const response = await fetch(`/api/cards/${cardId}`, {
@@ -83,12 +85,16 @@ export default function MyCollection() {
 
       if (response.ok) {
         setCards(cards.filter((card) => card._id !== cardId));
+        showToast(`${cardTitle} removed from collection`, 'success');
       } else {
-        alert('Failed to delete card');
+        const data = await response.json();
+        showToast(data.error || 'Failed to remove card', 'error');
       }
     } catch (err) {
       console.error('Delete error:', err);
-      alert('Failed to delete card');
+      showToast('Failed to remove card from collection', 'error');
+    } finally {
+      setDeletingCardId(null);
     }
   };
 
@@ -149,64 +155,99 @@ export default function MyCollection() {
 
           {!error && cards.length > 0 && (
             <div className={styles.grid}>
-              {cards.map((card) => (
-                <div key={card._id} className={styles.card}>
-                  <div className={styles.cardHeader}>
-                    <h3 className={styles.cardTitle}>{card.title}</h3>
-                    <button
-                      onClick={() => handleDeleteCard(card._id)}
-                      className={styles.deleteBtn}
-                      title="Remove from collection"
-                    >
-                      ×
-                    </button>
-                  </div>
+              {cards.map((card) => {
+                // Build TCGdex image URL
+                const tcgdexImageUrl = `https://assets.tcgdex.net/${card.language}/${card.setId}/${card.cardNumber}`;
+                const isDeleting = deletingCardId === card._id;
 
-                  <div className={styles.cardBody}>
-                    <div className={styles.cardInfo}>
-                      <div className={styles.infoRow}>
-                        <span className={styles.label}>Set:</span>
-                        <span className={styles.value}>{card.set}</span>
+                return (
+                  <div key={card._id} className={styles.card}>
+                    <div className={styles.cardImageContainer} onClick={() => handleViewCard(card)}>
+                      <img
+                        src={`${tcgdexImageUrl}/high.webp`}
+                        alt={card.title}
+                        className={styles.cardImage}
+                        onError={(e) => {
+                          // Fallback to low quality TCGdex image
+                          if (e.currentTarget.src.includes('/high.webp')) {
+                            e.currentTarget.src = `${tcgdexImageUrl}/low.webp`;
+                          } else {
+                            // If low.webp also fails, try pokefetch.info
+                            const pokefetchUrl = getFallbackImage(
+                              card.cardNumber,
+                              card.setId,
+                              card.title,
+                              card.set
+                            );
+                            if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
+                              e.currentTarget.src = pokefetchUrl;
+                            } else {
+                              // If all fail, show placeholder
+                              e.currentTarget.style.display = 'none';
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className={styles.cardBody}>
+                      <div className={styles.cardHeader}>
+                        <h3 className={styles.cardTitle}>{card.title}</h3>
+                        <button
+                          onClick={() => handleDeleteCard(card._id, card.title)}
+                          className={styles.deleteBtn}
+                          title="Remove from collection"
+                          disabled={isDeleting}
+                        >
+                          {isDeleting ? '...' : '×'}
+                        </button>
                       </div>
-                      <div className={styles.infoRow}>
-                        <span className={styles.label}>Number:</span>
-                        <span className={styles.value}>#{card.cardNumber}</span>
-                      </div>
-                      <div className={styles.infoRow}>
-                        <span className={styles.label}>Language:</span>
-                        <span className={styles.value}>{card.language.toUpperCase()}</span>
-                      </div>
-                      {card.rarity && (
+
+                      <div className={styles.cardInfo}>
                         <div className={styles.infoRow}>
-                          <span className={styles.label}>Rarity:</span>
-                          <span className={styles.value}>{card.rarity}</span>
+                          <span className={styles.label}>Set:</span>
+                          <span className={styles.value}>{card.set}</span>
                         </div>
-                      )}
-                      {card.condition && (
                         <div className={styles.infoRow}>
-                          <span className={styles.label}>Condition:</span>
-                          <span className={styles.value}>{card.condition}</span>
+                          <span className={styles.label}>Number:</span>
+                          <span className={styles.value}>#{card.cardNumber}</span>
                         </div>
-                      )}
-                      <div className={styles.infoRow}>
-                        <span className={styles.label}>Added:</span>
-                        <span className={styles.value}>
-                          {new Date(card.createdAt).toLocaleDateString()}
-                        </span>
+                        <div className={styles.infoRow}>
+                          <span className={styles.label}>Language:</span>
+                          <span className={styles.value}>{card.language.toUpperCase()}</span>
+                        </div>
+                        {card.rarity && (
+                          <div className={styles.infoRow}>
+                            <span className={styles.label}>Rarity:</span>
+                            <span className={styles.value}>{card.rarity}</span>
+                          </div>
+                        )}
+                        {card.condition && (
+                          <div className={styles.infoRow}>
+                            <span className={styles.label}>Condition:</span>
+                            <span className={styles.value}>{card.condition}</span>
+                          </div>
+                        )}
+                        <div className={styles.infoRow}>
+                          <span className={styles.label}>Added:</span>
+                          <span className={styles.value}>
+                            {new Date(card.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className={styles.cardFooter}>
+                        <button
+                          onClick={() => handleViewCard(card)}
+                          className={styles.viewBtn}
+                        >
+                          View Details
+                        </button>
                       </div>
                     </div>
                   </div>
-
-                  <div className={styles.cardFooter}>
-                    <button
-                      onClick={() => handleViewCard(card)}
-                      className={styles.viewBtn}
-                    >
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

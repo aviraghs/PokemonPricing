@@ -62,6 +62,27 @@ export async function POST(request: NextRequest) {
     const cardData = await cardResponse.json();
     console.log('✅ Found on TCGdex:', cardData.name);
 
+    const { cardsCollection } = await getDatabase();
+
+    // Check if card already exists in user's collection
+    const existingCard = await cardsCollection.findOne({
+      userId: user.id,
+      setId,
+      cardNumber,
+      language,
+    });
+
+    if (existingCard) {
+      console.log('⚠️  Card already in collection:', existingCard._id);
+      return NextResponse.json(
+        {
+          error: 'This card is already in your collection',
+          cardId: existingCard._id,
+        },
+        { status: 409 } // 409 Conflict
+      );
+    }
+
     const card = {
       userId: user.id,
       username: user.username,
@@ -78,7 +99,6 @@ export async function POST(request: NextRequest) {
       condition,
     };
 
-    const { cardsCollection } = await getDatabase();
     const result = await cardsCollection.insertOne(card);
 
     console.log('✅ Card added with ID:', result.insertedId);

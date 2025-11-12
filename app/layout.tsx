@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Poppins, Orbitron } from 'next/font/google';
 import './globals.css';
+import ToastProvider from '@/components/ToastProvider';
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -32,7 +33,9 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://open.er-api.com" />
       </head>
       <body className={`${poppins.variable} ${orbitron.variable}`}>
-        {children}
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );
