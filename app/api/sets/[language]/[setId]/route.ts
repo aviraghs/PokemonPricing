@@ -367,20 +367,20 @@ export async function GET(
         if (POKEFETCH_API_KEY) {
           // Try multiple set name variations for pokefetch
           const setNameVariations = [
-            // Full set name with hyphens
-            setData.name.toLowerCase().replace(/[''']/g, '').replace(/\s+/g, '-'),
-            // Full set name with spaces replaced by hyphens, no special chars
-            setData.name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-'),
+            // Full set name as-is (pokefetch expects spaces)
+            setData.name,
+            // Full set name, title case
+            setData.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' '),
             // First word only
-            setData.name.split(' ')[0].replace(/['']s$/, '').toLowerCase(),
+            setData.name.split(' ')[0],
           ];
 
           console.log(`   Attempting to fetch logo from pokefetch with variations:`, setNameVariations);
 
           for (const pokefetchSetParam of setNameVariations) {
             try {
-              // Use 'a' as a generic query to get any card from the set and extract the logo
-              const pokefetchUrl = `https://pokefetch.info/pokemon?query=a&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
+              // Use 'pikachu' as a common query to get any card from the set and extract the logo
+              const pokefetchUrl = `https://pokefetch.info/pokemon?query=pikachu&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
               const pokefetchResponse = await fetch(pokefetchUrl, {
                 headers: {
                   'Authorization': `Bearer ${POKEFETCH_API_KEY}`,
