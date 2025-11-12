@@ -345,6 +345,58 @@ export async function GET(
 
     const setData = await response.json();
 
+    // Try to get logo from pokefetch first (more reliable)
+    let pokefetchLogo = null;
+    try {
+      const POKEFETCH_API_KEY = process.env.POKEFETCH_API_KEY;
+      if (POKEFETCH_API_KEY) {
+        const setNameVariations = [
+          setData.name,
+          setData.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' '),
+          setData.name.split(' ')[0],
+        ];
+
+        console.log(`   Attempting to fetch logo from pokefetch first with variations:`, setNameVariations);
+
+        for (const pokefetchSetParam of setNameVariations) {
+          try {
+            const pokefetchUrl = `https://pokefetch.info/pokemon?query=pikachu&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
+            const pokefetchResponse = await fetch(pokefetchUrl, {
+              headers: {
+                'Authorization': `Bearer ${POKEFETCH_API_KEY}`,
+              }
+            });
+
+            if (pokefetchResponse.ok) {
+              const pokefetchData = await pokefetchResponse.json();
+              if (pokefetchData.data && pokefetchData.data.length > 0) {
+                const card = pokefetchData.data[0];
+                if (card.set && card.set.logo_url) {
+                  pokefetchLogo = card.set.logo_url;
+                  console.log(`   ✅ Found pokefetch logo (variation: ${pokefetchSetParam}): ${pokefetchLogo}`);
+                  break;
+                }
+              }
+            }
+          } catch (err) {
+            console.log(`   ⚠️  Variation ${pokefetchSetParam} failed: ${(err as Error).message}`);
+          }
+        }
+      }
+    } catch (err) {
+      console.log(`   ⚠️  Could not fetch logo from pokefetch: ${(err as Error).message}`);
+    }
+
+    // Use pokefetch logo if found, otherwise keep TCGdex logo
+    if (pokefetchLogo) {
+      setData.logo = pokefetchLogo;
+      console.log(`   Using pokefetch logo: ${pokefetchLogo}`);
+    } else if (setData.logo) {
+      console.log(`   Using TCGdex logo: ${setData.logo}`);
+    } else {
+      console.log(`   No logo found from either source`);
+    }
+
     // For non-English sets, try to fetch English translation
     if (language !== 'en') {
       try {
@@ -357,54 +409,6 @@ export async function GET(
         }
       } catch (err) {
         console.warn('   Could not fetch English translation:', err);
-      }
-    }
-
-    // If TCGdex doesn't have a logo, try to fetch from pokefetch
-    if (!setData.logo) {
-      try {
-        const POKEFETCH_API_KEY = process.env.POKEFETCH_API_KEY;
-        if (POKEFETCH_API_KEY) {
-          // Try multiple set name variations for pokefetch
-          const setNameVariations = [
-            // Full set name as-is (pokefetch expects spaces)
-            setData.name,
-            // Full set name, title case
-            setData.name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' '),
-            // First word only
-            setData.name.split(' ')[0],
-          ];
-
-          console.log(`   Attempting to fetch logo from pokefetch with variations:`, setNameVariations);
-
-          for (const pokefetchSetParam of setNameVariations) {
-            try {
-              // Use 'pikachu' as a common query to get any card from the set and extract the logo
-              const pokefetchUrl = `https://pokefetch.info/pokemon?query=pikachu&limit=1&set=${encodeURIComponent(pokefetchSetParam)}`;
-              const pokefetchResponse = await fetch(pokefetchUrl, {
-                headers: {
-                  'Authorization': `Bearer ${POKEFETCH_API_KEY}`,
-                }
-              });
-
-              if (pokefetchResponse.ok) {
-                const pokefetchData = await pokefetchResponse.json();
-                if (pokefetchData.data && pokefetchData.data.length > 0) {
-                  const card = pokefetchData.data[0];
-                  if (card.set && card.set.logo_url) {
-                    setData.logo = card.set.logo_url;
-                    console.log(`   ✅ Using pokefetch logo for set (variation: ${pokefetchSetParam}): ${setData.logo}`);
-                    break; // Found a logo, stop trying variations
-                  }
-                }
-              }
-            } catch (err) {
-              console.log(`   ⚠️  Variation ${pokefetchSetParam} failed: ${(err as Error).message}`);
-            }
-          }
-        }
-      } catch (err) {
-        console.log(`   ⚠️  Could not fetch logo from pokefetch: ${(err as Error).message}`);
       }
     }
 
