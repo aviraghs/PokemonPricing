@@ -127,7 +127,12 @@ export default function MarketTrends() {
                           onError={(e) => {
                             if (e.currentTarget.src.includes('/low.webp')) {
                               // Try pokefetch.info as fallback
-                              const pokefetchUrl = getFallbackImage(card.id?.split('-')[1], card.set?.id);
+                              const pokefetchUrl = getFallbackImage(
+                                card.id?.split('-')[1],
+                                card.set?.id,
+                                card.name,
+                                card.set?.name
+                              );
                               if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                                 e.currentTarget.src = pokefetchUrl;
                               } else {
@@ -138,7 +143,28 @@ export default function MarketTrends() {
                           }}
                         />
                       ) : (
-                        <span style={{ fontSize: '2em' }}>🎴</span>
+                        // If no TCGdex image, try pokefetch.info directly
+                        (() => {
+                          const pokefetchUrl = getFallbackImage(
+                            card.id?.split('-')[1],
+                            card.set?.id,
+                            card.name,
+                            card.set?.name
+                          );
+                          return pokefetchUrl ? (
+                            <img
+                              src={pokefetchUrl}
+                              alt={card.name}
+                              style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
+                              onError={(e) => {
+                                const parentElement = e.currentTarget.parentElement?.parentElement;
+                                if (parentElement) parentElement.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <span style={{ fontSize: '2em' }}>🎴</span>
+                          );
+                        })()
                       )}
                     </div>
                     <div className={styles.trendCardInfo}>
@@ -185,7 +211,12 @@ export default function MarketTrends() {
                           onError={(e) => {
                             if (e.currentTarget.src.includes('/low.webp')) {
                               // Try pokefetch.info as fallback
-                              const pokefetchUrl = getFallbackImage(card.id?.split('-')[1], card.set?.id);
+                              const pokefetchUrl = getFallbackImage(
+                                card.id?.split('-')[1],
+                                card.set?.id,
+                                card.name,
+                                card.set?.name
+                              );
                               if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                                 e.currentTarget.src = pokefetchUrl;
                               } else {
@@ -196,7 +227,28 @@ export default function MarketTrends() {
                           }}
                         />
                       ) : (
-                        <span style={{ fontSize: '2em' }}>🎴</span>
+                        // If no TCGdex image, try pokefetch.info directly
+                        (() => {
+                          const pokefetchUrl = getFallbackImage(
+                            card.id?.split('-')[1],
+                            card.set?.id,
+                            card.name,
+                            card.set?.name
+                          );
+                          return pokefetchUrl ? (
+                            <img
+                              src={pokefetchUrl}
+                              alt={card.name}
+                              style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
+                              onError={(e) => {
+                                const parentElement = e.currentTarget.parentElement?.parentElement;
+                                if (parentElement) parentElement.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <span style={{ fontSize: '2em' }}>🎴</span>
+                          );
+                        })()
                       )}
                     </div>
                     <div className={styles.trendCardInfo}>

@@ -129,19 +129,45 @@ export default function PopularCards() {
                         onError={(e) => {
                           if (e.currentTarget.src.includes('/high.webp')) {
                             e.currentTarget.src = `${card.image}/low.webp`;
-                          } else {
+                          } else if (e.currentTarget.src.includes('/low.webp')) {
                             // Try pokefetch.info as fallback
-                            const pokefetchUrl = getFallbackImage(card.id?.split('-')[1], card.set?.id);
+                            const pokefetchUrl = getFallbackImage(
+                              card.id?.split('-')[1],
+                              card.set?.id,
+                              card.name,
+                              card.set?.name
+                            );
                             if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                               e.currentTarget.src = pokefetchUrl;
                             } else {
                               e.currentTarget.style.display = 'none';
                             }
+                          } else {
+                            e.currentTarget.style.display = 'none';
                           }
                         }}
                       />
                     ) : (
-                      <div className={styles.placeholder}>🎴</div>
+                      // If no TCGdex image, try pokefetch.info directly
+                      (() => {
+                        const pokefetchUrl = getFallbackImage(
+                          card.id?.split('-')[1],
+                          card.set?.id,
+                          card.name,
+                          card.set?.name
+                        );
+                        return pokefetchUrl ? (
+                          <img
+                            src={pokefetchUrl}
+                            alt={card.name}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <div className={styles.placeholder}>🎴</div>
+                        );
+                      })()
                     )}
                   </div>
                   <div className={styles.cardInfo}>
