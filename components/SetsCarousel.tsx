@@ -76,7 +76,9 @@ export default function SetsCarousel({}: SetsCarouselProps) {
     <div className={styles.setsSection}>
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>📦 Browse Recent Sets</h2>
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.emoji}>📦</span> Browse Recent Sets
+          </h2>
           <p className={styles.sectionSubtitle}>Explore the latest Pokémon TCG expansions</p>
         </div>
 
