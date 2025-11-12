@@ -331,14 +331,6 @@ export async function GET(
             fixedLogo = `${fixedLogo}.png`;
         }
 
-        // If no logo but has symbol, use the symbol as logo
-        if (!fixedLogo && set.symbol) {
-            fixedLogo = set.symbol;
-            if (!fixedLogo.match(/\.(png|jpg|jpeg|webp|svg)$/i)) {
-                fixedLogo = `${fixedLogo}.png`;
-            }
-        }
-
         return {
             ...set,
             logo: fixedLogo
@@ -347,6 +339,49 @@ export async function GET(
 
     // Get the last 50 sets (most recent) and reverse them so newest appears first
     const recentSets = enhancedData.slice(-50).reverse();
+
+    // Try to fetch missing logos from pokefetch (only for sets without logos)
+    const POKEFETCH_API_KEY = process.env.POKEFETCH_API_KEY;
+    if (POKEFETCH_API_KEY) {
+      const setsNeedingLogos = recentSets.filter((set: any) => !set.logo);
+
+      if (setsNeedingLogos.length > 0) {
+        console.log(`🔍 Fetching ${setsNeedingLogos.length} missing logos from pokefetch...`);
+
+        // Fetch logos in parallel with a limit
+        const logoPromises = setsNeedingLogos.slice(0, 10).map(async (set: any) => {
+          try {
+            const pokefetchUrl = `https://pokefetch.info/pokemon?query=pikachu&limit=1&set=${encodeURIComponent(set.name)}`;
+            const response = await fetch(pokefetchUrl, {
+              headers: { 'Authorization': `Bearer ${POKEFETCH_API_KEY}` }
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              if (data.data?.[0]?.set?.logo_url) {
+                return { setId: set.id, logo: data.data[0].set.logo_url };
+              }
+            }
+          } catch (err) {
+            console.log(`   ⚠️  Failed to fetch logo for ${set.name}`);
+          }
+          return null;
+        });
+
+        const results = await Promise.all(logoPromises);
+
+        // Update logos in recentSets
+        results.forEach((result) => {
+          if (result) {
+            const set = recentSets.find((s: any) => s.id === result.setId);
+            if (set) {
+              set.logo = result.logo;
+              console.log(`   ✅ Added pokefetch logo for ${set.name}`);
+            }
+          }
+        });
+      }
+    }
 
     console.log(`📦 Returning ${recentSets.length} most recent sets (optimized - no individual fetches)`);
 
