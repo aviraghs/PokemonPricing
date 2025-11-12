@@ -31,7 +31,7 @@ export default function StickyHeader() {
     <div className={`${styles.stickyHeader} ${visible ? styles.visible : ''}`}>
       <div className={styles.headerLeft}>
         <div className={styles.logo} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          ⚡ POKÉCARD PRO
+          <span className={styles.emoji}>⚡</span> POKÉCARD PRO
         </div>
         <div className={styles.searchBox}>
           <input
@@ -42,7 +42,7 @@ export default function StickyHeader() {
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <span className={styles.searchIcon}>🔍</span>
+          <span className={`${styles.searchIcon} ${styles.emoji}`}>🔍</span>
         </div>
       </div>
 

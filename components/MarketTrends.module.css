@@ -41,6 +41,12 @@
   -webkit-text-fill-color: transparent;
 }
 
+.sectionTitle .emoji {
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background: none;
+}
+
 .sectionSubtitle {
   font-size: 1.1em;
   color: #b0b0b0;

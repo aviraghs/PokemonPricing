@@ -36,6 +36,13 @@
   letter-spacing: 3px;
 }
 
+.emoji {
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background: none;
+  display: inline-block;
+}
+
 .logoSubtitle {
   font-size: 1.2em;
   color: #b0b0b0;

@@ -54,10 +54,10 @@ export default function AuthButtons() {
         {showDropdown && (
           <div className={styles.dropdownMenu}>
             <a href="/mycollection" className={styles.dropdownItem}>
-              📦 My Collection
+              <span className={styles.emoji}>📦</span> My Collection
             </a>
             <div className={styles.dropdownItem} onClick={handleLogout}>
-              🚪 Logout
+              <span className={styles.emoji}>🚪</span> Logout
             </div>
           </div>
         )}

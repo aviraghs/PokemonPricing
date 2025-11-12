@@ -76,3 +76,7 @@
   background: #16213e;
   color: #667eea;
 }
+
+.emoji {
+  display: inline-block;
+}

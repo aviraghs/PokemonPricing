@@ -104,7 +104,9 @@ export default function MarketTrends() {
     <div className={styles.trendsSection}>
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>📊 Market Trends</h2>
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.emoji}>📊</span> Market Trends
+          </h2>
           <p className={styles.sectionSubtitle}>Tracking price movements in the market</p>
         </div>
 

@@ -41,6 +41,13 @@
   white-space: nowrap;
 }
 
+.emoji {
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  background: none;
+  display: inline-block;
+}
+
 .searchBox {
   position: relative;
   flex: 1;

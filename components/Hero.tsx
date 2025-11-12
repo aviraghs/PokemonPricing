@@ -37,7 +37,9 @@ export default function Hero() {
       </div>
 
       <div className={styles.logoContainer}>
-        <div className={styles.logo}>⚡ POKÉCARD PRO</div>
+        <div className={styles.logo}>
+          <span className={styles.emoji}>⚡</span> POKÉCARD PRO
+        </div>
         <div className={styles.logoSubtitle}>Track, Value & Collect</div>
       </div>
 
@@ -53,7 +55,7 @@ export default function Hero() {
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <span className={styles.searchIcon}>🔍</span>
+          <span className={`${styles.searchIcon} ${styles.emoji}`}>🔍</span>
         </div>
 
         <div className={styles.searchFilters}>
