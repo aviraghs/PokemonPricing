@@ -181,11 +181,14 @@ export default function MarketTrends() {
                     </div>
                     <div className={styles.trendStats}>
                       <span className={styles.trendPrice}>
-                        {card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A'
-                          ? card.pricing.tcgPlayer.averagePrice
-                          : card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A'
-                            ? card.pricing.pokemonPriceTracker.averagePrice
-                            : 'N/A'}
+                        {(() => {
+                          const price = card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A'
+                            ? card.pricing.tcgPlayer.averagePrice
+                            : card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A'
+                              ? card.pricing.pokemonPriceTracker.averagePrice
+                              : 'N/A';
+                          return typeof price === 'number' ? `$${price.toFixed(2)}` : price;
+                        })()}
                       </span>
                       <span className={`${styles.trendChange} ${card.trendPercent != null && card.trendPercent > 0 ? 'positive' : 'negative'}`}>
                         {card.trendPercent != null ? (card.trendPercent > 0 ? '+' : '') + card.trendPercent.toFixed(1) + '%' : ''}
@@ -265,11 +268,14 @@ export default function MarketTrends() {
                     </div>
                     <div className={styles.trendStats}>
                       <span className={styles.trendPrice}>
-                        {card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A'
-                          ? card.pricing.tcgPlayer.averagePrice
-                          : card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A'
-                            ? card.pricing.pokemonPriceTracker.averagePrice
-                            : 'N/A'}
+                        {(() => {
+                          const price = card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A'
+                            ? card.pricing.tcgPlayer.averagePrice
+                            : card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A'
+                              ? card.pricing.pokemonPriceTracker.averagePrice
+                              : 'N/A';
+                          return typeof price === 'number' ? `$${price.toFixed(2)}` : price;
+                        })()}
                       </span>
                       <span className={`${styles.trendChange} ${card.trendPercent != null && card.trendPercent > 0 ? 'positive' : 'negative'}`}>
                         {card.trendPercent != null ? (card.trendPercent > 0 ? '+' : '') + card.trendPercent.toFixed(1) + '%' : ''}

@@ -189,13 +189,21 @@ export default function PopularCards() {
                         {card.pricing.tcgPlayer && card.pricing.tcgPlayer.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A' && (
                           <div className={styles.pricingItem}>
                             <span className={styles.pricingSource}>TCG:</span>
-                            <span className={styles.pricingValue}>{card.pricing.tcgPlayer.averagePrice}</span>
+                            <span className={styles.pricingValue}>
+                              {typeof card.pricing.tcgPlayer.averagePrice === 'number'
+                                ? `$${card.pricing.tcgPlayer.averagePrice.toFixed(2)}`
+                                : card.pricing.tcgPlayer.averagePrice}
+                            </span>
                           </div>
                         )}
                         {card.pricing.pokemonPriceTracker && card.pricing.pokemonPriceTracker.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && (
                           <div className={styles.pricingItem}>
                             <span className={styles.pricingSource}>PPT:</span>
-                            <span className={styles.pricingValue}>{card.pricing.pokemonPriceTracker.averagePrice}</span>
+                            <span className={styles.pricingValue}>
+                              {typeof card.pricing.pokemonPriceTracker.averagePrice === 'number'
+                                ? `$${card.pricing.pokemonPriceTracker.averagePrice.toFixed(2)}`
+                                : card.pricing.pokemonPriceTracker.averagePrice}
+                            </span>
                           </div>
                         )}
                       </div>
