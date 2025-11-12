@@ -115,7 +115,9 @@ export default function MarketTrends() {
         <div className={styles.trendsGrid}>
           {/* Rising Trends Column */}
           <div className={styles.trendColumn}>
-            <h3 className={`${styles.trendHeader} ${styles.rising}`}>📈 Rising Prices</h3>
+            <h3 className={`${styles.trendHeader} ${styles.rising}`}>
+              <span className={styles.emoji}>📈</span> Rising Prices
+            </h3>
             <div className={styles.trendList}>
               {risingCards.length > 0 ? (
                 risingCards.map((card) => (
@@ -199,7 +201,9 @@ export default function MarketTrends() {
 
           {/* Falling Trends Column */}
           <div className={styles.trendColumn}>
-            <h3 className={`${styles.trendHeader} ${styles.falling}`}>📉 Falling Prices</h3>
+            <h3 className={`${styles.trendHeader} ${styles.falling}`}>
+              <span className={styles.emoji}>📉</span> Falling Prices
+            </h3>
             <div className={styles.trendList}>
               {fallingCards.length > 0 ? (
                 fallingCards.map((card) => (

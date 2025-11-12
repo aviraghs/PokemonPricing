@@ -103,7 +103,9 @@ export default function PopularCards() {
     <div className={styles.popularSection}>
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>🔥 Popular Cards Right Now</h2>
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.emoji}>🔥</span> Popular Cards Right Now
+          </h2>
           <p className={styles.sectionSubtitle}>
             Most sought-after cards in the market
           </p>

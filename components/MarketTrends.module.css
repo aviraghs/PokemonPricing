@@ -107,6 +107,11 @@
   font-family: var(--font-orbitron);
 }
 
+.emoji {
+  color: initial;
+  display: inline-block;
+}
+
 .trendHeader.rising {
   color: #4ade80; /* Green for rising */
 }
