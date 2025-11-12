@@ -146,8 +146,7 @@ export default function MarketTrends() {
                               if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                                 e.currentTarget.src = pokefetchUrl;
                               } else {
-                                const parentElement = e.currentTarget.parentElement?.parentElement;
-                                if (parentElement) parentElement.style.display = 'none';
+                                e.currentTarget.src = '/card-back.svg';
                               }
                             }
                           }}
@@ -167,12 +166,11 @@ export default function MarketTrends() {
                               alt={card.name}
                               style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
                               onError={(e) => {
-                                const parentElement = e.currentTarget.parentElement?.parentElement;
-                                if (parentElement) parentElement.style.display = 'none';
+                                e.currentTarget.src = '/card-back.svg';
                               }}
                             />
                           ) : (
-                            <span style={{ fontSize: '2em' }}>🎴</span>
+                            <img src="/card-back.svg" alt="Pokemon Card Back" style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }} />
                           );
                         })()
                       )}
@@ -232,8 +230,7 @@ export default function MarketTrends() {
                               if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                                 e.currentTarget.src = pokefetchUrl;
                               } else {
-                                const parentElement = e.currentTarget.parentElement?.parentElement;
-                                if (parentElement) parentElement.style.display = 'none';
+                                e.currentTarget.src = '/card-back.svg';
                               }
                             }
                           }}
@@ -253,12 +250,11 @@ export default function MarketTrends() {
                               alt={card.name}
                               style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
                               onError={(e) => {
-                                const parentElement = e.currentTarget.parentElement?.parentElement;
-                                if (parentElement) parentElement.style.display = 'none';
+                                e.currentTarget.src = '/card-back.svg';
                               }}
                             />
                           ) : (
-                            <span style={{ fontSize: '2em' }}>🎴</span>
+                            <img src="/card-back.svg" alt="Pokemon Card Back" style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }} />
                           );
                         })()
                       )}

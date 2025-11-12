@@ -182,8 +182,8 @@ export default function MyCollection() {
                             if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                               e.currentTarget.src = pokefetchUrl;
                             } else {
-                              // If all fail, show placeholder
-                              e.currentTarget.style.display = 'none';
+                              // If all fail, show card back placeholder
+                              e.currentTarget.src = '/card-back.svg';
                             }
                           }
                         }}

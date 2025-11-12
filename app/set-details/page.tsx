@@ -185,10 +185,10 @@ function SetDetailsContent() {
                               if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                                 e.currentTarget.src = pokefetchUrl;
                               } else {
-                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.src = '/card-back.svg';
                               }
                             } else {
-                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.src = '/card-back.svg';
                             }
                           }}
                         />
@@ -206,11 +206,11 @@ function SetDetailsContent() {
                               src={pokefetchUrl}
                               alt={card.name}
                               onError={(e) => {
-                                e.currentTarget.style.display = 'none';
+                                e.currentTarget.src = '/card-back.svg';
                               }}
                             />
                           ) : (
-                            <div className={styles.placeholder}>🎴</div>
+                            <img src="/card-back.svg" alt="Pokemon Card Back" />
                           );
                         })()
                       )}

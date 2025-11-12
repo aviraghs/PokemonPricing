@@ -1,0 +1,37 @@
+<svg width="245" height="342" viewBox="0 0 245 342" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card background -->
+  <rect width="245" height="342" rx="12" fill="url(#gradient1)"/>
+
+  <!-- Border -->
+  <rect x="8" y="8" width="229" height="326" rx="8" fill="none" stroke="#FFD700" stroke-width="3"/>
+
+  <!-- Inner pattern -->
+  <circle cx="122.5" cy="171" r="60" fill="url(#gradient2)" opacity="0.3"/>
+  <circle cx="122.5" cy="171" r="45" fill="none" stroke="#FFD700" stroke-width="2" opacity="0.5"/>
+
+  <!-- Pokeball center -->
+  <circle cx="122.5" cy="171" r="30" fill="white"/>
+  <path d="M 122.5 141 A 30 30 0 0 1 122.5 201" fill="#DC143C"/>
+  <circle cx="122.5" cy="171" r="8" fill="white" stroke="#333" stroke-width="2"/>
+
+  <!-- Decorative corners -->
+  <path d="M 20 20 L 40 20 L 40 25 L 25 25 L 25 40 L 20 40 Z" fill="#FFD700"/>
+  <path d="M 225 20 L 205 20 L 205 25 L 220 25 L 220 40 L 225 40 Z" fill="#FFD700"/>
+  <path d="M 20 322 L 40 322 L 40 317 L 25 317 L 25 302 L 20 302 Z" fill="#FFD700"/>
+  <path d="M 225 322 L 205 322 L 205 317 L 220 317 L 220 302 L 225 302 Z" fill="#FFD700"/>
+
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gradient1" x1="0" y1="0" x2="0" y2="342">
+      <stop offset="0%" stop-color="#4169E1"/>
+      <stop offset="100%" stop-color="#1E3A8A"/>
+    </linearGradient>
+    <radialGradient id="gradient2">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#FFA500"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Text -->
+  <text x="122.5" y="280" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFD700" text-anchor="middle">POKÉMON</text>
+</svg>

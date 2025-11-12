@@ -152,8 +152,8 @@ function SearchResultsContent() {
                                 if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
                                   e.currentTarget.src = pokefetchUrl;
                                 } else {
-                                  // If all fail, show placeholder
-                                  e.currentTarget.style.display = 'none';
+                                  // If all fail, show card back placeholder
+                                  e.currentTarget.src = '/card-back.svg';
                                 }
                               }
                             }}
@@ -161,10 +161,10 @@ function SearchResultsContent() {
                         ) : (
                           // If no TCGdex image, try pokefetch.info directly
                           <img
-                            src={getFallbackImage(card.localId, card.set?.id, card.name, card.set?.name) || ''}
+                            src={getFallbackImage(card.localId, card.set?.id, card.name, card.set?.name) || '/card-back.svg'}
                             alt={card.name}
                             onError={(e) => {
-                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.src = '/card-back.svg';
                             }}
                           />
                         )}
