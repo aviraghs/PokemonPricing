@@ -33,52 +33,58 @@ export default function MarketTrends() {
   useEffect(() => {
     const fetchTrends = async () => {
       try {
-        // Fetch cards for trends
-        const response = await fetch('/api/search-cards', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query: 'Pikachu',
-            includePricing: true,
-          }),
-        });
+        // Search for multiple popular Pokemon to get variety
+        const trendingPokemon = ['Mew', 'Eevee', 'Gyarados', 'Gengar', 'Dragonite', 'Blastoise'];
+        const allCards: Card[] = [];
 
-        if (response.ok) {
-          const data = await response.json();
+        // Fetch 1-2 cards from each Pokemon
+        for (const pokemon of trendingPokemon) {
+          try {
+            const response = await fetch('/api/search-cards', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                query: pokemon,
+                includePricing: true,
+              }),
+            });
 
-          // Limit to first 10 unique cards with pricing
-          const uniqueCards: Card[] = [];
-          const seenNames = new Set();
+            if (response.ok) {
+              const data = await response.json();
 
-          for (const card of data) {
-            const baseName = card.name.split(/\s+(VMAX|VSTAR|V|ex|EX|GX|&)/)[0].trim();
+              // Get first 1-2 cards with valid pricing
+              let count = 0;
+              for (const card of data) {
+                const hasValidPrice =
+                  (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
+                  (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
 
-            // Only include cards that have valid pricing
-            const hasValidPrice =
-              (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
-              (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
-
-            if (!seenNames.has(baseName) && hasValidPrice) {
-              uniqueCards.push(card);
-              seenNames.add(baseName);
-              if (uniqueCards.length >= 10) break;
+                if (hasValidPrice && count < 2) {
+                  allCards.push(card);
+                  count++;
+                }
+              }
             }
+          } catch (err) {
+            console.error(`Failed to fetch ${pokemon}:`, err);
           }
-
-          // Split into rising and falling
-          const half = Math.floor(uniqueCards.length / 2);
-          const rising = uniqueCards.slice(0, half).map((card, idx) => ({
-            ...card,
-            trendPercent: 25 - idx * 3 + Math.random() * 4
-          }));
-          const falling = uniqueCards.slice(half).map((card, idx) => ({
-            ...card,
-            trendPercent: -(10 + idx * 1.5 + Math.random() * 2)
-          }));
-
-          setRisingCards(rising);
-          setFallingCards(falling);
         }
+
+        // Shuffle and split into rising/falling
+        const shuffled = allCards.sort(() => Math.random() - 0.5);
+        const half = Math.floor(shuffled.length / 2);
+
+        const rising = shuffled.slice(0, half).map((card, idx) => ({
+          ...card,
+          trendPercent: 25 - idx * 3 + Math.random() * 4
+        }));
+        const falling = shuffled.slice(half).map((card, idx) => ({
+          ...card,
+          trendPercent: -(10 + idx * 1.5 + Math.random() * 2)
+        }));
+
+        setRisingCards(rising);
+        setFallingCards(falling);
       } catch (err) {
         console.error('Failed to fetch trends:', err);
       } finally {

@@ -30,39 +30,47 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Extract first word from set name and clean it for pokefetch API
-    // "Macdonald's Collection 2018" -> "mcdonald"
-    let pokefetchSetParam = setId;
+    // Try multiple set name variations for pokefetch API
+    const setNameVariations = [];
     if (setName) {
-      const firstWord = setName.split(' ')[0]; // Get first word: "Macdonald's"
-      pokefetchSetParam = firstWord
-        .replace(/['']s$/, '') // Remove possessive 's: "Macdonald"
-        .toLowerCase(); // Convert to lowercase: "macdonald"
-    }
-
-    // Search for card in pokefetch.info using card name/number and set
-    // Format: https://pokefetch.info/pokemon?query={cardName}&limit=10&set={setParam}
-    const searchUrl = `https://pokefetch.info/pokemon?query=${encodeURIComponent(cardName || cardNumber)}&limit=10&set=${encodeURIComponent(pokefetchSetParam)}`;
-
-    const searchResponse = await fetch(searchUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${pokefetchApiKey}`,
-      },
-    });
-
-    if (!searchResponse.ok) {
-      console.error(`Pokefetch search failed: ${searchResponse.status}`);
-      return NextResponse.json(
-        { error: `Pokefetch search error: ${searchResponse.status}` },
-        { status: searchResponse.status }
+      setNameVariations.push(
+        setName, // Full set name: "Temporal Forces"
+        setName.split(' ')[0].replace(/['']s$/, '').toLowerCase() // First word: "temporal"
       );
+    } else {
+      setNameVariations.push(setId);
     }
 
-    const searchData = await searchResponse.json();
+    let searchData = null;
+
+    // Try each set name variation until we find a match
+    for (const pokefetchSetParam of setNameVariations) {
+      try {
+        // Search for card in pokefetch.info using card name/number and set
+        // Format: https://pokefetch.info/pokemon?query={cardName}&limit=10&set={setParam}
+        const searchUrl = `https://pokefetch.info/pokemon?query=${encodeURIComponent(cardName || cardNumber)}&limit=10&set=${encodeURIComponent(pokefetchSetParam)}`;
+
+        const searchResponse = await fetch(searchUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${pokefetchApiKey}`,
+          },
+        });
+
+        if (searchResponse.ok) {
+          const data = await searchResponse.json();
+          if (data.data && data.data.length > 0) {
+            searchData = data;
+            break; // Found results, stop trying
+          }
+        }
+      } catch (err) {
+        console.log(`Pokefetch variation ${pokefetchSetParam} failed:`, err);
+      }
+    }
 
     // Check if card was found
-    if (!searchData.data || searchData.data.length === 0) {
+    if (!searchData || !searchData.data || searchData.data.length === 0) {
       return NextResponse.json(
         { error: 'Card not found in pokefetch.info' },
         { status: 404 }

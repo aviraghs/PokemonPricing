@@ -36,38 +36,46 @@ export default function PopularCards() {
   useEffect(() => {
     const fetchCards = async () => {
       try {
-        const response = await fetch('/api/search-cards', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query: 'Charizard',
-            includePricing: true,
-          }),
-        });
+        // Search for multiple popular Pokemon to get variety
+        const popularPokemon = ['Charizard', 'Pikachu', 'Mewtwo', 'Lugia', 'Rayquaza', 'Umbreon'];
+        const allCards: Card[] = [];
 
-        if (response.ok) {
-          const data = await response.json();
-          // Limit to first 12 unique Pokemon with pricing
-          const uniqueCards: Card[] = [];
-          const seenNames = new Set();
+        // Fetch 2-3 cards from each Pokemon
+        for (const pokemon of popularPokemon) {
+          try {
+            const response = await fetch('/api/search-cards', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                query: pokemon,
+                includePricing: true,
+              }),
+            });
 
-          for (const card of data) {
-            const baseName = card.name.split(/\s+(VMAX|VSTAR|V|ex|EX|GX|&)/)[0].trim();
+            if (response.ok) {
+              const data = await response.json();
 
-            // Only include cards that have valid pricing
-            const hasValidPrice =
-              (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
-              (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
+              // Get first 2-3 cards with valid pricing
+              let count = 0;
+              for (const card of data) {
+                const hasValidPrice =
+                  (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
+                  (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
 
-            if (!seenNames.has(baseName) && hasValidPrice) {
-              uniqueCards.push(card);
-              seenNames.add(baseName);
-              if (uniqueCards.length >= 12) break;
+                if (hasValidPrice && count < 2) {
+                  allCards.push(card);
+                  count++;
+                }
+              }
             }
+          } catch (err) {
+            console.error(`Failed to fetch ${pokemon}:`, err);
           }
-
-          setCards(uniqueCards);
         }
+
+        // Shuffle and take first 12
+        const shuffled = allCards.sort(() => Math.random() - 0.5);
+        setCards(shuffled.slice(0, 12));
       } catch (err) {
         console.error('Failed to fetch popular cards:', err);
       } finally {
