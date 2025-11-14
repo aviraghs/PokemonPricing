@@ -9,7 +9,8 @@
       "Bash(git push:*)",
       "Bash(curl:*)",
       "Bash(pkill -9 npm sleep 2 rm -rf .next npm run build)",
-      "Bash(killall npm sleep 2 rm -rf .next npm run build)"
+      "Bash(killall npm sleep 2 rm -rf .next npm run build)",
+      "Bash(pkill:*)"
     ],
     "deny": [],
     "ask": []
