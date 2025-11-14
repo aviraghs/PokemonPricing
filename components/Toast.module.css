@@ -15,7 +15,7 @@
   cursor: pointer;
   animation: slideIn 0.3s ease-out;
   max-width: 400px;
-  font-family: var(--font-poppins);
+  font-family: var(--font-inter);
 }
 
 @keyframes slideIn {
@@ -30,15 +30,15 @@
 }
 
 .toast.success {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  background: var(--color-success);
 }
 
 .toast.error {
-  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  background: var(--color-danger);
 }
 
 .toast.info {
-  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  background: var(--color-accent-secondary);
 }
 
 .icon {

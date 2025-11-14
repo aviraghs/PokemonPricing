@@ -3,7 +3,8 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
-import PokemonLoader from '@/components/PokemonLoader';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import AddToCollectionButton from '@/components/AddToCollectionButton';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
 
@@ -56,6 +57,7 @@ function SetDetailsContent() {
       }
 
       const data = await response.json();
+      console.log('Set data loaded:', { name: data.name, logo: data.logo });
       setSetData(data);
     } catch (err) {
       setError('Failed to load set details. Please try again.');
@@ -74,7 +76,9 @@ function SetDetailsContent() {
       <>
         <StickyHeader />
         <div className={styles.page}>
-          <PokemonLoader message="Loading set details..." size="large" />
+          <div className={styles.container}>
+            <SkeletonLoader type="card" count={12} />
+          </div>
         </div>
       </>
     );
@@ -104,21 +108,46 @@ function SetDetailsContent() {
           {/* Set Header */}
           <div className={styles.setHeader}>
             <button onClick={() => router.back()} className={styles.backButton}>
-              ← Back
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back
             </button>
 
             <div className={styles.setInfo}>
-              {setData.logo && (
-                <div className={styles.setLogo}>
+              <div className={styles.setLogo}>
+                {setData.logo ? (
                   <img
-                    src={setData.logo}
+                    src={setData.logo.endsWith('.png') || setData.logo.endsWith('.jpg') || setData.logo.endsWith('.webp') ? setData.logo : `${setData.logo}.png`}
                     alt={setData.name}
+                    onLoad={() => console.log('Logo loaded successfully:', setData.logo)}
                     onError={(e) => {
-                      e.currentTarget.style.display = 'none';
+                      console.error('Logo failed to load:', setData.logo);
+                      // Replace with fallback icon if logo fails to load
+                      const parent = e.currentTarget.parentElement;
+                      if (parent) {
+                        e.currentTarget.style.display = 'none';
+                        const fallbackDiv = document.createElement('div');
+                        fallbackDiv.className = styles.logoFallback;
+                        fallbackDiv.innerHTML = `
+                          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M3 9h18M9 21V9"/>
+                          </svg>
+                        `;
+                        parent.appendChild(fallbackDiv);
+                      }
                     }}
                   />
-                </div>
-              )}
+                ) : (
+                  <div className={styles.logoFallback}>
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/>
+                      <path d="M3 9h18M9 21V9"/>
+                    </svg>
+                  </div>
+                )}
+              </div>
 
               <div className={styles.setDetails}>
                 <h1 className={styles.setName}>{setData.name}</h1>
@@ -163,9 +192,8 @@ function SetDetailsContent() {
                   <div
                     key={card.id}
                     className={styles.card}
-                    onClick={() => handleCardClick(card.id)}
                   >
-                    <div className={styles.cardImage}>
+                    <div className={styles.cardImage} onClick={() => handleCardClick(card.id)}>
                       {card.image ? (
                         <img
                           src={`${card.image}/high.webp`}
@@ -216,11 +244,27 @@ function SetDetailsContent() {
                       )}
                     </div>
                     <div className={styles.cardInfo}>
-                      <div className={styles.cardNumber}>#{card.localId}</div>
-                      <h3 className={styles.cardName}>{card.name}</h3>
-                      {card.rarity && (
-                        <span className={styles.cardRarity}>{card.rarity}</span>
-                      )}
+                      <div className={styles.cardHeader} onClick={() => handleCardClick(card.id)}>
+                        <div className={styles.cardNumber}>#{card.localId}</div>
+                        <h3 className={styles.cardName}>{card.name}</h3>
+                        {card.rarity && (
+                          <span className={styles.cardRarity}>{card.rarity}</span>
+                        )}
+                      </div>
+                      <div className={styles.cardActions}>
+                        <AddToCollectionButton
+                          cardData={{
+                            id: card.id,
+                            name: card.name,
+                            set: {
+                              id: setData.id,
+                              name: setData.name,
+                            },
+                            localId: card.localId,
+                          }}
+                          language={lang}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -243,7 +287,9 @@ export default function SetDetails() {
       <>
         <StickyHeader />
         <div className={styles.page}>
-          <PokemonLoader message="Loading..." size="large" />
+          <div className={styles.container}>
+            <SkeletonLoader type="card" count={12} />
+          </div>
         </div>
       </>
     }>

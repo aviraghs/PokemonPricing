@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: #0f0f23;
+  background: var(--color-bg-primary);
   padding-top: 100px;
 }
 
@@ -20,8 +20,8 @@
   width: 60px;
   height: 60px;
   margin: 0 auto 20px;
-  border: 4px solid #2d2d44;
-  border-top-color: #667eea;
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-accent-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -33,34 +33,22 @@
 }
 
 .error {
-  color: #ef4444;
+  color: var(--color-danger);
 }
 
-.backBtn,
-.backButton {
-  padding: 10px 20px;
-  background: #2d2d44;
-  color: #e0e0e0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: var(--font-poppins);
-  margin-bottom: 30px;
-  transition: background 0.2s;
-}
 
 .backButton:hover {
-  background: #3d3d54;
+  background: var(--color-bg-tertiary);
 }
 
 .cardContainer {
   display: grid;
   grid-template-columns: 400px 1fr;
   gap: 40px;
-  background: #1a1a2e;
+  background: var(--color-bg-secondary);
   border-radius: 16px;
   padding: 40px;
-  border: 1px solid #2d2d44;
+  border: 1px solid var(--color-border);
 }
 
 .imageSection {
@@ -71,10 +59,10 @@
 .cardImageWrapper {
   width: 100%;
   max-width: 350px;
-  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
   border-radius: 16px;
   padding: 20px;
-  border: 1px solid #2d2d44;
+  border: 1px solid var(--color-border);
 }
 
 .cardImage {
@@ -107,18 +95,21 @@
 }
 
 .cardName {
-  font-family: var(--font-orbitron);
+  font-family: var(--font-inter);
   font-size: 2.5em;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
+  font-weight: 700;
+  letter-spacing: -1px;
 }
 
 .cardNumber {
   font-size: 1.5em;
-  color: #667eea;
-  font-weight: 600;
+  color: var(--color-accent-primary);
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -135,13 +126,13 @@
 }
 
 .metaLabel {
-  color: #b0b0b0;
+  color: var(--color-text-muted);
   font-weight: 500;
   min-width: 100px;
 }
 
 .metaValue {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-weight: 600;
 }
 
@@ -153,33 +144,33 @@
 
 .type {
   padding: 4px 12px;
-  background: #16213e;
+  background: var(--color-bg-tertiary);
   border-radius: 12px;
   font-size: 0.9em;
-  color: #667eea;
+  color: var(--color-accent-primary);
   font-weight: 600;
 }
 
 .section {
-  background: #16213e;
+  background: var(--color-bg-tertiary);
   border-radius: 12px;
   padding: 20px;
-  border: 1px solid #2d2d44;
+  border: 1px solid var(--color-border);
 }
 
 .sectionTitle {
-  font-family: var(--font-orbitron);
+  font-family: var(--font-inter);
   font-size: 1.3em;
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   margin-bottom: 15px;
 }
 
 .attack {
   padding: 15px;
-  background: #1a1a2e;
+  background: var(--color-bg-secondary);
   border-radius: 8px;
   margin-bottom: 10px;
-  border: 1px solid #2d2d44;
+  border: 1px solid var(--color-border);
 }
 
 .attack:last-child {
@@ -195,18 +186,18 @@
 
 .attackName {
   font-weight: 600;
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-size: 1.1em;
 }
 
 .attackDamage {
   font-size: 1.2em;
   font-weight: bold;
-  color: #667eea;
+  color: var(--color-accent-primary);
 }
 
 .attackEffect {
-  color: #b0b0b0;
+  color: var(--color-text-muted);
   font-size: 0.9em;
   line-height: 1.5;
 }
@@ -224,21 +215,21 @@
 }
 
 .statLabel {
-  color: #b0b0b0;
+  color: var(--color-text-muted);
   font-weight: 500;
   min-width: 100px;
 }
 
 .stat {
   padding: 4px 12px;
-  background: #1a1a2e;
+  background: var(--color-bg-secondary);
   border-radius: 8px;
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-weight: 600;
 }
 
 .description {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   line-height: 1.6;
   font-style: italic;
 }
@@ -261,7 +252,7 @@
   position: relative;
   padding: 16px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(255, 225, 101, 0.08) 0%, rgba(255, 225, 101, 0.05) 100%);
   border: 2px solid;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
@@ -289,8 +280,8 @@
 }
 
 .priceCard.tcgplayer {
-  border-color: rgba(102, 126, 234, 0.3);
-  --card-gradient: #667eea, #764ba2;
+  border-color: rgba(255, 225, 101, 0.3);
+  --card-gradient: var(--color-accent-primary), #FFF;
 }
 
 .priceCard.pokemon {
@@ -322,22 +313,23 @@
 
 .priceSource {
   margin: 0;
-  font-family: var(--font-orbitron);
+  font-family: var(--font-inter);
   font-size: 0.85em;
   font-weight: 600;
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   letter-spacing: 0.5px;
 }
 
 .priceAmount {
   font-size: 1.5em;
   font-weight: 800;
-  font-family: var(--font-orbitron);
+  font-family: var(--font-inter);
   margin: 8px 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-accent-primary) 0%, #FFF 50%, var(--color-accent-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  background-clip: text;
+  text-shadow: 0 2px 8px rgba(255, 225, 101, 0.3);
 }
 
 .priceCard.pokemon .priceAmount {
@@ -376,14 +368,14 @@
 }
 
 .variantLabel {
-  color: #b0b0b0;
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
 .variantPrice {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-weight: 600;
-  font-family: var(--font-orbitron);
+  font-family: var(--font-inter);
 }
 
 /* eBay Listings */
@@ -392,7 +384,7 @@
 }
 
 .ebayItem {
-  background: #16213e;
+  background: var(--color-bg-tertiary);
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -400,17 +392,17 @@
   justify-content: space-between;
   align-items: center;
   gap: 15px;
-  border: 1px solid #2d2d44;
+  border: 1px solid var(--color-border);
   transition: all 0.2s;
 }
 
 .ebayItem:hover {
-  background: #1a2640;
-  border-color: #667eea;
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-accent-primary);
 }
 
 .ebayItem a {
-  color: #b0b0b0;
+  color: var(--color-text-muted);
   text-decoration: none;
   flex: 1;
   overflow: hidden;
@@ -420,14 +412,14 @@
 }
 
 .ebayItem a:hover {
-  color: #667eea;
+  color: var(--color-accent-primary);
 }
 
 .ebayPrice {
   font-weight: 700;
-  color: #667eea;
+  color: var(--color-accent-primary);
   white-space: nowrap;
-  font-family: var(--font-orbitron);
+  font-family: var(--font-inter);
 }
 
 /* Clickable eBay card styles */
@@ -625,7 +617,7 @@
 @media (max-width: 480px) {
   .page {
     padding-top: 80px;
-    background: #0f0f23;
+    background: var(--color-bg-primary);
   }
 
   .container {
@@ -828,5 +820,181 @@
   .description {
     font-size: 0.9em;
     line-height: 1.5;
+  }
+}
+.backBtn,
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+}
+
+.backBtn:hover,
+.backButton:hover {
+  border-color: var(--color-accent-primary);
+  transform: translateX(-4px);
+}
+
+/* Skeleton Loader Styles */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeletonBackBtn,
+.skeletonCardImage,
+.skeletonTitle,
+.skeletonSubtitle,
+.skeletonButton,
+.skeletonSectionTitle,
+.skeletonPriceCard,
+.skeletonStatItem,
+.skeletonText {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 0%,
+    var(--color-border-light) 50%,
+    var(--color-bg-tertiary) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+  border-radius: 12px;
+}
+
+.skeletonBackBtn {
+  width: 120px;
+  height: 44px;
+  margin-bottom: 30px;
+  border-radius: 12px;
+}
+
+.skeletonCardImage {
+  width: 100%;
+  aspect-ratio: 2.5 / 3.5;
+  border-radius: 20px;
+  max-height: 550px;
+}
+
+.skeletonTitle {
+  width: 70%;
+  height: 48px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+}
+
+.skeletonSubtitle {
+  width: 120px;
+  height: 24px;
+  margin-bottom: 24px;
+  border-radius: 8px;
+}
+
+.skeletonButton {
+  width: 180px;
+  height: 44px;
+  margin-bottom: 32px;
+  border-radius: 12px;
+}
+
+.skeletonPricingSection {
+  margin-bottom: 32px;
+}
+
+.skeletonSectionTitle {
+  width: 200px;
+  height: 28px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+.skeletonPricingGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.skeletonPriceCard {
+  height: 100px;
+  border-radius: 16px;
+}
+
+.skeletonStatsSection {
+  margin-bottom: 24px;
+}
+
+.skeletonStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.skeletonStatItem {
+  height: 80px;
+  border-radius: 12px;
+}
+
+.skeletonInfoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonText {
+  height: 16px;
+  border-radius: 8px;
+}
+
+/* Responsive Skeleton Styles */
+@media (max-width: 768px) {
+  .skeletonPricingGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .skeletonStats {
+    grid-template-columns: 1fr;
+  }
+
+  .skeletonCardImage {
+    max-height: 400px;
+  }
+
+  .skeletonTitle {
+    width: 90%;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeletonCardImage {
+    max-height: 350px;
+  }
+
+  .skeletonTitle {
+    width: 100%;
+    height: 32px;
+  }
+
+  .skeletonBackBtn {
+    width: 100px;
+    height: 40px;
+  }
+
+  .skeletonButton {
+    width: 100%;
   }
 }

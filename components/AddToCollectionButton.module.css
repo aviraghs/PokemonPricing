@@ -1,7 +1,7 @@
 .addButton {
   width: 100%;
   padding: 12px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-accent-secondary) 0%, var(--color-accent-tertiary) 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -9,7 +9,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: var(--font-poppins);
+  font-family: var(--font-inter);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,7 +27,7 @@
 }
 
 .addButton.inCollection {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  background: var(--color-success);
 }
 
 .addButton.inCollection:hover {

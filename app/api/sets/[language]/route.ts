@@ -323,7 +323,7 @@ export async function GET(
 
     console.log(`✅ Filtered ${data.length - filteredData.length} Pocket sets`);
 
-    // Enhance with fixed logos
+    // Enhance with fixed logos and ensure releaseDate is included
     const enhancedData = filteredData.map((set: any) => {
         // Fix TCGdex logo URLs by adding .png extension if they don't have one
         let fixedLogo = set.logo;
@@ -333,17 +333,43 @@ export async function GET(
 
         return {
             ...set,
-            logo: fixedLogo
+            logo: fixedLogo,
+            // TCGdex uses 'releaseDate' field - make sure it's included
+            releaseDate: set.releaseDate || set.released || null
         };
     });
 
     // Get the last 50 sets (most recent) and reverse them so newest appears first
     const recentSets = enhancedData.slice(-50).reverse();
 
+    // Fetch release dates for the sets (TCGdex list endpoint doesn't include them)
+    console.log(`📅 Fetching release dates for ${Math.min(12, recentSets.length)} most recent sets...`);
+    const setsWithDates = await Promise.all(
+      recentSets.slice(0, 12).map(async (set: any) => {
+        try {
+          const detailResponse = await fetch(`https://api.tcgdex.net/v2/${language}/sets/${set.id}`);
+          if (detailResponse.ok) {
+            const details = await detailResponse.json();
+            return {
+              ...set,
+              releaseDate: details.releaseDate || null
+            };
+          }
+        } catch (err) {
+          console.log(`   ⚠️  Failed to fetch details for ${set.id}`);
+        }
+        return set;
+      })
+    );
+
+    // Combine sets with dates and remaining sets without dates
+    const finalSets = [...setsWithDates, ...recentSets.slice(12)];
+    console.log(`✅ Added release dates to ${setsWithDates.filter((s: any) => s.releaseDate).length} sets`);
+
     // Try to fetch missing logos from pokefetch (only for sets without logos)
     const POKEFETCH_API_KEY = process.env.POKEFETCH_API_KEY;
     if (POKEFETCH_API_KEY) {
-      const setsNeedingLogos = recentSets.filter((set: any) => !set.logo);
+      const setsNeedingLogos = finalSets.filter((set: any) => !set.logo);
 
       if (setsNeedingLogos.length > 0) {
         console.log(`🔍 Fetching ${setsNeedingLogos.length} missing logos from pokefetch...`);
@@ -370,10 +396,10 @@ export async function GET(
 
         const results = await Promise.all(logoPromises);
 
-        // Update logos in recentSets
+        // Update logos in finalSets
         results.forEach((result) => {
           if (result) {
-            const set = recentSets.find((s: any) => s.id === result.setId);
+            const set = finalSets.find((s: any) => s.id === result.setId);
             if (set) {
               set.logo = result.logo;
               console.log(`   ✅ Added pokefetch logo for ${set.name}`);
@@ -383,9 +409,9 @@ export async function GET(
       }
     }
 
-    console.log(`📦 Returning ${recentSets.length} most recent sets (optimized - no individual fetches)`);
+    console.log(`📦 Returning ${finalSets.length} most recent sets with release dates`);
 
-    return NextResponse.json(recentSets, {
+    return NextResponse.json(finalSets, {
       headers: {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
       },

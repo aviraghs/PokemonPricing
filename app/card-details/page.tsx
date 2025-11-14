@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
-import PokemonLoader from '@/components/PokemonLoader';
 import AddToCollectionButton from '@/components/AddToCollectionButton';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
@@ -196,6 +195,7 @@ function CardDetailsContent() {
   const loadCardDetails = async () => {
     setLoading(true);
     setError('');
+    setCardData(null); // Clear old card data when loading new card
 
     try {
       // First, get basic card details
@@ -412,7 +412,54 @@ function CardDetailsContent() {
       <>
         <StickyHeader />
         <div className={styles.page}>
-          <PokemonLoader message="Loading card details..." size="large" />
+          <div className={styles.container}>
+            {/* Back button skeleton */}
+            <div className={styles.skeletonBackBtn}></div>
+
+            <div className={styles.cardContainer}>
+              {/* Card Image Skeleton */}
+              <div className={styles.imageSection}>
+                <div className={styles.skeletonCardImage}></div>
+              </div>
+
+              {/* Card Details Skeleton */}
+              <div className={styles.detailsSection}>
+                {/* Title Skeleton */}
+                <div className={styles.skeletonTitle}></div>
+                <div className={styles.skeletonSubtitle}></div>
+
+                {/* Button Skeleton */}
+                <div className={styles.skeletonButton}></div>
+
+                {/* Pricing Section Skeleton */}
+                <div className={styles.skeletonPricingSection}>
+                  <div className={styles.skeletonSectionTitle}></div>
+                  <div className={styles.skeletonPricingGrid}>
+                    <div className={styles.skeletonPriceCard}></div>
+                    <div className={styles.skeletonPriceCard}></div>
+                    <div className={styles.skeletonPriceCard}></div>
+                    <div className={styles.skeletonPriceCard}></div>
+                  </div>
+                </div>
+
+                {/* Stats Section Skeleton */}
+                <div className={styles.skeletonStatsSection}>
+                  <div className={styles.skeletonSectionTitle}></div>
+                  <div className={styles.skeletonStats}>
+                    <div className={styles.skeletonStatItem}></div>
+                    <div className={styles.skeletonStatItem}></div>
+                    <div className={styles.skeletonStatItem}></div>
+                  </div>
+                </div>
+
+                {/* Additional Info Skeleton */}
+                <div className={styles.skeletonInfoSection}>
+                  <div className={styles.skeletonText}></div>
+                  <div className={styles.skeletonText} style={{ width: '70%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </>
     );
@@ -440,7 +487,8 @@ function CardDetailsContent() {
       <div className={styles.page}>
         <div className={styles.container}>
           <button onClick={() => router.back()} className={styles.backButton}>
-            ← Back
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back
           </button>
 
           <div className={styles.cardContainer}>
@@ -940,7 +988,40 @@ export default function CardDetails() {
       <>
         <StickyHeader />
         <div className={styles.page}>
-          <PokemonLoader message="Loading..." size="large" />
+          <div className={styles.container}>
+            <div className={styles.skeletonBackBtn}></div>
+            <div className={styles.cardContainer}>
+              <div className={styles.imageSection}>
+                <div className={styles.skeletonCardImage}></div>
+              </div>
+              <div className={styles.detailsSection}>
+                <div className={styles.skeletonTitle}></div>
+                <div className={styles.skeletonSubtitle}></div>
+                <div className={styles.skeletonButton}></div>
+                <div className={styles.skeletonPricingSection}>
+                  <div className={styles.skeletonSectionTitle}></div>
+                  <div className={styles.skeletonPricingGrid}>
+                    <div className={styles.skeletonPriceCard}></div>
+                    <div className={styles.skeletonPriceCard}></div>
+                    <div className={styles.skeletonPriceCard}></div>
+                    <div className={styles.skeletonPriceCard}></div>
+                  </div>
+                </div>
+                <div className={styles.skeletonStatsSection}>
+                  <div className={styles.skeletonSectionTitle}></div>
+                  <div className={styles.skeletonStats}>
+                    <div className={styles.skeletonStatItem}></div>
+                    <div className={styles.skeletonStatItem}></div>
+                    <div className={styles.skeletonStatItem}></div>
+                  </div>
+                </div>
+                <div className={styles.skeletonInfoSection}>
+                  <div className={styles.skeletonText}></div>
+                  <div className={styles.skeletonText} style={{ width: '70%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </>
     }>

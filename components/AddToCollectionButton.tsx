@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 import { useToast } from './ToastProvider';
 import styles from './AddToCollectionButton.module.css';
 
@@ -25,6 +26,7 @@ export default function AddToCollectionButton({
   onSuccess,
 }: AddToCollectionButtonProps) {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isInCollection, setIsInCollection] = useState(false);
@@ -32,19 +34,16 @@ export default function AddToCollectionButton({
 
   // Check if card is already in collection on mount
   useEffect(() => {
-    checkIfInCollection();
+    if (user) {
+      checkIfInCollection();
+    } else {
+      setIsCheckingCollection(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cardData.id, language]);
+  }, [cardData.id, language, user]);
 
   const checkIfInCollection = async () => {
     try {
-      const authResponse = await fetch('/api/auth/verify');
-      if (!authResponse.ok) {
-        // User not logged in
-        setIsCheckingCollection(false);
-        return;
-      }
-
       // Get user's collection
       const response = await fetch('/api/cards');
       if (response.ok) {
@@ -64,19 +63,15 @@ export default function AddToCollectionButton({
     }
   };
 
+  // Don't render if not logged in or still loading auth
+  if (authLoading || !user) {
+    return null;
+  }
+
   const handleAddToCollection = async () => {
     setIsLoading(true);
 
     try {
-      // Check if user is authenticated
-      const authResponse = await fetch('/api/auth/verify');
-      if (!authResponse.ok) {
-        // User not logged in - show message
-        showToast('Please login to add cards to your collection', 'info');
-        setIsLoading(false);
-        return;
-      }
-
       // Add card to collection
       const response = await fetch('/api/cards', {
         method: 'POST',

@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import Hero from '@/components/Hero';
 import SetsCarousel from '@/components/SetsCarousel';
+import PopularCards from '@/components/PopularCards';
+import MarketTrends from '@/components/MarketTrends';
 import StickyHeader from '@/components/StickyHeader';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import styles from './page.module.css';
@@ -9,20 +11,16 @@ function MainContent() {
   return (
     <>
       <Hero />
-      
+
       <div className={styles.contentSection}>
         <ErrorBoundary>
           <SetsCarousel />
         </ErrorBoundary>
         <ErrorBoundary>
-          <Suspense fallback={<div>Loading popular cards...</div>}>
-            {import('@/components/PopularCards').then(({ default: PopularCards }) => <PopularCards />)}
-          </Suspense>
+          <PopularCards />
         </ErrorBoundary>
         <ErrorBoundary>
-          <Suspense fallback={<div>Loading market trends...</div>}>
-            {import('@/components/MarketTrends').then(({ default: MarketTrends }) => <MarketTrends />)}
-          </Suspense>
+          <MarketTrends />
         </ErrorBoundary>
       </div>
     </>

@@ -18,7 +18,7 @@
 .errorTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #ff3b30;
+  color: var(--color-danger);
   margin-bottom: 1rem;
 }
 
@@ -31,7 +31,7 @@
 
 .retryButton {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-accent-secondary) 0%, var(--color-accent-tertiary) 100%);
   color: white;
   border: none;
   border-radius: 8px;

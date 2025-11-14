@@ -4,16 +4,16 @@
   left: 0;
   width: 100%;
   height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, var(--color-accent-secondary), var(--color-accent-tertiary));
   z-index: 9999;
 }
 
 .loadingBar {
   width: 30%;
   height: 100%;
-  background: #f093fb;
+  background: var(--color-accent-primary);
   animation: loading 2s infinite ease-in-out;
-  box-shadow: 0 0 10px rgba(240, 147, 251, 0.5);
+  box-shadow: 0 0 10px rgba(255, 225, 101, 0.5);
 }
 
 @keyframes loading {
@@ -29,7 +29,7 @@
 }
 
 .contentSection {
-  background: #0f0f23;
+  background: var(--color-bg-primary);
   padding-top: 100px;
   position: relative;
   z-index: 1;

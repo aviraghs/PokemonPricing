@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
-import PokemonLoader from '@/components/PokemonLoader';
+import SkeletonLoader from '@/components/SkeletonLoader';
 import { useToast } from '@/components/ToastProvider';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
@@ -107,7 +107,7 @@ export default function MyCollection() {
       <>
         <StickyHeader />
         <div className={styles.page}>
-          <PokemonLoader message="Loading your collection..." size="large" />
+          <SkeletonLoader type="card" count={8} />
         </div>
       </>
     );

@@ -1,20 +1,20 @@
 .languageSelect {
-  background: #16213e;
-  border: 1px solid #2d2d44;
-  color: #e0e0e0;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
   padding: 8px 12px;
   border-radius: 20px;
-  font-family: var(--font-poppins);
+  font-family: var(--font-inter);
   cursor: pointer;
   font-size: 0.85em;
   transition: border-color 0.2s;
 }
 
 .languageSelect:hover {
-  border-color: #667eea;
+  border-color: var(--color-accent-secondary);
 }
 
 .languageSelect:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-accent-secondary);
 }

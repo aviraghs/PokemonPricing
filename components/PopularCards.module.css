@@ -1,24 +1,6 @@
 .popularSection {
-  padding: 40px 20px 80px;
-  background: #0f0f23;
-}
-
-@media (max-width: 1024px) {
-  .popularSection {
-    padding: 40px 15px 60px;
-  }
-}
-
-@media (max-width: 768px) {
-  .popularSection {
-    padding: 30px 15px 50px;
-  }
-}
-
-@media (max-width: 480px) {
-  .popularSection {
-    padding: 25px 12px 40px;
-  }
+  padding: 60px 20px;
+  background: var(--color-bg-primary);
 }
 
 .container {
@@ -28,68 +10,21 @@
 
 .sectionHeader {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .sectionTitle {
-  font-family: var(--font-orbitron);
-  font-size: 2.5em;
-  margin-bottom: 10px;
+  font-size: 48px;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.emoji {
-  -webkit-background-clip: initial;
-  -webkit-text-fill-color: initial;
-  background: none;
-  display: inline-block;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+  color: var(--color-text-primary);
 }
 
 .sectionSubtitle {
-  font-size: 1.1em;
-  color: #b0b0b0;
-  font-weight: 300;
-}
-
-@media (max-width: 1024px) {
-  .sectionTitle {
-    font-size: 2.2em;
-  }
-
-  .sectionSubtitle {
-    font-size: 1em;
-  }
-}
-
-@media (max-width: 768px) {
-  .sectionTitle {
-    font-size: 1.8em;
-    margin-bottom: 8px;
-  }
-
-  .sectionSubtitle {
-    font-size: 0.95em;
-  }
-}
-
-@media (max-width: 480px) {
-  .sectionTitle {
-    font-size: 1.4em;
-    margin-bottom: 5px;
-  }
-
-  .sectionSubtitle {
-    font-size: 0.85em;
-  }
-}
-
-.loadingSpinner {
-  text-align: center;
-  padding: 40px;
-  color: #b0b0b0;
+  font-size: 18px;
+  color: var(--color-text-muted);
+  font-weight: 400;
 }
 
 .carouselContainer {
@@ -105,17 +40,17 @@
 
 .carouselTrack {
   display: flex;
-  gap: 25px;
-  transition: transform 0.5s ease;
+  gap: 24px;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0 10px;
 }
 
 .card {
-  min-width: calc(25% - 19px);
-  background: #1a1a2e;
-  border-radius: 16px;
+  min-width: calc(25% - 18px);
+  background: var(--color-bg-secondary);
+  border-radius: 20px;
   overflow: hidden;
-  border: 1px solid #2d2d44;
+  border: 1px solid var(--color-border);
   transition: all 0.3s ease;
   cursor: pointer;
   flex-shrink: 0;
@@ -123,121 +58,138 @@
 
 .card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
-  border-color: #667eea;
+  box-shadow: var(--shadow-xl);
+  border-color: var(--color-accent-secondary);
 }
 
 .cardImage {
-  height: 280px;
-  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+  height: 320px;
+  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding: 20px;
 }
 
 .cardImage img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-.placeholder {
-  font-size: 5em;
-  opacity: 0.3;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
 }
 
 .cardInfo {
   padding: 20px;
-  text-align: center;
+  text-align: left;
 }
 
 .cardName {
-  font-size: 1.2em;
-  margin-bottom: 8px;
-  color: #e0e0e0;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--color-text-primary);
 }
 
 .cardSet {
-  font-size: 0.9em;
-  color: #b0b0b0;
-  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-bottom: 10px;
 }
 
 .cardRarity {
   display: inline-block;
-  padding: 4px 12px;
-  background: #16213e;
-  border-radius: 12px;
-  font-size: 0.8em;
-  color: #667eea;
+  padding: 5px 12px;
+  background: var(--color-bg-tertiary);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--color-accent-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .cardPricing {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #2d2d44;
+  border-top: 1px solid var(--color-border);
 }
 
 .pricingItem {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 4px;
-  font-size: 0.85em;
+  margin-bottom: 6px;
+  font-size: 14px;
 }
 
 .pricingSource {
-  color: #667eea;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .pricingValue {
-  color: #4ade80;
-  font-weight: 600;
+  color: var(--color-success);
+  font-weight: 700;
 }
 
 .carouselBtn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  width: 55px;
-  height: 55px;
+  background: var(--color-accent-primary);
+  color: var(--color-bg-primary);
+  border: none;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  font-size: 2em;
   cursor: pointer;
   z-index: 10;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .carouselBtn:hover {
-  transform: translateY(-50%) scale(1.15);
-  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: var(--shadow-lg);
+  background: var(--color-accent-primary-hover);
 }
 
 .carouselBtn.prev {
-  left: -30px;
+  left: -25px;
 }
 
 .carouselBtn.next {
-  right: -30px;
+  right: -25px;
 }
 
+/* Tablet */
 @media (max-width: 1024px) {
+  .popularSection {
+    padding: 50px 20px;
+  }
+
+  .sectionTitle {
+    font-size: 40px;
+  }
+
+  .sectionSubtitle {
+    font-size: 16px;
+  }
+
   .card {
-    min-width: calc(33.333% - 17px);
+    min-width: calc(33.333% - 16px);
+  }
+
+  .cardImage {
+    height: 280px;
   }
 
   .carouselBtn {
-    width: 45px;
-    height: 45px;
-    font-size: 1.5em;
+    width: 44px;
+    height: 44px;
   }
 
   .carouselBtn.prev {
@@ -249,55 +201,52 @@
   }
 }
 
-@media (max-width: 1024px) {
+/* Mobile */
+@media (max-width: 768px) {
+  .popularSection {
+    padding: 40px 16px;
+  }
+
   .sectionHeader {
-    margin-bottom: 30px;
+    margin-bottom: 32px;
+  }
+
+  .sectionTitle {
+    font-size: 32px;
+  }
+
+  .sectionSubtitle {
+    font-size: 15px;
   }
 
   .card {
-    min-width: calc(50% - 12.5px);
+    min-width: calc(50% - 12px);
   }
 
   .cardImage {
     height: 240px;
   }
 
-  .carouselBtn {
-    width: 45px;
-    height: 45px;
-    font-size: 1.5em;
-  }
-}
-
-@media (max-width: 768px) {
-  .sectionHeader {
-    margin-bottom: 30px;
-  }
-
-  .card {
-    min-width: calc(50% - 12.5px);
-  }
-
-  .cardImage {
-    height: 200px;
-  }
-
   .cardName {
-    font-size: 1.1em;
+    font-size: 16px;
   }
 
   .cardSet {
-    font-size: 0.85em;
+    font-size: 13px;
   }
 
   .pricingItem {
-    font-size: 0.8em;
+    font-size: 13px;
   }
 
   .carouselBtn {
     width: 40px;
     height: 40px;
-    font-size: 1.3em;
+  }
+
+  .carouselBtn svg {
+    width: 20px;
+    height: 20px;
   }
 
   .carouselBtn.prev {
@@ -309,9 +258,22 @@
   }
 }
 
+/* Small Mobile */
 @media (max-width: 480px) {
+  .popularSection {
+    padding: 30px 12px;
+  }
+
   .sectionHeader {
-    margin-bottom: 25px;
+    margin-bottom: 24px;
+  }
+
+  .sectionTitle {
+    font-size: 28px;
+  }
+
+  .sectionSubtitle {
+    font-size: 14px;
   }
 
   .card {
@@ -319,24 +281,24 @@
   }
 
   .cardImage {
-    height: 180px;
+    height: 220px;
   }
 
   .cardInfo {
-    padding: 15px;
+    padding: 16px;
   }
 
   .cardName {
-    font-size: 1em;
+    font-size: 15px;
   }
 
   .cardSet {
-    font-size: 0.8em;
+    font-size: 12px;
   }
 
   .cardRarity {
-    padding: 3px 10px;
-    font-size: 0.75em;
+    padding: 4px 10px;
+    font-size: 11px;
   }
 
   .cardPricing {
@@ -345,21 +307,17 @@
   }
 
   .pricingItem {
-    font-size: 0.75em;
-    margin-bottom: 3px;
+    font-size: 12px;
+    margin-bottom: 4px;
   }
 
   .carouselBtn {
     width: 36px;
     height: 36px;
-    font-size: 1.2em;
   }
 
-  .carouselBtn.prev {
-    left: 0;
-  }
-
-  .carouselBtn.next {
-    right: 0;
+  .carouselBtn svg {
+    width: 18px;
+    height: 18px;
   }
 }

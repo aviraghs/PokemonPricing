@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import PokemonLoader from './PokemonLoader';
+import SkeletonLoader from './SkeletonLoader';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './MarketTrends.module.css';
 
@@ -34,43 +34,42 @@ export default function MarketTrends() {
     const fetchTrends = async () => {
       try {
         // Search for multiple popular Pokemon to get variety
-        const trendingPokemon = ['Mew', 'Eevee', 'Gyarados', 'Gengar', 'Dragonite', 'Blastoise'];
-        const allCards: Card[] = [];
+        const trendingPokemon = ['Mew', 'Eevee', 'Gyarados', 'Gengar'];
 
-        // Fetch 1-2 cards from each Pokemon
-        for (const pokemon of trendingPokemon) {
-          try {
-            const response = await fetch('/api/search-cards', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                query: pokemon,
-                includePricing: true,
-              }),
-            });
+        // Fetch all Pokemon in parallel (much faster!)
+        const results = await Promise.all(
+          trendingPokemon.map(async (pokemon) => {
+            try {
+              const response = await fetch('/api/search-cards', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  query: pokemon,
+                  includePricing: true,
+                }),
+              });
 
-            if (response.ok) {
-              const data = await response.json();
-
-              // Get first 1-2 cards with valid pricing
-              let count = 0;
-              for (const card of data) {
-                const hasValidPrice =
-                  (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
-                  (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
-
-                if (hasValidPrice && count < 2) {
-                  allCards.push(card);
-                  count++;
-                }
+              if (response.ok) {
+                const data = await response.json();
+                // Get first 2 cards with valid pricing
+                const cardsWithPrice = data.filter((card: Card) => {
+                  const hasValidPrice =
+                    (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
+                    (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
+                  return hasValidPrice;
+                }).slice(0, 2);
+                return cardsWithPrice;
               }
+              return [];
+            } catch (err) {
+              console.error(`Failed to fetch ${pokemon}:`, err);
+              return [];
             }
-          } catch (err) {
-            console.error(`Failed to fetch ${pokemon}:`, err);
-          }
-        }
+          })
+        );
 
-        // Shuffle and split into rising/falling
+        // Flatten results and shuffle
+        const allCards = results.flat();
         const shuffled = allCards.sort(() => Math.random() - 0.5);
         const half = Math.floor(shuffled.length / 2);
 
@@ -105,20 +104,24 @@ export default function MarketTrends() {
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>
-            <span className={styles.emoji}>📊</span> Market Trends
+            Market Trends
           </h2>
           <p className={styles.sectionSubtitle}>Tracking price movements in the market</p>
         </div>
 
         {isLoading ? (
-          <PokemonLoader message="Loading trending cards..." size="medium" />
+          <SkeletonLoader type="trend" count={6} />
         ) : (
 
         <div className={styles.trendsGrid}>
           {/* Rising Trends Column */}
           <div className={styles.trendColumn}>
             <h3 className={`${styles.trendHeader} ${styles.rising}`}>
-              <span className={styles.emoji}>📈</span> Rising Prices
+              <svg className={styles.trendIcon} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+              Rising Prices
             </h3>
             <div className={styles.trendList}>
               {risingCards.length > 0 ? (
@@ -205,7 +208,11 @@ export default function MarketTrends() {
           {/* Falling Trends Column */}
           <div className={styles.trendColumn}>
             <h3 className={`${styles.trendHeader} ${styles.falling}`}>
-              <span className={styles.emoji}>📉</span> Falling Prices
+              <svg className={styles.trendIcon} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                <polyline points="17 18 23 18 23 12"></polyline>
+              </svg>
+              Falling Prices
             </h3>
             <div className={styles.trendList}>
               {fallingCards.length > 0 ? (

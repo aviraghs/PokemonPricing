@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
-import PokemonLoader from '@/components/PokemonLoader';
+import SkeletonLoader from '@/components/SkeletonLoader';
 import AddToCollectionButton from '@/components/AddToCollectionButton';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
@@ -92,7 +92,10 @@ function SearchResultsContent() {
       <div className={styles.page}>
         <div className={styles.container}>
           <button onClick={() => router.back()} className={styles.backBtn}>
-            ← Back
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
           </button>
           <div className={styles.header}>
             <h1 className={styles.title}>Search Results</h1>
@@ -103,7 +106,7 @@ function SearchResultsContent() {
           </div>
 
           {loading && (
-            <PokemonLoader message="Searching for cards..." size="large" />
+            <SkeletonLoader type="card" count={8} />
           )}
 
           {error && (
@@ -123,10 +126,13 @@ function SearchResultsContent() {
 
               {cards.length === 0 ? (
                 <div className={styles.noResults}>
-                  <div className={styles.noResultsIcon}>🔍</div>
+                  <svg className={styles.noResultsIcon} width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                  </svg>
                   <h2>No cards found</h2>
                   <p>Try adjusting your search criteria</p>
-                  <button onClick={() => router.push('/')} className={styles.backBtn}>
+                  <button onClick={() => router.push('/')} className={styles.homeBtn}>
                     Back to Home
                   </button>
                 </div>
@@ -236,7 +242,7 @@ export default function SearchResults() {
       <>
         <StickyHeader />
         <div className={styles.page}>
-          <PokemonLoader message="Loading search..." size="large" />
+          <SkeletonLoader type="card" count={8} />
         </div>
       </>
     }>

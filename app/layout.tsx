@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Poppins, Orbitron } from 'next/font/google';
 import './globals.css';
-import ToastProvider from '@/components/ToastProvider';
+import Providers from '@/components/Providers';
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -26,16 +26,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://api.tcgdex.net" />
         <link rel="dns-prefetch" href="https://api.tcgdex.net" />
         <link rel="dns-prefetch" href="https://open.er-api.com" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+              } catch (e) {}
+            `,
+          }}
+        />
       </head>
       <body className={`${poppins.variable} ${orbitron.variable}`}>
-        <ToastProvider>
+        <Providers>
           {children}
-        </ToastProvider>
+        </Providers>
       </body>
     </html>
   );

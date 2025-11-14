@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import PokemonLoader from './PokemonLoader';
+import SkeletonLoader from './SkeletonLoader';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './PopularCards.module.css';
 
@@ -37,43 +37,42 @@ export default function PopularCards() {
     const fetchCards = async () => {
       try {
         // Search for multiple popular Pokemon to get variety
-        const popularPokemon = ['Charizard', 'Pikachu', 'Mewtwo', 'Lugia', 'Rayquaza', 'Umbreon'];
-        const allCards: Card[] = [];
+        const popularPokemon = ['Charizard', 'Pikachu', 'Mewtwo', 'Lugia'];
 
-        // Fetch 2-3 cards from each Pokemon
-        for (const pokemon of popularPokemon) {
-          try {
-            const response = await fetch('/api/search-cards', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                query: pokemon,
-                includePricing: true,
-              }),
-            });
+        // Fetch all Pokemon in parallel (much faster!)
+        const results = await Promise.all(
+          popularPokemon.map(async (pokemon) => {
+            try {
+              const response = await fetch('/api/search-cards', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  query: pokemon,
+                  includePricing: true,
+                }),
+              });
 
-            if (response.ok) {
-              const data = await response.json();
-
-              // Get first 2-3 cards with valid pricing
-              let count = 0;
-              for (const card of data) {
-                const hasValidPrice =
-                  (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
-                  (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
-
-                if (hasValidPrice && count < 2) {
-                  allCards.push(card);
-                  count++;
-                }
+              if (response.ok) {
+                const data = await response.json();
+                // Get first 3 cards with valid pricing
+                const cardsWithPrice = data.filter((card: Card) => {
+                  const hasValidPrice =
+                    (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
+                    (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
+                  return hasValidPrice;
+                }).slice(0, 3);
+                return cardsWithPrice;
               }
+              return [];
+            } catch (err) {
+              console.error(`Failed to fetch ${pokemon}:`, err);
+              return [];
             }
-          } catch (err) {
-            console.error(`Failed to fetch ${pokemon}:`, err);
-          }
-        }
+          })
+        );
 
-        // Shuffle and take first 12
+        // Flatten results and shuffle
+        const allCards = results.flat();
         const shuffled = allCards.sort(() => Math.random() - 0.5);
         setCards(shuffled.slice(0, 12));
       } catch (err) {
@@ -104,7 +103,7 @@ export default function PopularCards() {
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.sectionTitle}>
-            <span className={styles.emoji}>🔥</span> Popular Cards Right Now
+            Popular Cards Right Now
           </h2>
           <p className={styles.sectionSubtitle}>
             Most sought-after cards in the market
@@ -112,11 +111,13 @@ export default function PopularCards() {
         </div>
 
         {isLoading ? (
-          <PokemonLoader message="Loading popular cards..." size="medium" />
+          <SkeletonLoader type="card" count={5} />
         ) : (
         <div className={styles.carouselContainer}>
-          <button className={`${styles.carouselBtn} ${styles.prev}`} onClick={handlePrevious}>
-            ‹
+          <button className={`${styles.carouselBtn} ${styles.prev}`} onClick={handlePrevious} aria-label="Previous">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
           </button>
           <div className={styles.carouselWrapper}>
             <div
@@ -213,8 +214,10 @@ export default function PopularCards() {
               ))}
             </div>
           </div>
-          <button className={`${styles.carouselBtn} ${styles.next}`} onClick={handleNext}>
-            ›
+          <button className={`${styles.carouselBtn} ${styles.next}`} onClick={handleNext} aria-label="Next">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
           </button>
         </div>
         )}

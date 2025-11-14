@@ -1,0 +1,216 @@
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.skeletonSetGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  width: 100%;
+}
+
+.skeletonCard,
+.skeletonSet {
+  background: var(--color-bg-secondary);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.skeletonImage,
+.skeletonSetImage,
+.skeletonTitle,
+.skeletonText {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 0%,
+    var(--color-border-light) 50%,
+    var(--color-bg-tertiary) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 350px;
+  border-radius: 12px;
+}
+
+.skeletonSetImage {
+  width: 100%;
+  height: 180px;
+}
+
+.skeletonContent,
+.skeletonSetContent {
+  padding: 20px;
+}
+
+.skeletonTitle {
+  height: 24px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.skeletonText {
+  height: 16px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.skeletonText:last-child {
+  margin-bottom: 0;
+}
+
+/* Trend Skeleton Styles */
+.skeletonTrendGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  width: 100%;
+}
+
+.skeletonTrendColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeletonTrendHeader {
+  height: 32px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 0%,
+    var(--color-border-light) 50%,
+    var(--color-bg-tertiary) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+.skeletonTrendList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonTrendItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: var(--color-bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+
+.skeletonTrendThumbnail {
+  width: 50px;
+  height: 70px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 0%,
+    var(--color-border-light) 50%,
+    var(--color-bg-tertiary) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+.skeletonTrendInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeletonTrendStats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+@media (max-width: 1024px) {
+  .skeletonSetGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .skeletonSetGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .skeletonImage {
+    height: 280px;
+  }
+
+  .skeletonSetImage {
+    height: 150px;
+  }
+
+  .skeletonTrendGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .skeletonTrendThumbnail {
+    width: 45px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeletonGrid,
+  .skeletonSetGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .skeletonImage {
+    height: 250px;
+  }
+
+  .skeletonSetImage {
+    height: 130px;
+  }
+
+  .skeletonTrendGrid {
+    gap: 20px;
+  }
+
+  .skeletonTrendThumbnail {
+    width: 40px;
+    height: 55px;
+  }
+
+  .skeletonTrendItem {
+    padding: 10px;
+    gap: 12px;
+  }
+}
