@@ -555,8 +555,8 @@ function CardDetailsContent() {
                 <div className={styles.pricingSection}>
                   <h3 className={styles.sectionTitle}>Current Market Prices</h3>
                   <div className={styles.pricingGrid}>
-                    {/* TCGPlayer Pricing */}
-                    {cardData.pricing.tcgPlayer && cardData.pricing.tcgPlayer.averagePrice && cardData.pricing.tcgPlayer.averagePrice !== 'N/A' && (
+                    {/* TCGPlayer Pricing - Only show if in INR */}
+                    {cardData.pricing.tcgPlayer && cardData.pricing.tcgPlayer.averagePrice && cardData.pricing.tcgPlayer.averagePrice !== 'N/A' && String(cardData.pricing.tcgPlayer.averagePrice).includes('₹') && (
                       <div className={`${styles.priceCard} ${styles.tcgplayer}`}>
                         <div className={styles.priceCardHeader}>
                           <h4 className={styles.priceSource}>TCGPlayer</h4>
@@ -566,20 +566,10 @@ function CardDetailsContent() {
                         </div>
                       </div>
                     )}
-                    {(!cardData.pricing.tcgPlayer || !cardData.pricing.tcgPlayer.averagePrice || cardData.pricing.tcgPlayer.averagePrice === 'N/A' || cardData.pricing.tcgPlayer.averagePrice === 'N/S') && (
-                      <div className={`${styles.priceCard} ${styles.tcgplayer}`}>
-                        <div className={styles.priceCardHeader}>
-                          <h4 className={styles.priceSource}>TCGPlayer</h4>
-                        </div>
-                        <div className={styles.priceAmount}>
-                          N/S
-                        </div>
-                      </div>
-                    )}
 
-                    {/* eBay Pricing */}
+                    {/* eBay Pricing - Only show if in INR */}
                     <div>
-                      {cardData.pricing.ebay && cardData.pricing.ebay.averagePrice && cardData.pricing.ebay.averagePrice !== 'N/A' && cardData.pricing.ebay.averagePrice !== 'N/S' && (
+                      {cardData.pricing.ebay && cardData.pricing.ebay.averagePrice && cardData.pricing.ebay.averagePrice !== 'N/A' && cardData.pricing.ebay.averagePrice !== 'N/S' && String(cardData.pricing.ebay.averagePrice).includes('₹') && (
                         <>
                           <div
                             className={`${styles.priceCard} ${styles.ebay}`}
@@ -627,36 +617,16 @@ function CardDetailsContent() {
                           )}
                         </>
                       )}
-                      {(!cardData.pricing.ebay || !cardData.pricing.ebay.averagePrice || cardData.pricing.ebay.averagePrice === 'N/A' || cardData.pricing.ebay.averagePrice === 'N/S') && (
-                        <div className={`${styles.priceCard} ${styles.ebay}`}>
-                          <div className={styles.priceCardHeader}>
-                            <h4 className={styles.priceSource}>eBay</h4>
-                          </div>
-                          <div className={styles.priceAmount}>
-                            N/S
-                          </div>
-                        </div>
-                      )}
                     </div>
 
-                    {/* Pokemon Price Tracker Pricing */}
-                    {cardData.pricing.pokemonPriceTracker && cardData.pricing.pokemonPriceTracker.averagePrice && cardData.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && cardData.pricing.pokemonPriceTracker.averagePrice !== 'N/S' && (
+                    {/* Pokemon Price Tracker Pricing - Only show if in INR */}
+                    {cardData.pricing.pokemonPriceTracker && cardData.pricing.pokemonPriceTracker.averagePrice && cardData.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && cardData.pricing.pokemonPriceTracker.averagePrice !== 'N/S' && String(cardData.pricing.pokemonPriceTracker.averagePrice).includes('₹') && (
                       <div className={`${styles.priceCard} ${styles.pokemon}`}>
                         <div className={styles.priceCardHeader}>
                           <h4 className={styles.priceSource}>Price Charting</h4>
                         </div>
                         <div className={styles.priceAmount}>
                           {cardData.pricing.pokemonPriceTracker.averagePrice}
-                        </div>
-                      </div>
-                    )}
-                    {(!cardData.pricing.pokemonPriceTracker || !cardData.pricing.pokemonPriceTracker.averagePrice || cardData.pricing.pokemonPriceTracker.averagePrice === 'N/A' || cardData.pricing.pokemonPriceTracker.averagePrice === 'N/S') && (
-                      <div className={`${styles.priceCard} ${styles.pokemon}`}>
-                        <div className={styles.priceCardHeader}>
-                          <h4 className={styles.priceSource}>Price Charting</h4>
-                        </div>
-                        <div className={styles.priceAmount}>
-                          N/S
                         </div>
                       </div>
                     )}
