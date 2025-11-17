@@ -252,7 +252,7 @@
   position: relative;
   padding: 16px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(255, 225, 101, 0.08) 0%, rgba(255, 225, 101, 0.05) 100%);
+  background: var(--color-bg-tertiary);
   border: 2px solid;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
