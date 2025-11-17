@@ -57,7 +57,6 @@
 .navIcon {
   font-size: 16px;
   line-height: 1;
-  filter: grayscale(1);
 }
 
 .navLabel {
