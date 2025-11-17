@@ -555,8 +555,8 @@ function CardDetailsContent() {
                 <div className={styles.pricingSection}>
                   <h3 className={styles.sectionTitle}>Current Market Prices</h3>
                   <div className={styles.pricingGrid}>
-                    {/* TCGPlayer Pricing - Only show if in INR */}
-                    {cardData.pricing.tcgPlayer && cardData.pricing.tcgPlayer.averagePrice && cardData.pricing.tcgPlayer.averagePrice !== 'N/A' && String(cardData.pricing.tcgPlayer.averagePrice).includes('₹') && (
+                    {/* TCGPlayer Pricing */}
+                    {cardData.pricing.tcgPlayer && cardData.pricing.tcgPlayer.averagePrice && cardData.pricing.tcgPlayer.averagePrice !== 'N/A' && String(cardData.pricing.tcgPlayer.averagePrice).includes('₹') ? (
                       <div className={`${styles.priceCard} ${styles.tcgplayer}`}>
                         <div className={styles.priceCardHeader}>
                           <h4 className={styles.priceSource}>TCGPlayer</h4>
@@ -565,68 +565,93 @@ function CardDetailsContent() {
                           {cardData.pricing.tcgPlayer.averagePrice}
                         </div>
                       </div>
+                    ) : (
+                      <div className={`${styles.priceCard} ${styles.tcgplayer}`}>
+                        <div className={styles.priceCardHeader}>
+                          <h4 className={styles.priceSource}>TCGPlayer</h4>
+                        </div>
+                        <div className={styles.priceAmount}>
+                          N/S
+                        </div>
+                      </div>
                     )}
 
-                    {/* eBay Pricing - Only show if in INR */}
-                    <div>
-                      {cardData.pricing.ebay && cardData.pricing.ebay.averagePrice && cardData.pricing.ebay.averagePrice !== 'N/A' && cardData.pricing.ebay.averagePrice !== 'N/S' && String(cardData.pricing.ebay.averagePrice).includes('₹') && (
-                        <>
-                          <div
-                            className={`${styles.priceCard} ${styles.ebay}`}
-                            onClick={() => cardData.pricing?.ebay?.listings?.length ? setShowEbayListings(!showEbayListings) : null}
-                            style={{ cursor: cardData.pricing?.ebay?.listings?.length ? 'pointer' : 'default' }}
-                          >
-                            <div className={styles.priceCardHeader}>
-                              <h4 className={styles.priceSource}>
-                                eBay {cardData.pricing.ebay?.listings?.length ? `(${cardData.pricing.ebay.listings.length} listings)` : ''}
-                              </h4>
-                            </div>
-                            <div className={styles.priceAmount}>
-                              {cardData.pricing.ebay.averagePrice}
-                              {cardData.pricing.ebay?.listings?.length ? (
-                                <span style={{ fontSize: '0.6em', marginLeft: '8px', opacity: 0.7 }}>
-                                  {showEbayListings ? '▼' : '▶'}
-                                </span>
-                              ) : null}
-                            </div>
+                    {/* eBay Pricing */}
+                    {cardData.pricing.ebay && cardData.pricing.ebay.averagePrice && cardData.pricing.ebay.averagePrice !== 'N/A' && cardData.pricing.ebay.averagePrice !== 'N/S' && String(cardData.pricing.ebay.averagePrice).includes('₹') ? (
+                      <div>
+                        <div
+                          className={`${styles.priceCard} ${styles.ebay}`}
+                          onClick={() => cardData.pricing?.ebay?.listings?.length ? setShowEbayListings(!showEbayListings) : null}
+                          style={{ cursor: cardData.pricing?.ebay?.listings?.length ? 'pointer' : 'default' }}
+                        >
+                          <div className={styles.priceCardHeader}>
+                            <h4 className={styles.priceSource}>
+                              eBay {cardData.pricing.ebay?.listings?.length ? `(${cardData.pricing.ebay.listings.length} listings)` : ''}
+                            </h4>
                           </div>
+                          <div className={styles.priceAmount}>
+                            {cardData.pricing.ebay.averagePrice}
+                            {cardData.pricing.ebay?.listings?.length ? (
+                              <span style={{ fontSize: '0.6em', marginLeft: '8px', opacity: 0.7 }}>
+                                {showEbayListings ? '▼' : '▶'}
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
 
-                          {/* eBay Listings Dropdown */}
-                          {showEbayListings && cardData.pricing.ebay?.listings && cardData.pricing.ebay.listings.length > 0 && (
-                            <div className={styles.ebayListings}>
-                              <h4 style={{ color: '#e0e0e0', marginBottom: '12px', fontSize: '0.9em' }}>
-                                Recent Sales:
-                              </h4>
-                              {cardData.pricing.ebay.listings.map((listing, index) => (
-                                <div key={index} className={styles.ebayItem}>
-                                  <a href={listing.link} target="_blank" rel="noopener noreferrer" title={listing.title}>
-                                    {listing.title}
-                                  </a>
-                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                                    <span className={styles.ebayPrice}>${listing.sale_price}</span>
-                                    <span style={{ fontSize: '0.75em', color: '#888' }}>
-                                      {listing.condition}
-                                    </span>
-                                    <span style={{ fontSize: '0.7em', color: '#666' }}>
-                                      {listing.date_sold}
-                                    </span>
-                                  </div>
+                        {/* eBay Listings Dropdown */}
+                        {showEbayListings && cardData.pricing.ebay?.listings && cardData.pricing.ebay.listings.length > 0 && (
+                          <div className={styles.ebayListings}>
+                            <h4 style={{ color: '#e0e0e0', marginBottom: '12px', fontSize: '0.9em' }}>
+                              Recent Sales:
+                            </h4>
+                            {cardData.pricing.ebay.listings.map((listing, index) => (
+                              <div key={index} className={styles.ebayItem}>
+                                <a href={listing.link} target="_blank" rel="noopener noreferrer" title={listing.title}>
+                                  {listing.title}
+                                </a>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                                  <span className={styles.ebayPrice}>${listing.sale_price}</span>
+                                  <span style={{ fontSize: '0.75em', color: '#888' }}>
+                                    {listing.condition}
+                                  </span>
+                                  <span style={{ fontSize: '0.7em', color: '#666' }}>
+                                    {listing.date_sold}
+                                  </span>
                                 </div>
-                              ))}
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className={`${styles.priceCard} ${styles.ebay}`}>
+                        <div className={styles.priceCardHeader}>
+                          <h4 className={styles.priceSource}>eBay</h4>
+                        </div>
+                        <div className={styles.priceAmount}>
+                          N/S
+                        </div>
+                      </div>
+                    )}
 
-                    {/* Pokemon Price Tracker Pricing - Only show if in INR */}
-                    {cardData.pricing.pokemonPriceTracker && cardData.pricing.pokemonPriceTracker.averagePrice && cardData.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && cardData.pricing.pokemonPriceTracker.averagePrice !== 'N/S' && String(cardData.pricing.pokemonPriceTracker.averagePrice).includes('₹') && (
+                    {/* Pokemon Price Tracker Pricing */}
+                    {cardData.pricing.pokemonPriceTracker && cardData.pricing.pokemonPriceTracker.averagePrice && cardData.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && cardData.pricing.pokemonPriceTracker.averagePrice !== 'N/S' && String(cardData.pricing.pokemonPriceTracker.averagePrice).includes('₹') ? (
                       <div className={`${styles.priceCard} ${styles.pokemon}`}>
                         <div className={styles.priceCardHeader}>
                           <h4 className={styles.priceSource}>Price Charting</h4>
                         </div>
                         <div className={styles.priceAmount}>
                           {cardData.pricing.pokemonPriceTracker.averagePrice}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={`${styles.priceCard} ${styles.pokemon}`}>
+                        <div className={styles.priceCardHeader}>
+                          <h4 className={styles.priceSource}>Price Charting</h4>
+                        </div>
+                        <div className={styles.priceAmount}>
+                          N/S
                         </div>
                       </div>
                     )}
