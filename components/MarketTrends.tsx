@@ -198,9 +198,8 @@ export default function MarketTrends() {
                             ? card.pricing.tcgPlayer.averagePrice
                             : card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A'
                               ? card.pricing.pokemonPriceTracker.averagePrice
-                              : 'N/S';
-                          // Only show if it's in INR format
-                          return String(price).includes('₹') ? price : 'N/S';
+                              : 'N/A';
+                          return price;
                         })()}
                       </span>
                       <span className={`${styles.trendChange} ${card.trendPercent != null && card.trendPercent > 0 ? 'positive' : 'negative'}`}>
@@ -298,9 +297,8 @@ export default function MarketTrends() {
                             ? card.pricing.tcgPlayer.averagePrice
                             : card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A'
                               ? card.pricing.pokemonPriceTracker.averagePrice
-                              : 'N/S';
-                          // Only show if it's in INR format
-                          return String(price).includes('₹') ? price : 'N/S';
+                              : 'N/A';
+                          return price;
                         })()}
                       </span>
                       <span className={`${styles.trendChange} ${card.trendPercent != null && card.trendPercent > 0 ? 'positive' : 'negative'}`}>

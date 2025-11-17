@@ -1258,13 +1258,6 @@ export async function POST(request: NextRequest) {
     console.log(`📦 Returning ${enhancedCards.length} cards`);
     console.log(`${'='.repeat(50)}\n`);
 
-    // Cache results (both with and without pricing)
-    cardDataCache.set(cacheKey, {
-      cards: enhancedCards,
-      timestamp: Date.now()
-    });
-    console.log(`💾 Cached ${enhancedCards.length} cards - expires in 4 hours`);
-
     // Fetch exchange rate and convert prices to INR if includePricing is true
     if (includePricing) {
       // Define currency conversion functions here
@@ -1447,8 +1440,22 @@ export async function POST(request: NextRequest) {
         return card;
       });
 
+      // Cache the INR-converted results
+      cardDataCache.set(cacheKey, {
+        cards: convertedCards,
+        timestamp: Date.now()
+      });
+      console.log(`💾 Cached ${convertedCards.length} cards with INR pricing - expires in 4 hours`);
+
       return NextResponse.json(convertedCards);
     } else {
+      // Cache results without pricing
+      cardDataCache.set(cacheKey, {
+        cards: enhancedCards,
+        timestamp: Date.now()
+      });
+      console.log(`💾 Cached ${enhancedCards.length} cards without pricing - expires in 4 hours`);
+
       return NextResponse.json(enhancedCards);
     }
   } catch (err) {

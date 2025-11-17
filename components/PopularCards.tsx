@@ -196,9 +196,7 @@ export default function PopularCards() {
                     {card.rarity && <span className={styles.cardRarity}>{card.rarity}</span>}
                     {card.pricing && (
                       <div className={styles.cardPricing}>
-                        {card.pricing.tcgPlayer && card.pricing.tcgPlayer.averagePrice &&
-                         card.pricing.tcgPlayer.averagePrice !== 'N/A' &&
-                         String(card.pricing.tcgPlayer.averagePrice).includes('₹') && (
+                        {card.pricing.tcgPlayer && card.pricing.tcgPlayer.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A' && (
                           <div className={styles.pricingItem}>
                             <span className={styles.pricingSource}>TCG:</span>
                             <span className={styles.pricingValue}>
@@ -206,9 +204,7 @@ export default function PopularCards() {
                             </span>
                           </div>
                         )}
-                        {card.pricing.pokemonPriceTracker && card.pricing.pokemonPriceTracker.averagePrice &&
-                         card.pricing.pokemonPriceTracker.averagePrice !== 'N/A' &&
-                         String(card.pricing.pokemonPriceTracker.averagePrice).includes('₹') && (
+                        {card.pricing.pokemonPriceTracker && card.pricing.pokemonPriceTracker.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && (
                           <div className={styles.pricingItem}>
                             <span className={styles.pricingSource}>PPT:</span>
                             <span className={styles.pricingValue}>
