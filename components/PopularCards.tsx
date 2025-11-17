@@ -196,23 +196,23 @@ export default function PopularCards() {
                     {card.rarity && <span className={styles.cardRarity}>{card.rarity}</span>}
                     {card.pricing && (
                       <div className={styles.cardPricing}>
-                        {card.pricing.tcgPlayer && card.pricing.tcgPlayer.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A' && (
+                        {card.pricing.tcgPlayer && card.pricing.tcgPlayer.averagePrice &&
+                         card.pricing.tcgPlayer.averagePrice !== 'N/A' &&
+                         String(card.pricing.tcgPlayer.averagePrice).includes('₹') && (
                           <div className={styles.pricingItem}>
                             <span className={styles.pricingSource}>TCG:</span>
                             <span className={styles.pricingValue}>
-                              {typeof card.pricing.tcgPlayer.averagePrice === 'number'
-                                ? `$${card.pricing.tcgPlayer.averagePrice.toFixed(2)}`
-                                : card.pricing.tcgPlayer.averagePrice}
+                              {card.pricing.tcgPlayer.averagePrice}
                             </span>
                           </div>
                         )}
-                        {card.pricing.pokemonPriceTracker && card.pricing.pokemonPriceTracker.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && (
+                        {card.pricing.pokemonPriceTracker && card.pricing.pokemonPriceTracker.averagePrice &&
+                         card.pricing.pokemonPriceTracker.averagePrice !== 'N/A' &&
+                         String(card.pricing.pokemonPriceTracker.averagePrice).includes('₹') && (
                           <div className={styles.pricingItem}>
                             <span className={styles.pricingSource}>PPT:</span>
                             <span className={styles.pricingValue}>
-                              {typeof card.pricing.pokemonPriceTracker.averagePrice === 'number'
-                                ? `$${card.pricing.pokemonPriceTracker.averagePrice.toFixed(2)}`
-                                : card.pricing.pokemonPriceTracker.averagePrice}
+                              {card.pricing.pokemonPriceTracker.averagePrice}
                             </span>
                           </div>
                         )}
