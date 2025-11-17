@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SkeletonLoader from './SkeletonLoader';
+import QuickAddButton from './QuickAddButton';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './PopularCards.module.css';
 
@@ -133,6 +134,14 @@ export default function PopularCards() {
                   onClick={() => handleCardClick(card.id)}
                 >
                   <div className={styles.cardImage}>
+                    <QuickAddButton
+                      cardData={{
+                        id: card.id,
+                        name: card.name,
+                        set: card.set,
+                      }}
+                      language="en"
+                    />
                     {card.image ? (
                       <img
                         src={`${card.image}/high.webp`}

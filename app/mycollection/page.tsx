@@ -25,10 +25,25 @@ export default function MyCollection() {
   const router = useRouter();
   const { showToast } = useToast();
   const [cards, setCards] = useState<Card[]>([]);
+  const [sortedCards, setSortedCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [user, setUser] = useState<any>(null);
   const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('collectionSortPreference') || 'recent';
+    }
+    return 'recent';
+  });
+  const [statistics, setStatistics] = useState({
+    totalCards: 0,
+    totalValue: 0,
+    mostValuableCard: null as Card | null,
+    rarityBreakdown: {} as Record<string, number>,
+    setBreakdown: {} as Record<string, number>,
+    averageValue: 0,
+  });
 
   useEffect(() => {
     checkAuth();
@@ -73,6 +88,81 @@ export default function MyCollection() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Calculate statistics whenever cards change
+  useEffect(() => {
+    if (cards.length === 0) {
+      setStatistics({
+        totalCards: 0,
+        totalValue: 0,
+        mostValuableCard: null,
+        rarityBreakdown: {},
+        setBreakdown: {},
+        averageValue: 0,
+      });
+      return;
+    }
+
+    // Calculate rarity breakdown
+    const rarityBreakdown: Record<string, number> = {};
+    cards.forEach(card => {
+      const rarity = card.rarity || 'Unknown';
+      rarityBreakdown[rarity] = (rarityBreakdown[rarity] || 0) + 1;
+    });
+
+    // Calculate set breakdown
+    const setBreakdown: Record<string, number> = {};
+    cards.forEach(card => {
+      const setName = card.set || 'Unknown';
+      setBreakdown[setName] = (setBreakdown[setName] || 0) + 1;
+    });
+
+    setStatistics({
+      totalCards: cards.length,
+      totalValue: 0, // Will implement pricing later
+      mostValuableCard: null, // Will implement pricing later
+      rarityBreakdown,
+      setBreakdown,
+      averageValue: 0, // Will implement pricing later
+    });
+  }, [cards]);
+
+  // Sort cards whenever cards or sortBy changes
+  useEffect(() => {
+    const sorted = [...cards].sort((a, b) => {
+      switch (sortBy) {
+        case 'name-asc':
+          return a.title.localeCompare(b.title);
+        case 'name-desc':
+          return b.title.localeCompare(a.title);
+        case 'set':
+          return (a.set || '').localeCompare(b.set || '');
+        case 'oldest':
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        case 'recent':
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    });
+    setSortedCards(sorted);
+  }, [cards, sortBy]);
+
+  const handleSortChange = (newSort: string) => {
+    setSortBy(newSort);
+    localStorage.setItem('collectionSortPreference', newSort);
+    showToast(`Sorted by ${getSortLabel(newSort)}`, 'info');
+  };
+
+  const getSortLabel = (sort: string) => {
+    const labels: { [key: string]: string } = {
+      'recent': 'Recently Added',
+      'oldest': 'Oldest First',
+      'name-asc': 'Name: A-Z',
+      'name-desc': 'Name: Z-A',
+      'set': 'Set Name'
+    };
+    return labels[sort] || 'Recently Added';
   };
 
   const handleDeleteCard = async (cardId: string, cardTitle: string) => {
@@ -154,8 +244,86 @@ export default function MyCollection() {
           )}
 
           {!error && cards.length > 0 && (
-            <div className={styles.grid}>
-              {cards.map((card) => {
+            <>
+              <div className={styles.statsSection}>
+                <h2 className={styles.statsTitle}>Collection Statistics</h2>
+                <div className={styles.statsGrid}>
+                  <div className={styles.statCard}>
+                    <div className={styles.statIcon}>📊</div>
+                    <div className={styles.statValue}>{statistics.totalCards}</div>
+                    <div className={styles.statLabel}>Total Cards</div>
+                  </div>
+
+                  <div className={styles.statCard}>
+                    <div className={styles.statIcon}>✨</div>
+                    <div className={styles.statValue}>
+                      {Object.keys(statistics.rarityBreakdown).length}
+                    </div>
+                    <div className={styles.statLabel}>Different Rarities</div>
+                  </div>
+
+                  <div className={styles.statCard}>
+                    <div className={styles.statIcon}>📦</div>
+                    <div className={styles.statValue}>
+                      {Object.keys(statistics.setBreakdown).length}
+                    </div>
+                    <div className={styles.statLabel}>Different Sets</div>
+                  </div>
+                </div>
+
+                <div className={styles.breakdownSection}>
+                  <div className={styles.breakdown}>
+                    <h3 className={styles.breakdownTitle}>Top Rarities</h3>
+                    <div className={styles.breakdownList}>
+                      {Object.entries(statistics.rarityBreakdown)
+                        .sort(([, a], [, b]) => b - a)
+                        .slice(0, 5)
+                        .map(([rarity, count]) => (
+                          <div key={rarity} className={styles.breakdownItem}>
+                            <span className={styles.breakdownLabel}>{rarity}</span>
+                            <span className={styles.breakdownValue}>{count} cards</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  <div className={styles.breakdown}>
+                    <h3 className={styles.breakdownTitle}>Top Sets</h3>
+                    <div className={styles.breakdownList}>
+                      {Object.entries(statistics.setBreakdown)
+                        .sort(([, a], [, b]) => b - a)
+                        .slice(0, 5)
+                        .map(([setName, count]) => (
+                          <div key={setName} className={styles.breakdownItem}>
+                            <span className={styles.breakdownLabel}>{setName}</span>
+                            <span className={styles.breakdownValue}>{count} cards</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.sortSection}>
+                <div className={styles.sortContainer}>
+                  <label htmlFor="collection-sort-select" className={styles.sortLabel}>Sort by:</label>
+                  <select
+                    id="collection-sort-select"
+                    className={styles.sortSelect}
+                    value={sortBy}
+                    onChange={(e) => handleSortChange(e.target.value)}
+                  >
+                    <option value="recent">Recently Added</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name-asc">Name: A-Z</option>
+                    <option value="name-desc">Name: Z-A</option>
+                    <option value="set">Set Name</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.grid}>
+                {sortedCards.map((card) => {
                 // Build TCGdex image URL
                 const tcgdexImageUrl = `https://assets.tcgdex.net/${card.language}/${card.setId}/${card.cardNumber}`;
                 const isDeleting = deletingCardId === card._id;
@@ -248,7 +416,8 @@ export default function MyCollection() {
                   </div>
                 );
               })}
-            </div>
+              </div>
+            </>
           )}
         </div>
       </div>

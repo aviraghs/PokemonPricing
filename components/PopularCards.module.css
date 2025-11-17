@@ -63,6 +63,7 @@
 }
 
 .cardImage {
+  position: relative;
   height: 320px;
   background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
   display: flex;
@@ -70,6 +71,12 @@
   justify-content: center;
   overflow: hidden;
   padding: 20px;
+}
+
+/* Show quick add button on card hover */
+.card:hover .cardImage :global(.quickAddBtn) {
+  opacity: 1 !important;
+  transform: scale(1) !important;
 }
 
 .cardImage img {

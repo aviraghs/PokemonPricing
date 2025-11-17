@@ -3,19 +3,26 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import { useToast } from './ToastProvider';
 import LoginModal from './LoginModal';
 import styles from './AuthButtons.module.css';
 
 export default function AuthButtons() {
   const router = useRouter();
   const { user, checkAuth, logout } = useAuth();
+  const { showToast } = useToast();
   const [showModal, setShowModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
-    setShowDropdown(false);
-    router.refresh();
+    try {
+      await logout();
+      setShowDropdown(false);
+      showToast('Successfully logged out', 'success');
+      router.refresh();
+    } catch (error) {
+      showToast('Failed to logout. Please try again.', 'error');
+    }
   };
 
   if (user) {

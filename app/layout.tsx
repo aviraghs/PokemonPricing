@@ -32,6 +32,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://api.tcgdex.net" />
         <link rel="dns-prefetch" href="https://open.er-api.com" />
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
               try {

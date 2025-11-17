@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SkeletonLoader from './SkeletonLoader';
+import QuickAddButton from './QuickAddButton';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './MarketTrends.module.css';
 
@@ -126,12 +127,20 @@ export default function MarketTrends() {
             <div className={styles.trendList}>
               {risingCards.length > 0 ? (
                 risingCards.map((card) => (
-                  <div 
-                    key={card.id} 
+                  <div
+                    key={card.id}
                     className={styles.trendItem}
                     onClick={() => handleCardClick(card.id)}
                   >
                     <div className={styles.trendCardThumbnail}>
+                      <QuickAddButton
+                        cardData={{
+                          id: card.id,
+                          name: card.name,
+                          set: card.set,
+                        }}
+                        language="en"
+                      />
                       {card.image ? (
                         <img
                           src={`${card.image}/low.webp`}
@@ -217,12 +226,20 @@ export default function MarketTrends() {
             <div className={styles.trendList}>
               {fallingCards.length > 0 ? (
                 fallingCards.map((card) => (
-                  <div 
-                    key={card.id} 
+                  <div
+                    key={card.id}
                     className={styles.trendItem}
                     onClick={() => handleCardClick(card.id)}
                   >
                     <div className={styles.trendCardThumbnail}>
+                      <QuickAddButton
+                        cardData={{
+                          id: card.id,
+                          name: card.name,
+                          set: card.set,
+                        }}
+                        language="en"
+                      />
                       {card.image ? (
                         <img
                           src={`${card.image}/low.webp`}

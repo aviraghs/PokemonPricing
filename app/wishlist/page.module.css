@@ -5,12 +5,42 @@
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 40px 20px;
 }
 
-.backBtn {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 20px;
+}
+
+.title {
+  font-family: var(--font-inter);
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+  color: var(--color-text-primary);
+}
+
+.subtitle {
+  font-size: 18px;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.backBtn,
+.clearBtn {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -22,7 +52,7 @@
   cursor: pointer;
   font-family: var(--font-inter);
   font-weight: 500;
-  margin-bottom: 32px;
+  white-space: nowrap;
   transition: all 0.3s ease;
 }
 
@@ -31,75 +61,34 @@
   transform: translateX(-4px);
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 48px;
+.clearBtn {
+  background: var(--color-danger);
+  color: white;
+  border-color: var(--color-danger);
 }
 
-.title {
-  font-size: 48px;
-  font-weight: 700;
-  letter-spacing: -1px;
-  margin-bottom: 12px;
-  color: var(--color-text-primary);
-}
-
-.subtitle {
-  font-size: 18px;
-  color: var(--color-text-muted);
-  font-weight: 400;
-}
-
-.error {
-  text-align: center;
-  padding: 80px 20px;
-  color: var(--color-danger);
-}
-
-.retryBtn {
-  margin-top: 20px;
-  padding: 14px 28px;
-  background: var(--color-accent-primary);
-  color: var(--color-bg-primary);
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-family: var(--font-inter);
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.retryBtn:hover {
+.clearBtn:hover {
+  filter: brightness(0.9);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  background: var(--color-accent-primary-hover);
 }
 
-.resultsHeader {
+.statsBar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.resultsCount {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-accent-primary);
-  padding: 12px 24px;
+  gap: 24px;
+  padding: 20px 28px;
   background: var(--color-bg-secondary);
-  border-radius: 12px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  margin-bottom: 32px;
 }
 
-.sortContainer {
+.stat {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.sortLabel {
+.statLabel {
   font-size: 14px;
   font-weight: 600;
   color: var(--color-text-secondary);
@@ -107,55 +96,44 @@
   letter-spacing: 0.5px;
 }
 
-.sortSelect {
-  padding: 10px 16px;
-  background: var(--color-bg-secondary);
-  border: 2px solid var(--color-border);
-  border-radius: 12px;
-  color: var(--color-text-primary);
-  font-size: 14px;
-  font-family: var(--font-inter);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 200px;
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-accent-primary);
 }
 
-.sortSelect:focus {
-  outline: none;
-  border-color: var(--color-accent-secondary);
-  box-shadow: 0 0 0 4px var(--color-accent-secondary-focus, rgba(124, 58, 237, 0.1));
+.loading {
+  text-align: center;
+  padding: 80px 20px;
+  font-size: 18px;
+  color: var(--color-text-muted);
 }
 
-.sortSelect:hover {
-  border-color: var(--color-accent-primary);
-}
-
-.noResults {
+.empty {
   text-align: center;
   padding: 80px 20px;
 }
 
-.noResultsIcon {
-  color: var(--color-text-muted);
-  opacity: 0.3;
+.emptyIcon {
+  font-size: 80px;
   margin-bottom: 24px;
+  opacity: 0.5;
 }
 
-.noResults h2 {
+.empty h2 {
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 12px;
   color: var(--color-text-primary);
 }
 
-.noResults p {
+.empty p {
   font-size: 16px;
   color: var(--color-text-muted);
   margin-bottom: 32px;
 }
 
-.homeBtn {
+.searchBtn {
   padding: 14px 32px;
   background: var(--color-accent-primary);
   color: var(--color-bg-primary);
@@ -167,7 +145,7 @@
   transition: all 0.3s ease;
 }
 
-.homeBtn:hover {
+.searchBtn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
   background: var(--color-accent-primary-hover);
@@ -187,6 +165,7 @@
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .card:hover {
@@ -195,7 +174,32 @@
   border-color: var(--color-accent-secondary);
 }
 
-.cardImage {
+.removeBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: var(--color-danger);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  z-index: 10;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeBtn:hover {
+  transform: scale(1.1);
+  filter: brightness(0.9);
+}
+
+.cardImageContainer {
   position: relative;
   height: 350px;
   background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
@@ -207,13 +211,7 @@
   padding: 20px;
 }
 
-/* Show quick add button on card hover */
-.card:hover .cardImage :global(.quickAddBtn) {
-  opacity: 1 !important;
-  transform: scale(1) !important;
-}
-
-.cardImage img {
+.cardImage {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -222,7 +220,6 @@
 
 .cardInfo {
   padding: 20px;
-  cursor: pointer;
   flex: 1;
 }
 
@@ -269,7 +266,7 @@
   font-size: 14px;
 }
 
-.pricingSource {
+.pricingLabel {
   color: var(--color-text-secondary);
   font-weight: 500;
 }
@@ -285,16 +282,12 @@
     font-size: 40px;
   }
 
-  .subtitle {
-    font-size: 16px;
-  }
-
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
   }
 
-  .cardImage {
+  .cardImageContainer {
     height: 300px;
   }
 }
@@ -302,21 +295,16 @@
 /* Mobile */
 @media (max-width: 768px) {
   .page {
-    padding-top: 140px;
+    padding-top: 80px;
   }
 
   .container {
     padding: 30px 16px;
   }
 
-  .backBtn {
-    padding: 10px 20px;
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
-
   .header {
-    margin-bottom: 32px;
+    flex-direction: column;
+    gap: 16px;
   }
 
   .title {
@@ -327,32 +315,30 @@
     font-size: 15px;
   }
 
-  .resultsHeader {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-  }
-
-  .resultsCount {
-    font-size: 14px;
-    padding: 10px 20px;
-    text-align: center;
-  }
-
-  .sortContainer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  .sortLabel {
-    font-size: 12px;
-  }
-
-  .sortSelect {
+  .headerActions {
     width: 100%;
-    min-width: auto;
-    font-size: 13px;
+    flex-direction: column;
+  }
+
+  .backBtn,
+  .clearBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 20px;
+  }
+
+  .statsBar {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+
+  .stat {
+    justify-content: space-between;
+  }
+
+  .statValue {
+    font-size: 20px;
   }
 
   .grid {
@@ -360,11 +346,7 @@
     gap: 16px;
   }
 
-  .card {
-    border-radius: 16px;
-  }
-
-  .cardImage {
+  .cardImageContainer {
     height: 240px;
     padding: 15px;
   }
@@ -381,44 +363,27 @@
     font-size: 13px;
   }
 
-  .cardMeta {
-    gap: 6px;
+  .emptyIcon {
+    font-size: 64px;
   }
 
-  .cardNumber,
-  .cardRarity {
-    font-size: 11px;
-    padding: 4px 10px;
+  .empty h2 {
+    font-size: 24px;
   }
 
-  .pricingItem {
-    font-size: 13px;
+  .empty p {
+    font-size: 14px;
   }
 }
 
 /* Small Mobile */
 @media (max-width: 480px) {
   .page {
-    padding-top: 80px;
+    padding-top: 70px;
   }
 
   .container {
     padding: 20px 12px;
-  }
-
-  .backBtn {
-    padding: 9px 16px;
-    font-size: 13px;
-    margin-bottom: 20px;
-  }
-
-  .backBtn svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .header {
-    margin-bottom: 24px;
   }
 
   .title {
@@ -429,21 +394,12 @@
     font-size: 14px;
   }
 
-  .resultsCount {
-    font-size: 13px;
-    padding: 8px 16px;
-  }
-
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
   }
 
-  .card {
-    border-radius: 14px;
-  }
-
-  .cardImage {
+  .cardImageContainer {
     height: 200px;
     padding: 12px;
   }
@@ -466,31 +422,7 @@
     padding: 3px 8px;
   }
 
-  .cardPricing {
-    margin-top: 10px;
-    padding-top: 10px;
-  }
-
   .pricingItem {
-    font-size: 12px;
-    margin-bottom: 4px;
-  }
-
-  .noResultsIcon {
-    width: 48px;
-    height: 48px;
-  }
-
-  .noResults h2 {
-    font-size: 24px;
-  }
-
-  .noResults p {
-    font-size: 14px;
-  }
-
-  .homeBtn {
-    padding: 12px 24px;
-    font-size: 14px;
+    font-size: 13px;
   }
 }

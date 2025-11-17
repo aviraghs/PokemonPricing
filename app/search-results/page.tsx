@@ -5,6 +5,10 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import AddToCollectionButton from '@/components/AddToCollectionButton';
+import QuickAddButton from '@/components/QuickAddButton';
+import CompareButton from '@/components/CompareButton';
+import WishlistButton from '@/components/WishlistButton';
+import { useToast } from '@/components/ToastProvider';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
 
@@ -16,6 +20,7 @@ interface Card {
   rarity: string;
   types?: string[];
   localId?: string;
+  hp?: string;
   pricing?: {
     averagePrice: string | number;
     source: string;
@@ -35,19 +40,31 @@ interface Card {
 function SearchResultsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { showToast } = useToast();
   const [cards, setCards] = useState<Card[]>([]);
+  const [sortedCards, setSortedCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sortBy, setSortBy] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('cardSortPreference') || 'relevance';
+    }
+    return 'relevance';
+  });
 
   const query = searchParams.get('q') || '';
   const set = searchParams.get('set') || '';
   const rarity = searchParams.get('rarity') || '';
   const type = searchParams.get('type') || '';
   const lang = searchParams.get('lang') || 'en';
+  const minPrice = searchParams.get('minPrice') || '';
+  const maxPrice = searchParams.get('maxPrice') || '';
+  const minHP = searchParams.get('minHP') || '';
+  const maxHP = searchParams.get('maxHP') || '';
 
   useEffect(() => {
     searchCards();
-  }, [query, set, rarity, type, lang]);
+  }, [query, set, rarity, type, lang, minPrice, maxPrice, minHP, maxHP]);
 
   const searchCards = async () => {
     setLoading(true);
@@ -72,14 +89,100 @@ function SearchResultsContent() {
         throw new Error('Search failed');
       }
 
-      const data = await response.json();
+      let data = await response.json();
+
+      // Apply client-side advanced filters
+      if (minPrice || maxPrice || minHP || maxHP) {
+        data = data.filter((card: Card) => {
+          // Price filtering
+          if (minPrice || maxPrice) {
+            const cardPrice = card.pricing?.tcgPlayer?.averagePrice || card.pricing?.pokemonPriceTracker?.averagePrice;
+            const price = typeof cardPrice === 'number' ? cardPrice : 0;
+
+            if (minPrice && price < parseFloat(minPrice)) return false;
+            if (maxPrice && price > parseFloat(maxPrice)) return false;
+          }
+
+          // HP filtering
+          if (minHP || maxHP) {
+            const hp = card.hp ? parseInt(card.hp) : 0;
+
+            if (minHP && hp < parseInt(minHP)) return false;
+            if (maxHP && hp > parseInt(maxHP)) return false;
+          }
+
+          return true;
+        });
+      }
+
       setCards(data);
+
+      // Show success toast with result count
+      if (data.length === 0) {
+        showToast('No cards found matching your search', 'info');
+      } else {
+        showToast(`Found ${data.length} card${data.length === 1 ? '' : 's'}`, 'success');
+      }
     } catch (err) {
-      setError('Failed to search cards. Please try again.');
+      const errorMsg = 'Failed to search cards. Please try again.';
+      setError(errorMsg);
+      showToast(errorMsg, 'error');
       console.error('Search error:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Sort cards whenever cards or sortBy changes
+  useEffect(() => {
+    const sorted = [...cards].sort((a, b) => {
+      const getPriceValue = (card: Card) => {
+        const price = card.pricing?.tcgPlayer?.averagePrice || card.pricing?.pokemonPriceTracker?.averagePrice;
+        return typeof price === 'number' ? price : 0;
+      };
+
+      switch (sortBy) {
+        case 'price-high':
+          return getPriceValue(b) - getPriceValue(a);
+        case 'price-low':
+          return getPriceValue(a) - getPriceValue(b);
+        case 'name-asc':
+          return a.name.localeCompare(b.name);
+        case 'name-desc':
+          return b.name.localeCompare(a.name);
+        case 'rarity':
+          const rarityOrder: { [key: string]: number } = {
+            'common': 1,
+            'uncommon': 2,
+            'rare': 3,
+            'ultra rare': 4,
+            'secret rare': 5
+          };
+          return (rarityOrder[b.rarity?.toLowerCase()] || 0) - (rarityOrder[a.rarity?.toLowerCase()] || 0);
+        case 'relevance':
+        default:
+          return 0; // Keep original order
+      }
+    });
+    setSortedCards(sorted);
+  }, [cards, sortBy]);
+
+  const handleSortChange = (newSort: string) => {
+    setSortBy(newSort);
+    localStorage.setItem('cardSortPreference', newSort);
+    showToast(`Sorted by ${getSortLabel(newSort)}`, 'info');
+  };
+
+  const getSortLabel = (sort: string) => {
+    const labels: { [key: string]: string } = {
+      'relevance': 'Relevance',
+      'price-high': 'Price: High to Low',
+      'price-low': 'Price: Low to High',
+      'name-asc': 'Name: A-Z',
+      'name-desc': 'Name: Z-A',
+      'rarity': 'Rarity: High to Low'
+    };
+    return labels[sort] || 'Relevance';
   };
 
   const handleCardClick = (cardId: string) => {
@@ -120,8 +223,28 @@ function SearchResultsContent() {
 
           {!loading && !error && (
             <>
-              <div className={styles.resultsCount}>
-                Found {cards.length} cards
+              <div className={styles.resultsHeader}>
+                <div className={styles.resultsCount}>
+                  Found {cards.length} cards
+                </div>
+                {cards.length > 0 && (
+                  <div className={styles.sortContainer}>
+                    <label htmlFor="sort-select" className={styles.sortLabel}>Sort by:</label>
+                    <select
+                      id="sort-select"
+                      className={styles.sortSelect}
+                      value={sortBy}
+                      onChange={(e) => handleSortChange(e.target.value)}
+                    >
+                      <option value="relevance">Relevance</option>
+                      <option value="price-high">Price: High to Low</option>
+                      <option value="price-low">Price: Low to High</option>
+                      <option value="name-asc">Name: A-Z</option>
+                      <option value="name-desc">Name: Z-A</option>
+                      <option value="rarity">Rarity: High to Low</option>
+                    </select>
+                  </div>
+                )}
               </div>
 
               {cards.length === 0 ? (
@@ -138,12 +261,23 @@ function SearchResultsContent() {
                 </div>
               ) : (
                 <div className={styles.grid}>
-                  {cards.map((card) => (
+                  {sortedCards.map((card) => (
                     <div
                       key={card.id}
                       className={styles.card}
                     >
                       <div className={styles.cardImage} onClick={() => handleCardClick(card.id)}>
+                        <QuickAddButton
+                          cardData={{
+                            id: card.id,
+                            name: card.name,
+                            set: {
+                              id: card.set?.id || '',
+                              name: card.set?.name || 'Unknown Set',
+                            },
+                          }}
+                          language={lang}
+                        />
                         {card.image ? (
                           <img
                             src={`${card.image}/high.webp`}
@@ -212,18 +346,46 @@ function SearchResultsContent() {
                           </div>
                         )}
                       </div>
-                      <AddToCollectionButton
-                        cardData={{
-                          id: card.id,
-                          name: card.name,
-                          set: {
-                            id: card.set?.id || '',
-                            name: card.set?.name || 'Unknown Set',
-                          },
-                          localId: card.localId || '',
-                        }}
-                        language={lang}
-                      />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '0 16px 16px' }}>
+                        <AddToCollectionButton
+                          cardData={{
+                            id: card.id,
+                            name: card.name,
+                            set: {
+                              id: card.set?.id || '',
+                              name: card.set?.name || 'Unknown Set',
+                            },
+                            localId: card.localId || '',
+                          }}
+                          language={lang}
+                        />
+                        <CompareButton
+                          cardData={{
+                            id: card.id,
+                            name: card.name,
+                            image: card.image,
+                            set: card.set,
+                            rarity: card.rarity,
+                            types: card.types,
+                            localId: card.localId,
+                            hp: card.hp,
+                            pricing: card.pricing,
+                          }}
+                        />
+                        <WishlistButton
+                          cardData={{
+                            id: card.id,
+                            name: card.name,
+                            image: card.image,
+                            set: card.set,
+                            rarity: card.rarity,
+                            types: card.types,
+                            localId: card.localId,
+                            hp: card.hp,
+                            pricing: card.pricing,
+                          }}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>

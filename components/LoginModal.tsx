@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useToast } from './ToastProvider';
 import styles from './LoginModal.module.css';
 
 interface LoginModalProps {
@@ -9,6 +10,7 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ onClose, onSuccess }: LoginModalProps) {
+  const { showToast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -51,13 +53,18 @@ export default function LoginModal({ onClose, onSuccess }: LoginModalProps) {
       const data = await response.json();
 
       if (response.ok) {
+        showToast(`Welcome back, ${username}!`, 'success');
         onSuccess();
         onClose();
       } else {
-        setError(data.error || 'Login failed');
+        const errorMsg = data.error || 'Login failed';
+        setError(errorMsg);
+        showToast(errorMsg, 'error');
       }
     } catch (err) {
-      setError('Connection error. Please try again.');
+      const errorMsg = 'Connection error. Please try again.';
+      setError(errorMsg);
+      showToast(errorMsg, 'error');
     } finally {
       setLoading(false);
     }
@@ -78,13 +85,18 @@ export default function LoginModal({ onClose, onSuccess }: LoginModalProps) {
       const data = await response.json();
 
       if (response.ok) {
+        showToast(`Account created! Welcome, ${username}!`, 'success');
         onSuccess();
         onClose();
       } else {
-        setError(data.error || 'Registration failed');
+        const errorMsg = data.error || 'Registration failed';
+        setError(errorMsg);
+        showToast(errorMsg, 'error');
       }
     } catch (err) {
-      setError('Connection error. Please try again.');
+      const errorMsg = 'Connection error. Please try again.';
+      setError(errorMsg);
+      showToast(errorMsg, 'error');
     } finally {
       setLoading(false);
     }

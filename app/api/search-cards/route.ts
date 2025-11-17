@@ -1038,16 +1038,42 @@ async function fetchEbayData(title: string, cardNumber: string | null, set: stri
 
 export async function POST(request: NextRequest) {
   try {
-    const {
-      query,
-      set,
-      rarity,
-      type,
-      language = 'en',
-      includePricing = false,
-      refresh = false,
-      useJustTCGFallback = false, // JustTCG fallback disabled by default (main page only shows TCGdex cards)
-    } = await request.json();
+    // Check if request has a body and content type is JSON
+    const contentType = request.headers.get('content-type');
+    let query, set, rarity, type, language = 'en', includePricing = false, refresh = false, useJustTCGFallback = false;
+    
+    if (!contentType || !contentType.includes('application/json')) {
+      console.log('⚠️  Request missing JSON content-type header or has no content-type');
+      // Provide default values
+      query = '';
+      set = '';
+      rarity = '';
+      type = '';
+      useJustTCGFallback = false; // JustTCG fallback disabled by default (main page only shows TCGdex cards)
+    } else {
+      // Check if the request body is empty
+      const contentLength = request.headers.get('content-length');
+      if (!contentLength || parseInt(contentLength) === 0) {
+        console.log('⚠️  Request has JSON content-type but no body content');
+        query = '';
+        set = '';
+        rarity = '';
+        type = '';
+        useJustTCGFallback = false; // JustTCG fallback disabled by default (main page only shows TCGdex cards)
+      } else {
+        const requestBody = await request.json();
+        ({ 
+          query = '',
+          set = '',
+          rarity = '',
+          type = '',
+          language = 'en',
+          includePricing = false,
+          refresh = false,
+          useJustTCGFallback = false, // JustTCG fallback disabled by default (main page only shows TCGdex cards)
+        } = requestBody);
+      }
+    }
 
     console.log(`\n${'='.repeat(50)}`);
     console.log(`🔍 CARD SEARCH REQUEST`);
@@ -1427,10 +1453,20 @@ export async function POST(request: NextRequest) {
     }
   } catch (err) {
     console.error('❌ Card search error:', err);
+    // More specific error handling for JSON parsing errors
+    if (err instanceof SyntaxError && err.message.includes('JSON')) {
+      return NextResponse.json(
+        {
+          error: 'Invalid JSON in request body',
+          details: 'The request body contains malformed JSON or is empty',
+        },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       {
         error: 'Card search failed',
-        details: err instanceof Error ? err instanceof Error ? err.message : String(err) : 'Unknown error',
+        details: err instanceof Error ? err.message : String(err),
       },
       { status: 500 }
     );

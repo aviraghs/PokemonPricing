@@ -11,6 +11,8 @@ export default function StickyHeader() {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const [compareCount, setCompareCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,6 +22,32 @@ export default function StickyHeader() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    // Load initial counts
+    updateCounts();
+
+    // Listen for updates
+    const handleUpdate = () => updateCounts();
+    window.addEventListener('compareUpdated', handleUpdate);
+    window.addEventListener('wishlistUpdated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('compareUpdated', handleUpdate);
+      window.removeEventListener('wishlistUpdated', handleUpdate);
+    };
+  }, []);
+
+  const updateCounts = () => {
+    try {
+      const compareCards = localStorage.getItem('compareCards');
+      const wishlistCards = localStorage.getItem('wishlist');
+      setCompareCount(compareCards ? JSON.parse(compareCards).length : 0);
+      setWishlistCount(wishlistCards ? JSON.parse(wishlistCards).length : 0);
+    } catch (error) {
+      console.error('Failed to update counts:', error);
+    }
+  };
 
   const handleSearch = () => {
     if (searchInput.trim()) {
@@ -51,6 +79,26 @@ export default function StickyHeader() {
       </div>
 
       <div className={styles.headerRight}>
+        <button
+          className={styles.navBtn}
+          onClick={() => router.push('/compare')}
+          title="Card Comparison"
+        >
+          <span className={styles.navIcon}>⚖️</span>
+          <span className={styles.navLabel}>Compare</span>
+          {compareCount > 0 && <span className={styles.badge}>{compareCount}</span>}
+        </button>
+
+        <button
+          className={styles.navBtn}
+          onClick={() => router.push('/wishlist')}
+          title="Wishlist"
+        >
+          <span className={styles.navIcon}>⭐</span>
+          <span className={styles.navLabel}>Wishlist</span>
+          {wishlistCount > 0 && <span className={styles.badge}>{wishlistCount}</span>}
+        </button>
+
         <ThemeToggle />
         <LanguageSelector />
         <AuthButtons />
