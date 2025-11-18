@@ -8,6 +8,7 @@ import AddToCollectionButton from '@/components/AddToCollectionButton';
 import QuickAddButton from '@/components/QuickAddButton';
 import CompareButton from '@/components/CompareButton';
 import WishlistButton from '@/components/WishlistButton';
+import SealedProductCard from '@/components/SealedProductCard';
 import { useToast } from '@/components/ToastProvider';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
@@ -61,17 +62,21 @@ function SearchResultsContent() {
   const maxPrice = searchParams.get('maxPrice') || '';
   const minHP = searchParams.get('minHP') || '';
   const maxHP = searchParams.get('maxHP') || '';
+  const productType = searchParams.get('productType') || 'cards';
 
   useEffect(() => {
     searchCards();
-  }, [query, set, rarity, type, lang, minPrice, maxPrice, minHP, maxHP]);
+  }, [query, set, rarity, type, lang, minPrice, maxPrice, minHP, maxHP, productType]);
 
   const searchCards = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch('/api/search-cards', {
+      // Use different API endpoint based on product type
+      const apiEndpoint = productType === 'sealed' ? '/api/sealed-products' : '/api/search-cards';
+
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -81,7 +86,8 @@ function SearchResultsContent() {
           type,
           language: lang,
           includePricing: true,
-          useJustTCGFallback: true, // Enable JustTCG fallback for search results
+          useJustTCGFallback: productType === 'cards', // Only for cards
+          productType, // Filter for cards or sealed products
         }),
       });
 
@@ -119,9 +125,10 @@ function SearchResultsContent() {
 
       // Show success toast with result count
       if (data.length === 0) {
-        showToast('No cards found matching your search', 'info');
+        showToast(`No ${productType === 'sealed' ? 'sealed products' : 'cards'} found matching your search`, 'info');
       } else {
-        showToast(`Found ${data.length} card${data.length === 1 ? '' : 's'}`, 'success');
+        const itemType = productType === 'sealed' ? 'product' : 'card';
+        showToast(`Found ${data.length} ${itemType}${data.length === 1 ? '' : 's'}`, 'success');
       }
     } catch (err) {
       const errorMsg = 'Failed to search cards. Please try again.';
@@ -253,7 +260,7 @@ function SearchResultsContent() {
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.35-4.35"></path>
                   </svg>
-                  <h2>No cards found</h2>
+                  <h2>No {productType === 'sealed' ? 'sealed products' : 'cards'} found</h2>
                   <p>Try adjusting your search criteria</p>
                   <button onClick={() => router.push('/')} className={styles.homeBtn}>
                     Back to Home
@@ -261,7 +268,14 @@ function SearchResultsContent() {
                 </div>
               ) : (
                 <div className={styles.grid}>
-                  {sortedCards.map((card) => (
+                  {productType === 'sealed' ? (
+                    // Render sealed products
+                    sortedCards.map((product: any) => (
+                      <SealedProductCard key={product.id} product={product} />
+                    ))
+                  ) : (
+                    // Render regular cards
+                    sortedCards.map((card) => (
                     <div
                       key={card.id}
                       className={styles.card}
@@ -286,22 +300,27 @@ function SearchResultsContent() {
                               // Fallback to low quality TCGdex image
                               if (e.currentTarget.src.includes('/high.webp')) {
                                 e.currentTarget.src = `${card.image}/low.webp`;
-                              } else {
-                                // If low.webp also fails, try pokefetch.info
-                                const pokefetchUrl = getFallbackImage(card.localId, card.set?.id, card.name, card.set?.name);
-                                if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
-                                  e.currentTarget.src = pokefetchUrl;
+                              } else if (e.currentTarget.src.includes('/low.webp')) {
+                                // Try set logo as fallback
+                                const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
+                                if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                                  e.currentTarget.src = setLogoUrl;
                                 } else {
-                                  // If all fail, show card back placeholder
                                   e.currentTarget.src = '/card-back.svg';
                                 }
+                              } else if (e.currentTarget.src.includes('logo.png')) {
+                                // Set logo failed, use card back
+                                e.currentTarget.src = '/card-back.svg';
+                              } else {
+                                // If all fail, show card back placeholder
+                                e.currentTarget.src = '/card-back.svg';
                               }
                             }}
                           />
                         ) : (
-                          // If no TCGdex image, try pokefetch.info directly
+                          // If no TCGdex image, try set logo directly
                           <img
-                            src={getFallbackImage(card.localId, card.set?.id, card.name, card.set?.name) || '/card-back.svg'}
+                            src={card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : '/card-back.svg'}
                             alt={card.name}
                             onError={(e) => {
                               e.currentTarget.src = '/card-back.svg';
@@ -387,7 +406,8 @@ function SearchResultsContent() {
                         />
                       </div>
                     </div>
-                  ))}
+                  ))
+                  )}
                 </div>
               )}
             </>

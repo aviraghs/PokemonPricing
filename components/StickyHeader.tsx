@@ -13,6 +13,7 @@ export default function StickyHeader() {
   const [searchInput, setSearchInput] = useState('');
   const [compareCount, setCompareCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [productType, setProductType] = useState<'cards' | 'sealed'>('cards');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,17 +25,25 @@ export default function StickyHeader() {
   }, []);
 
   useEffect(() => {
-    // Load initial counts
+    // Load initial counts and product type
     updateCounts();
+    const savedType = localStorage.getItem('productType') as 'cards' | 'sealed' | null;
+    if (savedType) {
+      setProductType(savedType);
+    }
 
     // Listen for updates
     const handleUpdate = () => updateCounts();
+    const handleProductTypeChange = (event: any) => setProductType(event.detail);
+
     window.addEventListener('compareUpdated', handleUpdate);
     window.addEventListener('wishlistUpdated', handleUpdate);
+    window.addEventListener('productTypeChanged', handleProductTypeChange);
 
     return () => {
       window.removeEventListener('compareUpdated', handleUpdate);
       window.removeEventListener('wishlistUpdated', handleUpdate);
+      window.removeEventListener('productTypeChanged', handleProductTypeChange);
     };
   }, []);
 
@@ -52,7 +61,7 @@ export default function StickyHeader() {
   const handleSearch = () => {
     if (searchInput.trim()) {
       const lang = localStorage.getItem('preferredLanguage') || 'en';
-      router.push(`/search-results?q=${encodeURIComponent(searchInput)}&lang=${lang}`);
+      router.push(`/search-results?q=${encodeURIComponent(searchInput)}&lang=${lang}&productType=${productType}`);
     }
   };
 
@@ -70,7 +79,7 @@ export default function StickyHeader() {
           <input
             type="text"
             className={styles.searchInput}
-            placeholder="Search cards..."
+            placeholder={productType === 'sealed' ? 'Search sealed products...' : 'Search cards...'}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -97,6 +106,15 @@ export default function StickyHeader() {
           <span className={styles.navIcon}>⭐</span>
           <span className={styles.navLabel}>Wishlist</span>
           {wishlistCount > 0 && <span className={styles.badge}>{wishlistCount}</span>}
+        </button>
+
+        <button
+          className={styles.navBtn}
+          onClick={() => router.push('/sell')}
+          title="Sell Your Card"
+        >
+          <span className={styles.navIcon}>💰</span>
+          <span className={styles.navLabel}>Sell</span>
         </button>
 
         <ThemeToggle />

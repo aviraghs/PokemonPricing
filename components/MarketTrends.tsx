@@ -148,43 +148,31 @@ export default function MarketTrends() {
                           style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
                           onError={(e) => {
                             if (e.currentTarget.src.includes('/low.webp')) {
-                              // Try pokefetch.info as fallback
-                              const pokefetchUrl = getFallbackImage(
-                                card.id?.split('-')[1],
-                                card.set?.id,
-                                card.name,
-                                card.set?.name
-                              );
-                              if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
-                                e.currentTarget.src = pokefetchUrl;
+                              // Try set logo as fallback
+                              const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
+                              if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                                e.currentTarget.src = setLogoUrl;
                               } else {
                                 e.currentTarget.src = '/card-back.svg';
                               }
+                            } else if (e.currentTarget.src.includes('logo.png')) {
+                              // Set logo failed, use card back
+                              e.currentTarget.src = '/card-back.svg';
+                            } else {
+                              e.currentTarget.src = '/card-back.svg';
                             }
                           }}
                         />
                       ) : (
-                        // If no TCGdex image, try pokefetch.info directly
-                        (() => {
-                          const pokefetchUrl = getFallbackImage(
-                            card.id?.split('-')[1],
-                            card.set?.id,
-                            card.name,
-                            card.set?.name
-                          );
-                          return pokefetchUrl ? (
-                            <img
-                              src={pokefetchUrl}
-                              alt={card.name}
-                              style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
-                              onError={(e) => {
-                                e.currentTarget.src = '/card-back.svg';
-                              }}
-                            />
-                          ) : (
-                            <img src="/card-back.svg" alt="Pokemon Card Back" style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }} />
-                          );
-                        })()
+                        // If no TCGdex image, try set logo directly
+                        <img
+                          src={card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : '/card-back.svg'}
+                          alt={card.name}
+                          style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
+                          onError={(e) => {
+                            e.currentTarget.src = '/card-back.svg';
+                          }}
+                        />
                       )}
                     </div>
                     <div className={styles.trendCardInfo}>
@@ -247,43 +235,31 @@ export default function MarketTrends() {
                           style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
                           onError={(e) => {
                             if (e.currentTarget.src.includes('/low.webp')) {
-                              // Try pokefetch.info as fallback
-                              const pokefetchUrl = getFallbackImage(
-                                card.id?.split('-')[1],
-                                card.set?.id,
-                                card.name,
-                                card.set?.name
-                              );
-                              if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
-                                e.currentTarget.src = pokefetchUrl;
+                              // Try set logo as fallback
+                              const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
+                              if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                                e.currentTarget.src = setLogoUrl;
                               } else {
                                 e.currentTarget.src = '/card-back.svg';
                               }
+                            } else if (e.currentTarget.src.includes('logo.png')) {
+                              // Set logo failed, use card back
+                              e.currentTarget.src = '/card-back.svg';
+                            } else {
+                              e.currentTarget.src = '/card-back.svg';
                             }
                           }}
                         />
                       ) : (
-                        // If no TCGdex image, try pokefetch.info directly
-                        (() => {
-                          const pokefetchUrl = getFallbackImage(
-                            card.id?.split('-')[1],
-                            card.set?.id,
-                            card.name,
-                            card.set?.name
-                          );
-                          return pokefetchUrl ? (
-                            <img
-                              src={pokefetchUrl}
-                              alt={card.name}
-                              style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
-                              onError={(e) => {
-                                e.currentTarget.src = '/card-back.svg';
-                              }}
-                            />
-                          ) : (
-                            <img src="/card-back.svg" alt="Pokemon Card Back" style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }} />
-                          );
-                        })()
+                        // If no TCGdex image, try set logo directly
+                        <img
+                          src={card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : '/card-back.svg'}
+                          alt={card.name}
+                          style={{ width: '50px', height: '70px', objectFit: 'contain', borderRadius: '4px' }}
+                          onError={(e) => {
+                            e.currentTarget.src = '/card-back.svg';
+                          }}
+                        />
                       )}
                     </div>
                     <div className={styles.trendCardInfo}>

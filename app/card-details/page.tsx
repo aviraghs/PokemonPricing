@@ -138,6 +138,20 @@ interface CardData {
   };
 }
 
+interface CardListing {
+  id: string;
+  cardId: string;
+  cardName: string;
+  cardSet?: string;
+  sellerName: string;
+  sellerContact: string;
+  price: number;
+  condition: string;
+  description: string;
+  imageFile?: string;
+  createdAt: string;
+}
+
 function CardDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -145,6 +159,7 @@ function CardDetailsContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showEbayListings, setShowEbayListings] = useState(false);
+  const [listings, setListings] = useState<CardListing[]>([]);
 
   // Helper to get reverse holofoil data (handles both dash and camelCase formats)
   const getReverseHolofoilData = () => {
@@ -189,8 +204,23 @@ function CardDetailsContent() {
   useEffect(() => {
     if (cardId) {
       loadCardDetails();
+      loadListings();
     }
   }, [cardId, lang]);
+
+  const loadListings = () => {
+    try {
+      const allListings = JSON.parse(localStorage.getItem('cardListings') || '[]');
+      // Filter listings for this card by ID or name
+      const cardListings = allListings.filter((listing: CardListing) =>
+        listing.cardId === cardId ||
+        listing.cardName.toLowerCase() === cardData?.name.toLowerCase()
+      );
+      setListings(cardListings);
+    } catch (error) {
+      console.error('Failed to load listings:', error);
+    }
+  };
 
   const loadCardDetails = async () => {
     setLoading(true);
@@ -504,22 +534,27 @@ function CardDetailsContent() {
                       // Fallback to low quality TCGdex image
                       if (e.currentTarget.src.includes('/high.webp')) {
                         e.currentTarget.src = `${cardData.image}/low.webp`;
-                      } else {
-                        // If low.webp also fails, try pokefetch.info
-                        const pokefetchUrl = getFallbackImage(cardData.localId, cardData.set?.id, cardData.name, cardData.set?.name);
-                        if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
-                          e.currentTarget.src = pokefetchUrl;
+                      } else if (e.currentTarget.src.includes('/low.webp')) {
+                        // Try set logo as fallback
+                        const setLogoUrl = cardData.set?.id ? `https://images.pokemontcg.io/${cardData.set.id}/logo.png` : null;
+                        if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                          e.currentTarget.src = setLogoUrl;
                         } else {
-                          // If all fail, show card back placeholder
                           e.currentTarget.src = '/card-back.svg';
                         }
+                      } else if (e.currentTarget.src.includes('logo.png')) {
+                        // Set logo failed, use card back
+                        e.currentTarget.src = '/card-back.svg';
+                      } else {
+                        // If all fail, show card back placeholder
+                        e.currentTarget.src = '/card-back.svg';
                       }
                     }}
                   />
                 ) : (
-                  // If no TCGdex image, try pokefetch.info directly
+                  // If no TCGdex image, try set logo directly
                   <img
-                    src={getFallbackImage(cardData.localId, cardData.set?.id, cardData.name, cardData.set?.name) || '/card-back.svg'}
+                    src={cardData.set?.id ? `https://images.pokemontcg.io/${cardData.set.id}/logo.png` : '/card-back.svg'}
                     alt={cardData.name}
                     className={styles.cardImage}
                     onError={(e) => {
@@ -967,6 +1002,57 @@ function CardDetailsContent() {
                 <div className={styles.section}>
                   <h3 className={styles.sectionTitle}>Description</h3>
                   <p className={styles.description}>{cardData.description}</p>
+                </div>
+              )}
+
+              {/* User Listings */}
+              {listings.length > 0 && (
+                <div className={styles.section}>
+                  <div className={styles.listingsHeader}>
+                    <h3 className={styles.sectionTitle}>Available for Sale</h3>
+                    <span className={styles.listingsCount}>{listings.length} listing{listings.length !== 1 ? 's' : ''}</span>
+                  </div>
+                  <div className={styles.listingsGrid}>
+                    {listings.map((listing) => (
+                      <div key={listing.id} className={styles.listingCard}>
+                        {listing.imageFile && (
+                          <div className={styles.listingImageWrapper}>
+                            <img
+                              src={listing.imageFile}
+                              alt={listing.cardName}
+                              className={styles.listingImage}
+                            />
+                          </div>
+                        )}
+                        <div className={styles.listingDetails}>
+                          <div className={styles.listingHeader}>
+                            <span className={styles.listingPrice}>₹{listing.price.toFixed(2)}</span>
+                            <span className={styles.listingCondition}>{listing.condition}</span>
+                          </div>
+                          <div className={styles.listingInfo}>
+                            <div className={styles.listingRow}>
+                              <span className={styles.listingLabel}>Seller:</span>
+                              <span className={styles.listingValue}>{listing.sellerName}</span>
+                            </div>
+                            <div className={styles.listingRow}>
+                              <span className={styles.listingLabel}>Contact:</span>
+                              <span className={styles.listingValue}>{listing.sellerContact}</span>
+                            </div>
+                            {listing.description && (
+                              <div className={styles.listingDescription}>
+                                {listing.description}
+                              </div>
+                            )}
+                          </div>
+                          <div className={styles.listingFooter}>
+                            <span className={styles.listingDate}>
+                              Listed {new Date(listing.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

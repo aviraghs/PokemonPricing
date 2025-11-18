@@ -190,13 +190,19 @@ export default function ComparePage() {
                         onError={(e) => {
                           if (e.currentTarget.src.includes('/high.webp')) {
                             e.currentTarget.src = `${card.image}/low.webp`;
-                          } else {
-                            const fallback = getFallbackImage(card.localId, card.set?.id, card.name, card.set?.name);
-                            if (fallback && e.currentTarget.src !== fallback) {
-                              e.currentTarget.src = fallback;
+                          } else if (e.currentTarget.src.includes('/low.webp')) {
+                            // Try set logo as fallback
+                            const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
+                            if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                              e.currentTarget.src = setLogoUrl;
                             } else {
                               e.currentTarget.src = '/card-back.svg';
                             }
+                          } else if (e.currentTarget.src.includes('logo.png')) {
+                            // Set logo failed, use card back
+                            e.currentTarget.src = '/card-back.svg';
+                          } else {
+                            e.currentTarget.src = '/card-back.svg';
                           }
                         }}
                       />

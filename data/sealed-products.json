@@ -1,0 +1,302 @@
+[
+  {
+    "id": "sv08-bb",
+    "name": "Surging Sparks Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "sv08",
+      "name": "Surging Sparks",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2024-11-08",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/sv08/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["surging sparks", "booster box", "sv08", "pikachu"]
+  },
+  {
+    "id": "sv08-etb",
+    "name": "Surging Sparks Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "sv08",
+      "name": "Surging Sparks",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2024-11-08",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/sv08/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["surging sparks", "elite trainer box", "etb", "sv08"]
+  },
+  {
+    "id": "sv07-bb",
+    "name": "Stellar Crown Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "sv07",
+      "name": "Stellar Crown",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2024-09-13",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/sv07/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["stellar crown", "booster box", "sv07", "terapagos"]
+  },
+  {
+    "id": "sv07-etb",
+    "name": "Stellar Crown Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "sv07",
+      "name": "Stellar Crown",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2024-09-13",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/sv07/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["stellar crown", "elite trainer box", "etb", "sv07"]
+  },
+  {
+    "id": "sv06-bb",
+    "name": "Twilight Masquerade Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "sv06",
+      "name": "Twilight Masquerade",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2024-05-24",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/sv06/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["twilight masquerade", "booster box", "sv06", "ogerpon"]
+  },
+  {
+    "id": "sv06-etb",
+    "name": "Twilight Masquerade Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "sv06",
+      "name": "Twilight Masquerade",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2024-05-24",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/sv06/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["twilight masquerade", "elite trainer box", "etb", "sv06"]
+  },
+  {
+    "id": "sv05-bb",
+    "name": "Temporal Forces Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "sv05",
+      "name": "Temporal Forces",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2024-03-22",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/sv05/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["temporal forces", "booster box", "sv05", "iron leaves", "walking wake"]
+  },
+  {
+    "id": "sv05-etb",
+    "name": "Temporal Forces Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "sv05",
+      "name": "Temporal Forces",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2024-03-22",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/sv05/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["temporal forces", "elite trainer box", "etb", "sv05"]
+  },
+  {
+    "id": "sv04-bb",
+    "name": "Paradox Rift Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "sv04",
+      "name": "Paradox Rift",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2023-11-03",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/sv04/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["paradox rift", "booster box", "sv04", "roaring moon", "iron valiant"]
+  },
+  {
+    "id": "sv04-etb",
+    "name": "Paradox Rift Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "sv04",
+      "name": "Paradox Rift",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2023-11-03",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/sv04/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["paradox rift", "elite trainer box", "etb", "sv04"]
+  },
+  {
+    "id": "sv03-bb",
+    "name": "Obsidian Flames Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "sv03",
+      "name": "Obsidian Flames",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2023-08-11",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/sv03/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["obsidian flames", "booster box", "sv03", "charizard"]
+  },
+  {
+    "id": "sv03-etb",
+    "name": "Obsidian Flames Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "sv03",
+      "name": "Obsidian Flames",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2023-08-11",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/sv03/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["obsidian flames", "elite trainer box", "etb", "sv03", "charizard"]
+  },
+  {
+    "id": "sv02-bb",
+    "name": "Paldea Evolved Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "sv02",
+      "name": "Paldea Evolved",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2023-06-09",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/sv02/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["paldea evolved", "booster box", "sv02", "iono"]
+  },
+  {
+    "id": "sv02-etb",
+    "name": "Paldea Evolved Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "sv02",
+      "name": "Paldea Evolved",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2023-06-09",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/sv02/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["paldea evolved", "elite trainer box", "etb", "sv02"]
+  },
+  {
+    "id": "sv01-bb",
+    "name": "Scarlet & Violet Base Set Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "sv01",
+      "name": "Scarlet & Violet",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2023-03-31",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/sv01/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["scarlet violet", "base set", "booster box", "sv01", "miraidon", "koraidon"]
+  },
+  {
+    "id": "sv01-etb",
+    "name": "Scarlet & Violet Base Set Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "sv01",
+      "name": "Scarlet & Violet",
+      "series": "Scarlet & Violet"
+    },
+    "releaseDate": "2023-03-31",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/sv01/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["scarlet violet", "base set", "elite trainer box", "etb", "sv01"]
+  },
+  {
+    "id": "swsh12-bb",
+    "name": "Silver Tempest Booster Box",
+    "productType": "Booster Box",
+    "set": {
+      "id": "swsh12",
+      "name": "Silver Tempest",
+      "series": "Sword & Shield"
+    },
+    "releaseDate": "2022-11-11",
+    "contents": "36 booster packs",
+    "image": "https://images.pokemontcg.io/swsh12/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["silver tempest", "booster box", "swsh12", "lugia"]
+  },
+  {
+    "id": "swsh12-etb",
+    "name": "Silver Tempest Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "swsh12",
+      "name": "Silver Tempest",
+      "series": "Sword & Shield"
+    },
+    "releaseDate": "2022-11-11",
+    "contents": "9 booster packs, 65 card sleeves, damage counters, condition markers, coins, dice",
+    "image": "https://images.pokemontcg.io/swsh12/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["silver tempest", "elite trainer box", "etb", "swsh12"]
+  },
+  {
+    "id": "crown-zenith-etb",
+    "name": "Crown Zenith Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "swsh12pt5",
+      "name": "Crown Zenith",
+      "series": "Sword & Shield"
+    },
+    "releaseDate": "2023-01-20",
+    "contents": "10 booster packs, 65 card sleeves, damage counters",
+    "image": "https://images.pokemontcg.io/swsh12pt5/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["crown zenith", "elite trainer box", "etb", "swsh12pt5", "special set"]
+  },
+  {
+    "id": "celebrations-etb",
+    "name": "Celebrations Elite Trainer Box",
+    "productType": "Elite Trainer Box",
+    "set": {
+      "id": "cel25",
+      "name": "Celebrations",
+      "series": "Sword & Shield"
+    },
+    "releaseDate": "2021-10-08",
+    "contents": "10 booster packs, accessories, special promo",
+    "image": "https://images.pokemontcg.io/cel25/logo.png",
+    "category": "Sealed Product",
+    "searchTerms": ["celebrations", "25th anniversary", "elite trainer box", "etb", "cel25"]
+  }
+]

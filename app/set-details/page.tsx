@@ -203,44 +203,30 @@ function SetDetailsContent() {
                             if (e.currentTarget.src.includes('/high.webp')) {
                               e.currentTarget.src = `${card.image}/low.webp`;
                             } else if (e.currentTarget.src.includes('/low.webp')) {
-                              // Try pokefetch.info as fallback
-                              const pokefetchUrl = getFallbackImage(
-                                card.localId,
-                                setData.id,
-                                card.name,
-                                setData.name
-                              );
-                              if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
-                                e.currentTarget.src = pokefetchUrl;
+                              // Try set logo as fallback
+                              const setLogoUrl = setData.id ? `https://images.pokemontcg.io/${setData.id}/logo.png` : null;
+                              if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                                e.currentTarget.src = setLogoUrl;
                               } else {
                                 e.currentTarget.src = '/card-back.svg';
                               }
+                            } else if (e.currentTarget.src.includes('logo.png')) {
+                              // Set logo failed, use card back
+                              e.currentTarget.src = '/card-back.svg';
                             } else {
                               e.currentTarget.src = '/card-back.svg';
                             }
                           }}
                         />
                       ) : (
-                        // If no TCGdex image, try pokefetch.info directly
-                        (() => {
-                          const pokefetchUrl = getFallbackImage(
-                            card.localId,
-                            setData.id,
-                            card.name,
-                            setData.name
-                          );
-                          return pokefetchUrl ? (
-                            <img
-                              src={pokefetchUrl}
-                              alt={card.name}
-                              onError={(e) => {
-                                e.currentTarget.src = '/card-back.svg';
-                              }}
-                            />
-                          ) : (
-                            <img src="/card-back.svg" alt="Pokemon Card Back" />
-                          );
-                        })()
+                        // If no TCGdex image, try set logo directly
+                        <img
+                          src={setData.id ? `https://images.pokemontcg.io/${setData.id}/logo.png` : '/card-back.svg'}
+                          alt={card.name}
+                          onError={(e) => {
+                            e.currentTarget.src = '/card-back.svg';
+                          }}
+                        />
                       )}
                     </div>
                     <div className={styles.cardInfo}>

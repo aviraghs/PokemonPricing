@@ -1,0 +1,101 @@
+.toggleContainer {
+  position: relative;
+  display: inline-flex;
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: 16px;
+  padding: 4px;
+  gap: 4px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: var(--font-inter);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text-muted);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+  min-width: 110px;
+  justify-content: center;
+}
+
+.toggleButton:hover {
+  color: var(--color-text-primary);
+}
+
+.toggleButton.active {
+  color: var(--color-text-primary);
+}
+
+.icon {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.toggleButton.active .icon {
+  transform: scale(1.1);
+}
+
+.label {
+  font-size: 15px;
+}
+
+.slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+  border-radius: 12px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .toggleContainer {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .toggleButton {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 16px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .icon {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toggleButton {
+    gap: 6px;
+    padding: 8px 12px;
+  }
+
+  .label {
+    font-size: 13px;
+  }
+
+  .icon {
+    font-size: 15px;
+  }
+}

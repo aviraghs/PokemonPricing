@@ -65,7 +65,7 @@ export function getImageUrl(
 
 /**
  * Get fallback image for a card
- * Returns pokefetch.info image URL if available
+ * Checks localStorage for uploaded images first, then falls back to pokefetch.info
  */
 export function getFallbackImage(
   cardNumber: string | undefined,
@@ -73,5 +73,23 @@ export function getFallbackImage(
   cardName: string | undefined = undefined,
   setName: string | undefined = undefined
 ): string | null {
+  // First check if there's an uploaded image in localStorage
+  if (typeof window !== 'undefined' && setId && cardNumber) {
+    try {
+      const imageMap = JSON.parse(localStorage.getItem('cardImageMap') || '{}');
+      const cardKey = `${setId}-${cardNumber}`;
+      if (imageMap[cardKey]) {
+        return imageMap[cardKey];
+      }
+      // Also check by just the card ID
+      if (imageMap[setId]) {
+        return imageMap[setId];
+      }
+    } catch (error) {
+      console.error('Error checking localStorage for images:', error);
+    }
+  }
+
+  // Fall back to pokefetch
   return generatePokefetchImageUrl(cardNumber, setId, cardName, setName, 'high');
 }

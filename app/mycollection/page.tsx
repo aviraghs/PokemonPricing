@@ -339,20 +339,20 @@ export default function MyCollection() {
                           // Fallback to low quality TCGdex image
                           if (e.currentTarget.src.includes('/high.webp')) {
                             e.currentTarget.src = `${tcgdexImageUrl}/low.webp`;
-                          } else {
-                            // If low.webp also fails, try pokefetch.info
-                            const pokefetchUrl = getFallbackImage(
-                              card.cardNumber,
-                              card.setId,
-                              card.title,
-                              card.set
-                            );
-                            if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
-                              e.currentTarget.src = pokefetchUrl;
+                          } else if (e.currentTarget.src.includes('/low.webp')) {
+                            // Try set logo as fallback
+                            const setLogoUrl = card.setId ? `https://images.pokemontcg.io/${card.setId}/logo.png` : null;
+                            if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                              e.currentTarget.src = setLogoUrl;
                             } else {
-                              // If all fail, show card back placeholder
                               e.currentTarget.src = '/card-back.svg';
                             }
+                          } else if (e.currentTarget.src.includes('logo.png')) {
+                            // Set logo failed, use card back
+                            e.currentTarget.src = '/card-back.svg';
+                          } else {
+                            // If all fail, show card back placeholder
+                            e.currentTarget.src = '/card-back.svg';
                           }
                         }}
                       />

@@ -6,6 +6,7 @@ import { useToast } from './ToastProvider';
 import AuthButtons from './AuthButtons';
 import LanguageSelector from './LanguageSelector';
 import ThemeToggle from './ThemeToggle';
+import ProductTypeToggle from './ProductTypeToggle';
 import styles from './Hero.module.css';
 
 interface SetOption {
@@ -38,10 +39,11 @@ export default function Hero() {
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [compareCount, setCompareCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [productType, setProductType] = useState<'cards' | 'sealed'>('cards');
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Load compare and wishlist counts
+  // Load compare and wishlist counts, and product type
   useEffect(() => {
     const updateCounts = () => {
       try {
@@ -57,14 +59,26 @@ export default function Hero() {
     // Load initial counts
     updateCounts();
 
+    // Load initial product type
+    const savedType = localStorage.getItem('productType') as 'cards' | 'sealed' | null;
+    if (savedType) {
+      setProductType(savedType);
+    }
+
     // Listen for updates
     const handleUpdate = () => updateCounts();
+    const handleProductTypeUpdate = (event: any) => {
+      setProductType(event.detail);
+    };
+
     window.addEventListener('compareUpdated', handleUpdate);
     window.addEventListener('wishlistUpdated', handleUpdate);
+    window.addEventListener('productTypeChanged', handleProductTypeUpdate);
 
     return () => {
       window.removeEventListener('compareUpdated', handleUpdate);
       window.removeEventListener('wishlistUpdated', handleUpdate);
+      window.removeEventListener('productTypeChanged', handleProductTypeUpdate);
     };
   }, []);
 
@@ -165,6 +179,7 @@ export default function Hero() {
     if (minHP) params.append('minHP', minHP);
     if (maxHP) params.append('maxHP', maxHP);
     params.append('lang', localStorage.getItem('preferredLanguage') || 'en');
+    params.append('productType', productType);
 
     setShowSuggestions(false);
     router.push(`/search-results?${params.toString()}`);
@@ -178,8 +193,13 @@ export default function Hero() {
       const params = new URLSearchParams();
       params.append('q', suggestion.name);
       params.append('lang', localStorage.getItem('preferredLanguage') || 'en');
+      params.append('productType', productType);
       router.push(`/search-results?${params.toString()}`);
     }, 100);
+  };
+
+  const handleProductTypeChange = (type: 'cards' | 'sealed') => {
+    setProductType(type);
   };
 
   return (
@@ -204,6 +224,15 @@ export default function Hero() {
           <span className={styles.navLabel}>Wishlist</span>
           {wishlistCount > 0 && <span className={styles.badge}>{wishlistCount}</span>}
         </button>
+
+        <button
+          className={styles.navBtn}
+          onClick={() => router.push('/sell')}
+          title="Sell Your Card"
+        >
+          <span className={styles.navIcon}>💰</span>
+          <span className={styles.navLabel}>Sell</span>
+        </button>
       </div>
 
       <div className={styles.heroAuth}>
@@ -218,11 +247,16 @@ export default function Hero() {
             POKÉCARD PRO
           </h1>
           <p className={styles.heroSubtitle}>
-            Track, Value & Collect Your Pokemon Cards
+            Track, Value & Collect Your Pokemon {productType === 'cards' ? 'Cards' : 'Products'}
           </p>
           <p className={styles.heroDescription}>
             Real-time pricing from multiple sources. Build your collection with confidence.
           </p>
+        </div>
+
+        {/* Product Type Toggle */}
+        <div className={styles.toggleWrapper}>
+          <ProductTypeToggle onChange={handleProductTypeChange} />
         </div>
 
         <div className={styles.searchContainer}>
@@ -230,7 +264,9 @@ export default function Hero() {
             <input
               type="text"
               className={styles.searchInput}
-              placeholder="Type to search cards (e.g., Charizard, Pikachu)..."
+              placeholder={productType === 'cards'
+                ? "Type to search cards (e.g., Charizard, Pikachu)..."
+                : "Type to search sealed products (e.g., Booster Box, ETB)..."}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -384,7 +420,7 @@ export default function Hero() {
           )}
 
           <button className={styles.searchButton} onClick={handleSearch}>
-            <span>Search Cards</span>
+            <span>{productType === 'cards' ? 'Search Cards' : 'Search Sealed Products'}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>

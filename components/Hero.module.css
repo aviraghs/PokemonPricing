@@ -725,3 +725,22 @@
     height: 16px;
   }
 }
+
+/* Product Type Toggle */
+.toggleWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0 24px 0;
+}
+
+@media (max-width: 768px) {
+  .toggleWrapper {
+    margin: 24px 0 20px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .toggleWrapper {
+    margin: 20px 0 16px 0;
+  }
+}

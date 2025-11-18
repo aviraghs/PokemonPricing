@@ -1040,7 +1040,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check if request has a body and content type is JSON
     const contentType = request.headers.get('content-type');
-    let query, set, rarity, type, language = 'en', includePricing = false, refresh = false, useJustTCGFallback = false;
+    let query, set, rarity, type, language = 'en', includePricing = false, refresh = false, useJustTCGFallback = false, productType = 'cards';
     
     if (!contentType || !contentType.includes('application/json')) {
       console.log('⚠️  Request missing JSON content-type header or has no content-type');
@@ -1062,7 +1062,7 @@ export async function POST(request: NextRequest) {
         useJustTCGFallback = false; // JustTCG fallback disabled by default (main page only shows TCGdex cards)
       } else {
         const requestBody = await request.json();
-        ({ 
+        ({
           query = '',
           set = '',
           rarity = '',
@@ -1071,6 +1071,7 @@ export async function POST(request: NextRequest) {
           includePricing = false,
           refresh = false,
           useJustTCGFallback = false, // JustTCG fallback disabled by default (main page only shows TCGdex cards)
+          productType = 'cards',
         } = requestBody);
       }
     }
@@ -1082,13 +1083,14 @@ export async function POST(request: NextRequest) {
     console.log(`Rarity: ${rarity || 'all'}`);
     console.log(`Type: ${type || 'all'}`);
     console.log(`Language: ${language}`);
+    console.log(`Product Type: ${productType}`);
     console.log(`Include Pricing: ${includePricing}`);
     console.log(`Refresh: ${refresh}`);
     console.log(`Use JustTCG Fallback: ${useJustTCGFallback}`);
     console.log(`${'='.repeat(50)}\n`);
 
     // Check cache first
-    const cacheKey = `search:${query}:${set}:${rarity}:${type}:${language}:${includePricing}:${useJustTCGFallback}`;
+    const cacheKey = `search:${query}:${set}:${rarity}:${type}:${language}:${includePricing}:${useJustTCGFallback}:${productType}`;
     const cachedData = cardDataCache.get(cacheKey);
 
     if (
@@ -1140,6 +1142,33 @@ export async function POST(request: NextRequest) {
 
     // Apply filters (only rarity and type, as name search is already done by API)
     let filteredCards = cards;
+
+    // Filter by product type (cards vs sealed products)
+    if (productType === 'sealed') {
+      filteredCards = filteredCards.filter(
+        (card: any) =>
+          // TCGdex marks sealed products with category field or in the name/description
+          card.category === 'Sealed Product' ||
+          card.category?.toLowerCase().includes('sealed') ||
+          card.name?.toLowerCase().includes('booster') ||
+          card.name?.toLowerCase().includes('elite trainer') ||
+          card.name?.toLowerCase().includes('etb') ||
+          card.name?.toLowerCase().includes('collection box') ||
+          card.name?.toLowerCase().includes('bundle') ||
+          card.name?.toLowerCase().includes('tin') ||
+          card.name?.toLowerCase().includes('deck') ||
+          card.name?.toLowerCase().includes('gift set')
+      );
+    } else {
+      // For cards, exclude sealed products
+      filteredCards = filteredCards.filter(
+        (card: any) =>
+          !card.category ||
+          (card.category !== 'Sealed Product' &&
+           !card.category?.toLowerCase().includes('sealed'))
+      );
+    }
+
     if (rarity && rarity !== 'all') {
       filteredCards = filteredCards.filter(
         (card: any) =>

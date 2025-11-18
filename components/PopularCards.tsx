@@ -150,35 +150,28 @@ export default function PopularCards() {
                           if (e.currentTarget.src.includes('/high.webp')) {
                             e.currentTarget.src = `${card.image}/low.webp`;
                           } else if (e.currentTarget.src.includes('/low.webp')) {
-                            // Try pokefetch.info as fallback
-                            const pokefetchUrl = getFallbackImage(
-                              card.id?.split('-')[1],
-                              card.set?.id,
-                              card.name,
-                              card.set?.name
-                            );
-                            if (pokefetchUrl && e.currentTarget.src !== pokefetchUrl) {
-                              e.currentTarget.src = pokefetchUrl;
+                            // Try set logo as fallback
+                            const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
+                            if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                              e.currentTarget.src = setLogoUrl;
                             } else {
                               e.currentTarget.src = '/card-back.svg';
                             }
+                          } else if (e.currentTarget.src.includes('logo.png')) {
+                            // Set logo failed, use card back
+                            e.currentTarget.src = '/card-back.svg';
                           } else {
                             e.currentTarget.src = '/card-back.svg';
                           }
                         }}
                       />
                     ) : (
-                      // If no TCGdex image, try pokefetch.info directly
+                      // If no TCGdex image, try set logo directly
                       (() => {
-                        const pokefetchUrl = getFallbackImage(
-                          card.id?.split('-')[1],
-                          card.set?.id,
-                          card.name,
-                          card.set?.name
-                        );
-                        return pokefetchUrl ? (
+                        const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
+                        return setLogoUrl ? (
                           <img
-                            src={pokefetchUrl}
+                            src={setLogoUrl}
                             alt={card.name}
                             onError={(e) => {
                               e.currentTarget.src = '/card-back.svg';
