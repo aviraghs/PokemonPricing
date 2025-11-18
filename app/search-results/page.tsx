@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import StickyHeader from '@/components/StickyHeader';
 import SkeletonLoader from '@/components/SkeletonLoader';
@@ -43,7 +43,6 @@ function SearchResultsContent() {
   const searchParams = useSearchParams();
   const { showToast } = useToast();
   const [cards, setCards] = useState<Card[]>([]);
-  const [sortedCards, setSortedCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [sortBy, setSortBy] = useState(() => {
@@ -140,14 +139,14 @@ function SearchResultsContent() {
     }
   };
 
-  // Sort cards whenever cards or sortBy changes
-  useEffect(() => {
-    const sorted = [...cards].sort((a, b) => {
-      const getPriceValue = (card: Card) => {
-        const price = card.pricing?.tcgPlayer?.averagePrice || card.pricing?.pokemonPriceTracker?.averagePrice;
-        return typeof price === 'number' ? price : 0;
-      };
+  // Memoize sorted cards to prevent unnecessary re-sorting (performance optimization)
+  const sortedCards = useMemo(() => {
+    const getPriceValue = (card: Card) => {
+      const price = card.pricing?.tcgPlayer?.averagePrice || card.pricing?.pokemonPriceTracker?.averagePrice;
+      return typeof price === 'number' ? price : 0;
+    };
 
+    return [...cards].sort((a, b) => {
       switch (sortBy) {
         case 'price-high':
           return getPriceValue(b) - getPriceValue(a);
@@ -171,7 +170,6 @@ function SearchResultsContent() {
           return 0; // Keep original order
       }
     });
-    setSortedCards(sorted);
   }, [cards, sortBy]);
 
   const handleSortChange = (newSort: string) => {

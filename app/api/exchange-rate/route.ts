@@ -77,12 +77,19 @@ export async function GET(request: NextRequest) {
       lastExchangeRateFetch = new Date();
     }
 
-    return NextResponse.json({
-      rate: currentExchangeRate,
-      lastUpdated: lastExchangeRateFetch,
-      from: 'USD',
-      to: 'INR',
-    });
+    return NextResponse.json(
+      {
+        rate: currentExchangeRate,
+        lastUpdated: lastExchangeRateFetch,
+        from: 'USD',
+        to: 'INR',
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+        },
+      }
+    );
   } catch (err) {
     console.error('❌ Error fetching exchange rate:', err);
     return NextResponse.json(

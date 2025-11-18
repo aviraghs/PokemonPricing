@@ -44,17 +44,13 @@ export default function AddToCollectionButton({
 
   const checkIfInCollection = async () => {
     try {
-      // Get user's collection
-      const response = await fetch('/api/cards');
+      // Use optimized check endpoint instead of fetching entire collection
+      const response = await fetch(
+        `/api/cards/check?setId=${encodeURIComponent(cardData.set.id)}&cardNumber=${encodeURIComponent(cardData.localId)}&language=${language}`
+      );
       if (response.ok) {
-        const cards = await response.json();
-        const cardExists = cards.some(
-          (card: any) =>
-            card.setId === cardData.set.id &&
-            card.cardNumber === cardData.localId &&
-            card.language === language
-        );
-        setIsInCollection(cardExists);
+        const data = await response.json();
+        setIsInCollection(data.exists);
       }
     } catch (error) {
       console.error('Error checking collection:', error);

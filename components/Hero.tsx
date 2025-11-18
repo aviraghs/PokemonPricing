@@ -100,7 +100,8 @@ export default function Hero() {
       }
     };
     fetchSets();
-  }, [showToast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only fetch once on mount, showToast is stable
 
   // Live search/autocomplete
   useEffect(() => {

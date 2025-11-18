@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { RequestQueue, extractCardName } from '@/lib/card-helpers';
+import { LRUCache } from '@/lib/lru-cache';
 
 const CARD_CACHE_DURATION = 4 * 60 * 60 * 1000; // 4 hours
-const cardDataCache = new Map<string, { cards: any[]; timestamp: number }>();
+const MAX_CACHE_ENTRIES = 500; // Limit cache to 500 searches (prevents memory leaks)
+const cardDataCache = new LRUCache<string, { cards: any[]; timestamp: number }>(MAX_CACHE_ENTRIES);
 
 const tcgdexQueue = new RequestQueue(50);
 const pricingQueue = new RequestQueue(100);
@@ -1072,6 +1074,8 @@ export async function POST(request: NextRequest) {
           refresh = false,
           useJustTCGFallback = false, // JustTCG fallback disabled by default (main page only shows TCGdex cards)
           productType = 'cards',
+          page = 1, // Pagination: current page
+          limit = 100, // Pagination: items per page (default 100 for backward compatibility)
         } = requestBody);
       }
     }
@@ -1102,10 +1106,28 @@ export async function POST(request: NextRequest) {
       const nextRefresh = Math.floor(
         (CARD_CACHE_DURATION - (Date.now() - cachedData.timestamp)) / 1000 / 60
       );
+
+      // Apply pagination to cached results
+      const totalCached = cachedData.cards.length;
+      const totalPagesCached = Math.ceil(totalCached / limit);
+      const startIdx = (page - 1) * limit;
+      const endIdx = startIdx + limit;
+      const paginatedCached = cachedData.cards.slice(startIdx, endIdx);
+
       console.log(
-        `✅ Returning cached search results (${cachedData.cards.length} cards, ${age} min old, refreshes in ${nextRefresh} min)`
+        `✅ Returning cached search results (Page ${page}/${totalPagesCached}, ${paginatedCached.length}/${totalCached} cards, ${age} min old, refreshes in ${nextRefresh} min)`
       );
-      return NextResponse.json(cachedData.cards);
+
+      return NextResponse.json({
+        cards: paginatedCached,
+        pagination: {
+          page,
+          limit,
+          total: totalCached,
+          totalPages: totalPagesCached,
+          hasMore: page < totalPagesCached
+        }
+      });
     }
 
     if (refresh) {
@@ -1183,8 +1205,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Limit results to 100 cards
-    const limitedCards = filteredCards.slice(0, 100);
+    // Apply pagination
+    const totalCards = filteredCards.length;
+    const totalPages = Math.ceil(totalCards / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedCards = filteredCards.slice(startIndex, endIndex);
+
+    console.log(`📄 Pagination: Page ${page}/${totalPages} (${paginatedCards.length} cards of ${totalCards} total)`);
+
+    const limitedCards = paginatedCards;
 
     let enhancedCards = limitedCards;
 
@@ -1289,50 +1319,19 @@ export async function POST(request: NextRequest) {
 
     // Fetch exchange rate and convert prices to INR if includePricing is true
     if (includePricing) {
-      // Define currency conversion functions here
+      // Use centralized exchange rate endpoint (prevents duplicate fetches)
       let currentExchangeRate = 88.72; // Default fallback rate
-      
-      // Fetch exchange rate from multiple sources
-      const apis = [
-        {
-          name: 'ExchangeRate-API',
-          url: 'https://open.er-api.com/v6/latest/USD',
-          parse: (data: any) => data.rates?.INR
-        },
-        {
-          name: 'ExchangeRate.host',
-          url: 'https://api.exchangerate.host/latest?base=USD&symbols=INR',
-          parse: (data: any) => data.rates?.INR
-        },
-        {
-          name: 'Frankfurter',
-          url: 'https://api.frankfurter.app/latest?from=USD&to=INR',
-          parse: (data: any) => data.rates?.INR
-        },
-        {
-          name: 'CurrencyAPI (Fawaz)',
-          url: 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
-          parse: (data: any) => data.usd?.inr
+
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const response = await fetch(`${baseUrl}/api/exchange-rate`);
+        if (response.ok) {
+          const data = await response.json();
+          currentExchangeRate = data.rate;
+          console.log(`💱 Using exchange rate: ${currentExchangeRate} from centralized endpoint`);
         }
-      ];
-
-      // Try each API until one succeeds
-      for (const api of apis) {
-        try {
-          const response = await fetch(api.url);
-
-          if (response.ok) {
-            const data = await response.json();
-            const rate = api.parse(data);
-
-            if (rate && !isNaN(rate) && rate > 0) {
-              currentExchangeRate = parseFloat(rate);
-              break; // Success, exit the function
-            }
-          }
-        } catch (err) {
-          console.log(`   ❌ ${api.name} failed: ${(err as Error).message}`);
-        }
+      } catch (err) {
+        console.log(`⚠️ Failed to fetch from centralized endpoint, using fallback: ${(err as Error).message}`);
       }
 
       // Convert USD price to INR
@@ -1476,7 +1475,16 @@ export async function POST(request: NextRequest) {
       });
       console.log(`💾 Cached ${convertedCards.length} cards with INR pricing - expires in 4 hours`);
 
-      return NextResponse.json(convertedCards);
+      return NextResponse.json({
+        cards: convertedCards,
+        pagination: {
+          page,
+          limit,
+          total: totalCards,
+          totalPages,
+          hasMore: page < totalPages
+        }
+      });
     } else {
       // Cache results without pricing
       cardDataCache.set(cacheKey, {
@@ -1485,7 +1493,16 @@ export async function POST(request: NextRequest) {
       });
       console.log(`💾 Cached ${enhancedCards.length} cards without pricing - expires in 4 hours`);
 
-      return NextResponse.json(enhancedCards);
+      return NextResponse.json({
+        cards: enhancedCards,
+        pagination: {
+          page,
+          limit,
+          total: totalCards,
+          totalPages,
+          hasMore: page < totalPages
+        }
+      });
     }
   } catch (err) {
     console.error('❌ Card search error:', err);
