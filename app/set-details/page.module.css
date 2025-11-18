@@ -36,6 +36,7 @@
 
 .setHeader {
   margin-bottom: 48px;
+  position: relative;
 }
 
 .backButton {
@@ -50,7 +51,9 @@
   cursor: pointer;
   font-family: var(--font-inter);
   font-weight: 500;
-  margin-bottom: 32px;
+  position: absolute;
+  top: 0;
+  right: 0;
   transition: all 0.3s ease;
 }
 

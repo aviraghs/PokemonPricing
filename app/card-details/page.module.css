@@ -822,6 +822,12 @@
     line-height: 1.5;
   }
 }
+.headerWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
 .backBtn,
 .backButton {
   display: flex;
@@ -835,7 +841,6 @@
   cursor: pointer;
   font-family: var(--font-inter);
   font-weight: 500;
-  margin-bottom: 30px;
   transition: all 0.3s ease;
 }
 

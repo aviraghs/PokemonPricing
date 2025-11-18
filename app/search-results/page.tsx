@@ -202,18 +202,20 @@ function SearchResultsContent() {
       <StickyHeader />
       <div className={styles.page}>
         <div className={styles.container}>
-          <button onClick={() => router.back()} className={styles.backBtn}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back
-          </button>
           <div className={styles.header}>
-            <h1 className={styles.title}>Search Results</h1>
-            <p className={styles.subtitle}>
-              {query && `Searching for "${query}"`}
-              {set && ` in ${set}`}
-            </p>
+            <div>
+              <h1 className={styles.title}>Search Results</h1>
+              <p className={styles.subtitle}>
+                {query && `Searching for "${query}"`}
+                {set && ` in ${set}`}
+              </p>
+            </div>
+            <button onClick={() => router.back()} className={styles.backBtn}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back
+            </button>
           </div>
 
           {loading && (

@@ -264,14 +264,6 @@ export default function MarketplacePage() {
       <StickyHeader />
       <div className={styles.page}>
         <div className={styles.container}>
-          {/* Back Button */}
-          <button onClick={() => router.back()} className={styles.backBtn}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back
-          </button>
-
           {/* Header */}
           <div className={styles.header}>
             <div>
@@ -280,6 +272,12 @@ export default function MarketplacePage() {
                 Buy and sell Pokémon cards with the community
               </p>
             </div>
+            <button onClick={() => router.back()} className={styles.backBtn}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back
+            </button>
           </div>
 
           {/* Tabs */}
