@@ -139,17 +139,26 @@ interface CardData {
 }
 
 interface CardListing {
-  id: string;
+  id?: string; // For localStorage (backward compatibility)
+  _id?: string; // For MongoDB
   cardId: string;
   cardName: string;
   cardSet?: string;
+  productType?: 'cards' | 'sealed';
   sellerName: string;
+  sellerEmail?: string;
   sellerContact: string;
   price: number;
+  currency?: string;
   condition: string;
   description: string;
-  imageFile?: string;
-  createdAt: string;
+  imageFile?: string; // For localStorage (backward compatibility)
+  imageData?: string; // For API (base64 image)
+  imageUrl?: string;
+  status?: string;
+  views?: number;
+  createdAt: string | Date;
+  updatedAt?: string | Date;
 }
 
 function CardDetailsContent() {
@@ -208,15 +217,34 @@ function CardDetailsContent() {
     }
   }, [cardId, lang]);
 
-  const loadListings = () => {
+  const loadListings = async () => {
     try {
-      const allListings = JSON.parse(localStorage.getItem('cardListings') || '[]');
-      // Filter listings for this card by ID or name
-      const cardListings = allListings.filter((listing: CardListing) =>
-        listing.cardId === cardId ||
-        listing.cardName.toLowerCase() === cardData?.name.toLowerCase()
-      );
-      setListings(cardListings);
+      if (!cardId && !cardData?.name) {
+        return;
+      }
+
+      // Fetch from API instead of localStorage
+      const params = new URLSearchParams({
+        status: 'active',
+      });
+
+      // Try to match by cardId first, then by cardName
+      if (cardId) {
+        params.append('cardId', cardId);
+      } else if (cardData?.name) {
+        params.append('cardName', cardData.name);
+      }
+
+      const response = await fetch(`/api/listings?${params.toString()}`);
+
+      if (!response.ok) {
+        console.error('Failed to fetch listings:', response.status);
+        return;
+      }
+
+      const data = await response.json();
+      setListings(data.listings || []);
+      console.log(`✅ Loaded ${data.listings?.length || 0} listings for ${cardData?.name || cardId}`);
     } catch (error) {
       console.error('Failed to load listings:', error);
     }
@@ -1014,11 +1042,11 @@ function CardDetailsContent() {
                   </div>
                   <div className={styles.listingsGrid}>
                     {listings.map((listing) => (
-                      <div key={listing.id} className={styles.listingCard}>
-                        {listing.imageFile && (
+                      <div key={listing.id || listing._id} className={styles.listingCard}>
+                        {(listing.imageData || listing.imageFile) && (
                           <div className={styles.listingImageWrapper}>
                             <img
-                              src={listing.imageFile}
+                              src={listing.imageData || listing.imageFile}
                               alt={listing.cardName}
                               className={styles.listingImage}
                             />

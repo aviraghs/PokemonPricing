@@ -45,5 +45,6 @@ export async function getDatabase() {
     db,
     cardsCollection: db.collection('cards'),
     usersCollection: db.collection('users'),
+    listingsCollection: db.collection('listings'),
   };
 }

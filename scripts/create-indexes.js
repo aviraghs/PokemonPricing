@@ -60,6 +60,34 @@ async function createIndexes() {
     await usersCollection.createIndex({ username: 1 }, { unique: true });
     console.log('✅ Created index: users.username (unique)');
 
+    // Create indexes for listings collection
+    console.log('\n📊 Creating indexes for listings collection...');
+    const listingsCollection = db.collection('listings');
+
+    // Index for finding listings by cardId
+    await listingsCollection.createIndex({ cardId: 1 });
+    console.log('✅ Created index: listings.cardId');
+
+    // Index for finding listings by cardName
+    await listingsCollection.createIndex({ cardName: 1 });
+    console.log('✅ Created index: listings.cardName');
+
+    // Index for filtering by status
+    await listingsCollection.createIndex({ status: 1 });
+    console.log('✅ Created index: listings.status');
+
+    // Compound index for active listings by card
+    await listingsCollection.createIndex({ cardId: 1, status: 1 });
+    console.log('✅ Created index: listings.cardId_status');
+
+    // Index for sorting by creation date
+    await listingsCollection.createIndex({ createdAt: -1 });
+    console.log('✅ Created index: listings.createdAt');
+
+    // Index for product type filtering
+    await listingsCollection.createIndex({ productType: 1 });
+    console.log('✅ Created index: listings.productType');
+
     console.log('\n✅ All indexes created successfully!');
     console.log('\n📋 Index Summary:');
     console.log('  Cards collection:');
@@ -70,6 +98,13 @@ async function createIndexes() {
     console.log('  Users collection:');
     console.log('    - email (unique)');
     console.log('    - username (unique)');
+    console.log('  Listings collection:');
+    console.log('    - cardId');
+    console.log('    - cardName');
+    console.log('    - status');
+    console.log('    - cardId + status (compound)');
+    console.log('    - createdAt');
+    console.log('    - productType');
 
   } catch (error) {
     console.error('❌ Error creating indexes:', error);

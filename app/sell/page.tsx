@@ -100,9 +100,8 @@ export default function SellPage() {
         return;
       }
 
-      // Create listing
-      const listing: CardListing = {
-        id: `listing-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      // Create listing via API
+      const listingData = {
         cardId: cardId.trim() || cardName.toLowerCase().replace(/\s+/g, '-'),
         cardName: cardName.trim(),
         cardSet: cardSet.trim() || undefined,
@@ -110,34 +109,30 @@ export default function SellPage() {
         sellerName: sellerName.trim(),
         sellerContact: sellerContact.trim(),
         price: parseFloat(price),
+        currency: 'INR',
         condition,
         description: description.trim(),
-        imageFile: imageFile || undefined,
-        createdAt: new Date().toISOString(),
+        imageData: imageFile || undefined, // Send base64 image to API
       };
 
-      // Save to localStorage
-      const existingListings = JSON.parse(localStorage.getItem('cardListings') || '[]');
-      existingListings.push(listing);
-      localStorage.setItem('cardListings', JSON.stringify(existingListings));
+      // Save to database via API
+      const response = await fetch('/api/listings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(listingData),
+      });
 
-      // Also store image mapping for fallback
-      if (imageFile) {
-        const imageMap = JSON.parse(localStorage.getItem('cardImageMap') || '{}');
-        // Store with multiple keys for better matching
-        if (cardId && cardSet) {
-          imageMap[`${cardSet}-${cardId}`] = imageFile;
-        }
-        if (cardId) {
-          imageMap[cardId] = imageFile;
-        }
-        if (cardName) {
-          imageMap[cardName.toLowerCase().replace(/\s+/g, '-')] = imageFile;
-        }
-        localStorage.setItem('cardImageMap', JSON.stringify(imageMap));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create listing');
       }
 
-      showToast('Card listing created successfully!', 'success');
+      const result = await response.json();
+      console.log('✅ Listing created:', result.listingId);
+
+      showToast('Card listing created successfully! 🎉', 'success');
 
       // Reset form
       setCardName('');
