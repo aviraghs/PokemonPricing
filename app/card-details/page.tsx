@@ -591,6 +591,35 @@ function CardDetailsContent() {
                   />
                 )}
               </div>
+
+              {/* Compact Listings - Shown as buttons below card image */}
+              {listings.length > 0 && (
+                <div className={styles.compactListings}>
+                  <div className={styles.compactListingsHeader}>
+                    <span className={styles.compactListingsTitle}>Available for Sale</span>
+                    <span className={styles.compactListingsCount}>{listings.length}</span>
+                  </div>
+                  <div className={styles.compactListingsButtons}>
+                    {listings.map((listing) => (
+                      <button
+                        key={listing.id || listing._id}
+                        className={styles.listingButton}
+                        onClick={() => {
+                          // You can add functionality to show more details or contact seller
+                          const contactInfo = `Seller: ${listing.sellerName}\nContact: ${listing.sellerContact}\nPrice: ₹${listing.price.toFixed(2)}\nCondition: ${listing.condition}${listing.description ? `\nDescription: ${listing.description}` : ''}`;
+                          alert(contactInfo);
+                        }}
+                      >
+                        <div className={styles.listingButtonPrice}>₹{listing.price.toFixed(2)}</div>
+                        <div className={styles.listingButtonDetails}>
+                          <span className={styles.listingButtonCondition}>{listing.condition}</span>
+                          <span className={styles.listingButtonSeller}>by {listing.sellerName}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Card Details */}

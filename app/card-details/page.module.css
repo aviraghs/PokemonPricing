@@ -999,6 +999,100 @@
   }
 }
 
+/* Compact Listings (below card image) */
+.compactListings {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+}
+
+.compactListingsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.compactListingsTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-family: var(--font-inter);
+}
+
+.compactListingsCount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-bg-tertiary);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.compactListingsButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.listingButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--font-inter);
+  width: 100%;
+}
+
+.listingButton:hover {
+  border-color: var(--color-accent-primary);
+  background: var(--color-bg-tertiary);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.listingButton:active {
+  transform: translateX(2px);
+}
+
+.listingButtonPrice {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-success);
+  white-space: nowrap;
+}
+
+.listingButtonDetails {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.listingButtonCondition {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.listingButtonSeller {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
 /* Listings Section */
 .listingsHeader {
   display: flex;
@@ -1129,6 +1223,28 @@
 }
 
 @media (max-width: 768px) {
+  .compactListings {
+    padding: 16px;
+    margin-top: 20px;
+  }
+
+  .listingButton {
+    padding: 12px 14px;
+  }
+
+  .listingButtonPrice {
+    font-size: 20px;
+  }
+
+  .listingButtonCondition {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .listingButtonSeller {
+    font-size: 11px;
+  }
+
   .listingsGrid {
     grid-template-columns: 1fr;
   }

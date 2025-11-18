@@ -47,7 +47,9 @@ export function useBulkCardSearch(pokemonList: string[], includePricing: boolean
           });
 
           if (response.ok) {
-            const cards = await response.json();
+            const data = await response.json();
+            // Handle new API response format (cards array or object with cards property)
+            const cards = Array.isArray(data) ? data : (data.cards || []);
             // Only include cards with valid images
             const cardsWithImages = cards.filter((card: any) => card.image);
             allCards.push(...cardsWithImages);

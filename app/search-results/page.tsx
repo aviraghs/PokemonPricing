@@ -96,9 +96,12 @@ function SearchResultsContent() {
 
       let data = await response.json();
 
+      // Handle new API response format (cards array or object with cards property)
+      let cardsArray = Array.isArray(data) ? data : (data.cards || []);
+
       // Apply client-side advanced filters
       if (minPrice || maxPrice || minHP || maxHP) {
-        data = data.filter((card: Card) => {
+        cardsArray = cardsArray.filter((card: Card) => {
           // Price filtering
           if (minPrice || maxPrice) {
             const cardPrice = card.pricing?.tcgPlayer?.averagePrice || card.pricing?.pokemonPriceTracker?.averagePrice;
@@ -120,14 +123,14 @@ function SearchResultsContent() {
         });
       }
 
-      setCards(data);
+      setCards(cardsArray);
 
       // Show success toast with result count
-      if (data.length === 0) {
+      if (cardsArray.length === 0) {
         showToast(`No ${productType === 'sealed' ? 'sealed products' : 'cards'} found matching your search`, 'info');
       } else {
         const itemType = productType === 'sealed' ? 'product' : 'card';
-        showToast(`Found ${data.length} ${itemType}${data.length === 1 ? '' : 's'}`, 'success');
+        showToast(`Found ${cardsArray.length} ${itemType}${cardsArray.length === 1 ? '' : 's'}`, 'success');
       }
     } catch (err) {
       const errorMsg = 'Failed to search cards. Please try again.';

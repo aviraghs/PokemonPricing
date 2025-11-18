@@ -55,8 +55,10 @@ export default function PopularCards() {
 
               if (response.ok) {
                 const data = await response.json();
+                // Handle new API response format (cards array or object with cards property)
+                const cardsArray = Array.isArray(data) ? data : (data.cards || []);
                 // Get first 3 cards with valid pricing
-                const cardsWithPrice = data.filter((card: Card) => {
+                const cardsWithPrice = cardsArray.filter((card: Card) => {
                   const hasValidPrice =
                     (card.pricing?.tcgPlayer?.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A') ||
                     (card.pricing?.pokemonPriceTracker?.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A');
