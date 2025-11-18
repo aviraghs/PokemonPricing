@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import StickyHeader from '@/components/StickyHeader';
 import AddToCollectionButton from '@/components/AddToCollectionButton';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
@@ -467,9 +466,7 @@ function CardDetailsContent() {
 
   if (loading) {
     return (
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
+      <div className={styles.page}>
           <div className={styles.container}>
             {/* Back button skeleton */}
             <div className={styles.skeletonBackBtn}></div>
@@ -519,15 +516,12 @@ function CardDetailsContent() {
             </div>
           </div>
         </div>
-      </>
     );
   }
 
   if (error || !cardData) {
     return (
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
+      <div className={styles.page}>
           <div className={styles.error}>
             <p>{error || 'Card not found'}</p>
             <button onClick={() => router.push('/')} className={styles.backBtn}>
@@ -535,14 +529,11 @@ function CardDetailsContent() {
             </button>
           </div>
         </div>
-      </>
     );
   }
 
   return (
-    <>
-      <StickyHeader />
-      <div className={styles.page}>
+    <div className={styles.page}>
         <div className={styles.container}>
           <div className={styles.headerWrapper}>
             <button onClick={() => router.back()} className={styles.backButton}>
@@ -1118,16 +1109,13 @@ function CardDetailsContent() {
           </div>
         </div>
       </div>
-    </>
   );
 }
 
 export default function CardDetails() {
   return (
     <Suspense fallback={
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
+      <div className={styles.page}>
           <div className={styles.container}>
             <div className={styles.skeletonBackBtn}></div>
             <div className={styles.cardContainer}>
@@ -1163,7 +1151,6 @@ export default function CardDetails() {
             </div>
           </div>
         </div>
-      </>
     }>
       <CardDetailsContent />
     </Suspense>

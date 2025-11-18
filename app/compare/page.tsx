@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import StickyHeader from '@/components/StickyHeader';
 import { useToast } from '@/components/ToastProvider';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
@@ -122,21 +121,16 @@ export default function ComparePage() {
 
   if (!mounted) {
     return (
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
-          <div className={styles.container}>
-            <div className={styles.loading}>Loading comparison...</div>
-          </div>
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className={styles.loading}>Loading comparison...</div>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <StickyHeader />
-      <div className={styles.page}>
+    <div className={styles.page}>
         <div className={styles.container}>
           <div className={styles.header}>
             <div>
@@ -438,6 +432,5 @@ export default function ComparePage() {
           )}
         </div>
       </div>
-    </>
   );
 }

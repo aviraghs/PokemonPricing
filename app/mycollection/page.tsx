@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import StickyHeader from '@/components/StickyHeader';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import { useToast } from '@/components/ToastProvider';
 import { getFallbackImage } from '@/lib/image-fallback';
@@ -198,19 +197,14 @@ export default function MyCollection() {
 
   if (loading) {
     return (
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
-          <SkeletonLoader type="card" count={8} />
-        </div>
-      </>
+      <div className={styles.page}>
+        <SkeletonLoader type="card" count={8} />
+      </div>
     );
   }
 
   return (
-    <>
-      <StickyHeader />
-      <div className={styles.page}>
+    <div className={styles.page}>
         <div className={styles.container}>
           <div className={styles.header}>
             <div>
@@ -428,6 +422,5 @@ export default function MyCollection() {
           )}
         </div>
       </div>
-    </>
   );
 }

@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import StickyHeader from '@/components/StickyHeader';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import AddToCollectionButton from '@/components/AddToCollectionButton';
 import { getFallbackImage } from '@/lib/image-fallback';
@@ -73,22 +72,17 @@ function SetDetailsContent() {
 
   if (loading) {
     return (
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
+      <div className={styles.page}>
           <div className={styles.container}>
             <SkeletonLoader type="card" count={12} />
           </div>
         </div>
-      </>
     );
   }
 
   if (error || !setData) {
     return (
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
+      <div className={styles.page}>
           <div className={styles.error}>
             <p>{error || 'Set not found'}</p>
             <button onClick={() => router.back()} className={styles.backBtn}>
@@ -99,14 +93,11 @@ function SetDetailsContent() {
             </button>
           </div>
         </div>
-      </>
     );
   }
 
   return (
-    <>
-      <StickyHeader />
-      <div className={styles.page}>
+    <div className={styles.page}>
         <div className={styles.container}>
           {/* Set Header */}
           <div className={styles.setHeader}>
@@ -266,21 +257,17 @@ function SetDetailsContent() {
           </div>
         </div>
       </div>
-    </>
   );
 }
 
 export default function SetDetails() {
   return (
     <Suspense fallback={
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
+      <div className={styles.page}>
           <div className={styles.container}>
             <SkeletonLoader type="card" count={12} />
           </div>
         </div>
-      </>
     }>
       <SetDetailsContent />
     </Suspense>

@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import StickyHeader from '@/components/StickyHeader';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import AddToCollectionButton from '@/components/AddToCollectionButton';
 import QuickAddButton from '@/components/QuickAddButton';
@@ -198,9 +197,7 @@ function SearchResultsContent() {
   };
 
   return (
-    <>
-      <StickyHeader />
-      <div className={styles.page}>
+    <div className={styles.page}>
         <div className={styles.container}>
           <div className={styles.header}>
             <div>
@@ -417,19 +414,15 @@ function SearchResultsContent() {
           )}
         </div>
       </div>
-    </>
   );
 }
 
 export default function SearchResults() {
   return (
     <Suspense fallback={
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
-          <SkeletonLoader type="card" count={8} />
-        </div>
-      </>
+      <div className={styles.page}>
+        <SkeletonLoader type="card" count={8} />
+      </div>
     }>
       <SearchResultsContent />
     </Suspense>

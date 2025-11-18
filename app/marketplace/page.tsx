@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import StickyHeader from '@/components/StickyHeader';
 import { useToast } from '@/components/ToastProvider';
 import styles from './page.module.css';
 
@@ -250,19 +249,14 @@ export default function MarketplacePage() {
 
   if (!mounted) {
     return (
-      <>
-        <StickyHeader />
-        <div className={styles.page}>
-          <div className={styles.loading}>Loading...</div>
-        </div>
-      </>
+      <div className={styles.page}>
+        <div className={styles.loading}>Loading...</div>
+      </div>
     );
   }
 
   return (
-    <>
-      <StickyHeader />
-      <div className={styles.page}>
+    <div className={styles.page}>
         <div className={styles.container}>
           {/* Header */}
           <div className={styles.header}>
@@ -643,7 +637,6 @@ export default function MarketplacePage() {
             </form>
           )}
         </div>
-      </div>
-    </>
+    </div>
   );
 }
