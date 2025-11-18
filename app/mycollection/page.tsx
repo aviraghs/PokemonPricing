@@ -54,8 +54,12 @@ export default function MyCollection() {
       const response = await fetch('/api/auth/verify');
       if (response.ok) {
         const data = await response.json();
-        setUser(data.user);
-        loadCollection();
+        if (data.authenticated && data.user) {
+          setUser(data.user);
+          loadCollection();
+        } else {
+          router.push('/');
+        }
       } else {
         router.push('/');
       }

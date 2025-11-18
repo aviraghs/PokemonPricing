@@ -7,13 +7,18 @@ export async function GET(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        {
+          success: false,
+          authenticated: false,
+          user: null
+        },
+        { status: 200 }
       );
     }
 
     return NextResponse.json({
       success: true,
+      authenticated: true,
       user: {
         id: user.id,
         username: user.username,
