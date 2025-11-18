@@ -1042,7 +1042,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check if request has a body and content type is JSON
     const contentType = request.headers.get('content-type');
-    let query, set, rarity, type, language = 'en', includePricing = false, refresh = false, useJustTCGFallback = false, productType = 'cards';
+    let query, set, rarity, type, language = 'en', includePricing = false, refresh = false, useJustTCGFallback = false, productType = 'cards', page = 1, limit = 100;
     
     if (!contentType || !contentType.includes('application/json')) {
       console.log('⚠️  Request missing JSON content-type header or has no content-type');
