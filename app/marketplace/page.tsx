@@ -48,10 +48,73 @@ export default function MarketplacePage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Card search state
+  const [cardSearchQuery, setCardSearchQuery] = useState('');
+  const [cardSuggestions, setCardSuggestions] = useState<any[]>([]);
+  const [showCardSuggestions, setShowCardSuggestions] = useState(false);
+  const [isLoadingCardSuggestions, setIsLoadingCardSuggestions] = useState(false);
+
   useEffect(() => {
     setMounted(true);
     loadListings();
   }, []);
+
+  // Card search autocomplete
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (cardSearchQuery.trim().length >= 2 && productType === 'cards') {
+      setIsLoadingCardSuggestions(true);
+      timeoutId = setTimeout(async () => {
+        try {
+          const response = await fetch('/api/search-cards', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              query: cardSearchQuery,
+              includePricing: false,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const cardsArray = Array.isArray(data) ? data : (data.cards || []);
+            setCardSuggestions(cardsArray.slice(0, 8));
+            setShowCardSuggestions(true);
+          }
+        } catch (error) {
+          console.error('Failed to fetch card suggestions:', error);
+        } finally {
+          setIsLoadingCardSuggestions(false);
+        }
+      }, 300);
+    } else {
+      setCardSuggestions([]);
+      setShowCardSuggestions(false);
+      setIsLoadingCardSuggestions(false);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [cardSearchQuery, productType]);
+
+  const handleCardSelect = (card: any) => {
+    // Auto-fill form with selected card details
+    setCardName(card.name);
+    setCardId(card.id || card.localId || '');
+    setCardSet(card.set?.name || '');
+
+    // Set card image if available
+    if (card.image) {
+      setImagePreview(`${card.image}/high.webp`);
+      setImageFile(`${card.image}/high.webp`);
+    }
+
+    // Clear search
+    setCardSearchQuery('');
+    setShowCardSuggestions(false);
+
+    showToast(`Card "${card.name}" added to form`, 'success');
+  };
 
   const loadListings = async () => {
     try {
@@ -335,6 +398,62 @@ export default function MarketplacePage() {
                   </button>
                 </div>
               </div>
+
+              {/* Card Search Helper (only for cards) */}
+              {productType === 'cards' && (
+                <div className={styles.formSection}>
+                  <h2 className={styles.sectionTitle}>🔍 Find Your Card (Optional)</h2>
+                  <p className={styles.sectionDescription}>
+                    Search for your card to auto-fill the form with its details
+                  </p>
+                  <div className={styles.cardSearchWrapper}>
+                    <input
+                      type="text"
+                      className={styles.cardSearchInput}
+                      placeholder="Type card name to search (e.g., Charizard, Pikachu)..."
+                      value={cardSearchQuery}
+                      onChange={(e) => setCardSearchQuery(e.target.value)}
+                      onFocus={() => cardSearchQuery.length >= 2 && cardSuggestions.length > 0 && setShowCardSuggestions(true)}
+                    />
+
+                    {/* Card Suggestions Dropdown */}
+                    {showCardSuggestions && (
+                      <div className={styles.cardSuggestionsDropdown}>
+                        {isLoadingCardSuggestions ? (
+                          <div className={styles.cardSuggestionItem}>
+                            <span>Searching...</span>
+                          </div>
+                        ) : cardSuggestions.length > 0 ? (
+                          cardSuggestions.map((card, index) => (
+                            <div
+                              key={index}
+                              className={styles.cardSuggestionItem}
+                              onClick={() => handleCardSelect(card)}
+                            >
+                              {card.image && (
+                                <img
+                                  src={`${card.image}/low.webp`}
+                                  alt={card.name}
+                                  className={styles.cardSuggestionImage}
+                                />
+                              )}
+                              <div className={styles.cardSuggestionInfo}>
+                                <span className={styles.cardSuggestionName}>{card.name}</span>
+                                <span className={styles.cardSuggestionSet}>{card.set?.name || 'Unknown Set'}</span>
+                              </div>
+                              <span className={styles.cardSuggestionNumber}>#{card.localId || card.id}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className={styles.cardSuggestionItem}>
+                            <span>No cards found</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Card Information */}
               <div className={styles.formSection}>

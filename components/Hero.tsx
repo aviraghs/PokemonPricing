@@ -228,11 +228,11 @@ export default function Hero() {
 
         <button
           className={styles.navBtn}
-          onClick={() => router.push('/sell')}
-          title="Sell Your Card"
+          onClick={() => router.push('/marketplace')}
+          title="Buy & Sell Cards"
         >
-          <span className={styles.navIcon}>💰</span>
-          <span className={styles.navLabel}>Sell</span>
+          <span className={styles.navIcon}>🛒</span>
+          <span className={styles.navLabel}>Marketplace</span>
         </button>
       </div>
 

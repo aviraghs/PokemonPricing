@@ -135,6 +135,113 @@
   border-bottom: 2px solid var(--color-border);
 }
 
+.sectionDescription {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Card Search Styles */
+.cardSearchWrapper {
+  position: relative;
+}
+
+.cardSearchInput {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  color: var(--color-text-primary);
+  font-family: var(--font-inter);
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.cardSearchInput:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.cardSuggestionsDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: var(--shadow-lg);
+}
+
+.cardSuggestionItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cardSuggestionItem:last-child {
+  border-bottom: none;
+}
+
+.cardSuggestionItem:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.cardSuggestionImage {
+  width: 50px;
+  height: 70px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: var(--color-bg-primary);
+  flex-shrink: 0;
+}
+
+.cardSuggestionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cardSuggestionName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardSuggestionSet {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardSuggestionNumber {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-tertiary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
 .formGroup {
   margin-bottom: 24px;
 }
@@ -654,5 +761,18 @@
   .filterBar {
     flex-direction: column;
     gap: 12px;
+  }
+
+  .cardSuggestionsDropdown {
+    max-height: 300px;
+  }
+
+  .cardSuggestionImage {
+    width: 40px;
+    height: 56px;
+  }
+
+  .cardSuggestionItem {
+    padding: 10px 12px;
   }
 }
