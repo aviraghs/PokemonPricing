@@ -5,6 +5,11 @@
   margin: -20px; /* Negative margin to maintain layout */
 }
 
+/* Disable 3D rotation effect - user doesn't want it */
+.cardWrapper > div:hover {
+  transform: none !important;
+}
+
 .cardImageWrapper {
   position: relative;
   width: 100%;
@@ -20,12 +25,9 @@
   height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
-  transition: transform 0.3s ease;
 }
 
-.cardWrapper:hover .cardImage {
-  transform: scale(1.05);
-}
+/* Removed zoom effect on hover - user doesn't want card to zoom */
 
 /* Copy existing styles from here down */
 .page {

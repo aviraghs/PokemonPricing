@@ -162,6 +162,12 @@
   margin: -10px; /* Negative margin to maintain spacing */
 }
 
+/* Override HoloCard background to transparent so glows are visible */
+.cardWrapper > div {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
 .cardContent {
   display: flex;
   flex-direction: column;
