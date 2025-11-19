@@ -1,3 +1,31 @@
+.cardWrapper {
+  height: auto;
+  width: 100%;
+}
+
+.cardImageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 0.72; /* Standard Pokemon card ratio */
+  background: transparent;
+  border-radius: 20px;
+  overflow: hidden;
+  /* No border/box-shadow here as HoloCard provides it */
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.cardWrapper:hover .cardImage {
+  transform: scale(1.05);
+}
+
+/* Copy existing styles from here down */
 .page {
   min-height: 100vh;
   background: var(--color-bg-primary);
@@ -53,23 +81,13 @@
 
 .imageSection {
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* Changed to column to stack compact listings */
+  align-items: center; /* Center items horizontally */
 }
 
-.cardImageWrapper {
-  width: 100%;
-  max-width: 350px;
-  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
-  border-radius: 16px;
-  padding: 20px;
-  border: 1px solid var(--color-border);
-}
+/* .cardImageWrapper styles are now at the top */
 
-.cardImage {
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
-}
+/* .cardImage styles are now at the top */
 
 .placeholder {
   width: 100%;
