@@ -1,4 +1,85 @@
-/* Rarity-specific glows */
+.holoCardWrapper {
+  perspective: 1000px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.holoCard {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 25, 40, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  transition: transform 0.1s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  transform-style: preserve-3d;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The Glare Effect */
+.holoCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at var(--mouse-x) var(--mouse-y),
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Neon Border Glow based on rarity (default blue) */
+.holoCard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.holoCard:hover {
+  transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) scale(1.02);
+  z-index: 10;
+}
+
+.holoCard:hover::before {
+  opacity: 1;
+}
+
+/* Content spacing */
+.holoContent {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================
+   RARITY SPECIFIC GLOWS
+   ========================================= */
 
 /* ULTRA RARE / GOLD (Top Tier) */
 /* Hyper rare, Ultra Rare, Secret Rare, etc. */
