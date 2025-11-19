@@ -31,24 +31,27 @@
   position: relative;
   max-width: 100%;
   margin: 0 auto;
+  padding: 0 60px; /* Extra padding for card rotation */
 }
 
 .carouselWrapper {
-  overflow: hidden;
-  padding: 20px 0;
+  overflow: visible; /* Allow glow to show beyond container */
+  padding: 40px 0; /* Extra vertical padding for glow and rotation */
 }
 
 .carouselTrack {
   display: flex;
   gap: 24px;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0 10px;
+  padding: 0 20px; /* Increased padding to prevent edge clipping */
 }
 
 .cardWrapper {
   min-width: calc(25% - 18px);
   flex-shrink: 0;
   height: auto;
+  padding: 10px; /* Extra padding to prevent glow clipping */
+  margin: -10px; /* Negative margin to maintain spacing */
 }
 
 .card {
@@ -188,6 +191,10 @@
     font-size: 16px;
   }
 
+  .carouselContainer {
+    padding: 0 50px;
+  }
+
   .cardWrapper {
     min-width: calc(33.333% - 16px);
   }
@@ -226,6 +233,14 @@
 
   .sectionSubtitle {
     font-size: 15px;
+  }
+
+  .carouselContainer {
+    padding: 0 30px;
+  }
+
+  .carouselWrapper {
+    padding: 30px 0;
   }
 
   .cardWrapper {
@@ -285,8 +300,18 @@
     font-size: 14px;
   }
 
+  .carouselContainer {
+    padding: 0 20px;
+  }
+
+  .carouselWrapper {
+    padding: 25px 0;
+  }
+
   .cardWrapper {
     min-width: 100%;
+    padding: 8px;
+    margin: -8px;
   }
 
   .cardImage {
