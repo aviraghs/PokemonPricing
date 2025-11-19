@@ -11,8 +11,9 @@
  */
 
 const { MongoClient } = require('mongodb');
+require('dotenv').config({ path: '.env.local' });
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/pokemon-pricing';
+const MONGODB_URI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/pokemon-pricing';
 
 async function createIndexes() {
   const client = new MongoClient(MONGODB_URI);

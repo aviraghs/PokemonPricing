@@ -10,7 +10,17 @@
       "Bash(curl:*)",
       "Bash(pkill -9 npm sleep 2 rm -rf .next npm run build)",
       "Bash(killall npm sleep 2 rm -rf .next npm run build)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(npm audit:*)",
+      "Bash(node scripts/create-indexes.js:*)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(npm test:*)",
+      "Bash(/home/runner/workspace/__tests__/api/auth/logout.test.ts)",
+      "Bash(python3:*)",
+      "Bash(cat:*)",
+      "Bash(printf:*)",
+      "Bash(/home/runner/workspace/__tests__/CardImage.test.tsx)"
     ],
     "deny": [],
     "ask": []
