@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SkeletonLoader from './SkeletonLoader';
 import QuickAddButton from './QuickAddButton';
+import HoloCard from './HoloCard';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './PopularCards.module.css';
 
@@ -130,87 +131,92 @@ export default function PopularCards() {
               }}
             >
               {cards.map((card) => (
-                <div
+                <HoloCard
                   key={card.id}
-                  className={styles.card}
-                  onClick={() => handleCardClick(card.id)}
+                  rarity={card.rarity}
+                  className={styles.cardWrapper}
                 >
-                  <div className={styles.cardImage}>
-                    <QuickAddButton
-                      cardData={{
-                        id: card.id,
-                        name: card.name,
-                        set: card.set,
-                      }}
-                      language="en"
-                    />
-                    {card.image ? (
-                      <img
-                        src={`${card.image}/high.webp`}
-                        alt={card.name}
-                        onError={(e) => {
-                          if (e.currentTarget.src.includes('/high.webp')) {
-                            e.currentTarget.src = `${card.image}/low.webp`;
-                          } else if (e.currentTarget.src.includes('/low.webp')) {
-                            // Try set logo as fallback
-                            const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
-                            if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
-                              e.currentTarget.src = setLogoUrl;
+                  <div
+                    className={styles.card}
+                    onClick={() => handleCardClick(card.id)}
+                  >
+                    <div className={styles.cardImage}>
+                      <QuickAddButton
+                        cardData={{
+                          id: card.id,
+                          name: card.name,
+                          set: card.set,
+                        }}
+                        language="en"
+                      />
+                      {card.image ? (
+                        <img
+                          src={`${card.image}/high.webp`}
+                          alt={card.name}
+                          onError={(e) => {
+                            if (e.currentTarget.src.includes('/high.webp')) {
+                              e.currentTarget.src = `${card.image}/low.webp`;
+                            } else if (e.currentTarget.src.includes('/low.webp')) {
+                              // Try set logo as fallback
+                              const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
+                              if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
+                                e.currentTarget.src = setLogoUrl;
+                              } else {
+                                e.currentTarget.src = '/card-back.svg';
+                              }
+                            } else if (e.currentTarget.src.includes('logo.png')) {
+                              // Set logo failed, use card back
+                              e.currentTarget.src = '/card-back.svg';
                             } else {
                               e.currentTarget.src = '/card-back.svg';
                             }
-                          } else if (e.currentTarget.src.includes('logo.png')) {
-                            // Set logo failed, use card back
-                            e.currentTarget.src = '/card-back.svg';
-                          } else {
-                            e.currentTarget.src = '/card-back.svg';
-                          }
-                        }}
-                      />
-                    ) : (
-                      // If no TCGdex image, try set logo directly
-                      (() => {
-                        const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
-                        return setLogoUrl ? (
-                          <img
-                            src={setLogoUrl}
-                            alt={card.name}
-                            onError={(e) => {
-                              e.currentTarget.src = '/card-back.svg';
-                            }}
-                          />
-                        ) : (
-                          <img src="/card-back.svg" alt="Pokemon Card Back" />
-                        );
-                      })()
-                    )}
+                          }}
+                        />
+                      ) : (
+                        // If no TCGdex image, try set logo directly
+                        (() => {
+                          const setLogoUrl = card.set?.id ? `https://images.pokemontcg.io/${card.set.id}/logo.png` : null;
+                          return setLogoUrl ? (
+                            <img
+                              src={setLogoUrl}
+                              alt={card.name}
+                              onError={(e) => {
+                                e.currentTarget.src = '/card-back.svg';
+                              }}
+                            />
+                          ) : (
+                            <img src="/card-back.svg" alt="Pokemon Card Back" />
+                          );
+                        })()
+                      )}
+                    </div>
+                    <div className={styles.cardInfo}>
+                      <h3 className={styles.cardName}>{card.name}</h3>
+                      <p className={styles.cardSet}>{card.set?.name || 'Unknown Set'}</p>
+                      {card.rarity && <span className={styles.cardRarity}>{card.rarity}</span>}
+                      {card.pricing && (
+                        <div className={styles.cardPricing}>
+                          {card.pricing.tcgPlayer && card.pricing.tcgPlayer.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A' && (
+                            <div className={styles.pricingItem}>
+                              <span className={styles.pricingSource}>TCG:</span>
+                              <span className={styles.pricingValue}>
+                                {card.pricing.tcgPlayer.averagePrice}
+                              </span>
+                            </div>
+                          )}
+                          {card.pricing.pokemonPriceTracker && card.pricing.pokemonPriceTracker.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && (
+                            <div className={styles.pricingItem}>
+                              <span className={styles.pricingSource}>PPT:</span>
+                              <span className={styles.pricingValue}>
+                                {card.pricing.pokemonPriceTracker.averagePrice}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className={styles.cardInfo}>
-                    <h3 className={styles.cardName}>{card.name}</h3>
-                    <p className={styles.cardSet}>{card.set?.name || 'Unknown Set'}</p>
-                    {card.rarity && <span className={styles.cardRarity}>{card.rarity}</span>}
-                    {card.pricing && (
-                      <div className={styles.cardPricing}>
-                        {card.pricing.tcgPlayer && card.pricing.tcgPlayer.averagePrice && card.pricing.tcgPlayer.averagePrice !== 'N/A' && (
-                          <div className={styles.pricingItem}>
-                            <span className={styles.pricingSource}>TCG:</span>
-                            <span className={styles.pricingValue}>
-                              {card.pricing.tcgPlayer.averagePrice}
-                            </span>
-                          </div>
-                        )}
-                        {card.pricing.pokemonPriceTracker && card.pricing.pokemonPriceTracker.averagePrice && card.pricing.pokemonPriceTracker.averagePrice !== 'N/A' && (
-                          <div className={styles.pricingItem}>
-                            <span className={styles.pricingSource}>PPT:</span>
-                            <span className={styles.pricingValue}>
-                              {card.pricing.pokemonPriceTracker.averagePrice}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                </HoloCard>
               ))}
             </div>
           </div>
