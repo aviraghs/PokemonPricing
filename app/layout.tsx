@@ -1,19 +1,33 @@
 import type { Metadata } from 'next';
-import { Poppins, Orbitron } from 'next/font/google';
+import { Poppins, Orbitron, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import Providers from '@/components/Providers';
 import CyberGrid from '@/components/CyberGrid';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+});
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700', '800'],
   subsets: ['latin'],
   variable: '--font-poppins',
+  display: 'swap',
 });
 
 const orbitron = Orbitron({
   weight: ['400', '500', '600', '700', '800', '900'],
   subsets: ['latin'],
   variable: '--font-orbitron',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -44,7 +58,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${poppins.variable} ${orbitron.variable}`}>
+      <body className={`${inter.variable} ${poppins.variable} ${orbitron.variable} ${jetbrainsMono.variable}`}>
         <CyberGrid />
         <Providers>
           {children}

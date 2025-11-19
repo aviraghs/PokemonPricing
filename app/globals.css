@@ -1,3 +1,66 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* Font declarations handled in layout.tsx via next/font/google */
+  --font-inter: var(--font-inter);
+  --font-orbitron: var(--font-orbitron);
+  --font-poppins: var(--font-poppins);
+  --font-mono: var(--font-mono);
+}
+
+/* Neo-Vault Dark Theme (Default) */
+[data-theme='dark'] {
+  /* Backgrounds - Void Black & Obsidian Glass */
+  --color-bg-primary: #050508; /* Void Black */
+  --color-bg-secondary: rgba(20, 25, 40, 0.7); /* Glass Panel */
+  --color-bg-tertiary: rgba(30, 35, 55, 0.5); /* Lighter Glass */
+  --color-bg-elevated: #1a1f2e;
+  --color-bg-overlay: rgba(5, 5, 8, 0.9);
+
+  /* Text - Holographic & Sharp */
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-text-disabled: #475569;
+
+  /* Accents - Neon Cyberpunk */
+  --color-accent-primary: #00f2ff; /* Neon Cyan */
+  --color-accent-primary-hover: #00c2cc;
+  --color-accent-secondary: #7c3aed; /* Cyber Purple */
+  --color-accent-secondary-hover: #6d28d9;
+  --color-accent-tertiary: #ff00ff; /* Neon Pink */
+
+  /* Status colors - Glowing */
+  --color-success: #00ff9d; /* Neon Green */
+  --color-success-bg: rgba(0, 255, 157, 0.1);
+  --color-danger: #ff3366; /* Neon Red */
+  --color-danger-bg: rgba(255, 51, 102, 0.1);
+  --color-warning: #ffb700; /* Neon Orange */
+  --color-warning-bg: rgba(255, 183, 0, 0.1);
+  --color-info: #00ccff;
+  --color-info-bg: rgba(0, 204, 255, 0.1);
+
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-light: rgba(255, 255, 255, 0.15);
+  --color-border-focus: var(--color-accent-primary);
+
+  /* Shadows - Neon Glows */
+  --shadow-sm: 0 0 10px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 0 20px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 0 30px rgba(0, 242, 255, 0.1); /* Cyan Glow */
+  --shadow-xl: 0 0 50px rgba(124, 58, 237, 0.2); /* Purple Glow */
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #00f2ff 0%, #0099ff 100%);
+  --gradient-bg: radial-gradient(circle at center, #131824 0%, #050508 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+
 /* Light Theme - Neo-Lab */
 [data-theme='light'] {
   /* Backgrounds - Clean Laboratory White */
@@ -45,4 +108,71 @@
   --gradient-primary: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
   --gradient-bg: radial-gradient(circle at center, #ffffff 0%, #f0f4f8 100%);
   --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 100%);
+}
+
+/* Set html element to use the data-theme attribute */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Headings use Orbitron for futuristic vibe */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-orbitron);
+  letter-spacing: 0.5px;
+}
+
+/* Prices and numbers use Monospace */
+.price, .number, .stat {
+  font-family: var(--font-mono);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-secondary);
+}
+
+/* Global button reset */
+button {
+  font-family: var(--font-inter);
+}
+
+/* Global input reset */
+input,
+select,
+textarea {
+  font-family: var(--font-inter);
+}
+
+/* Focus outline for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-accent-secondary);
+  outline-offset: 2px;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--color-bg-secondary);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
 }
