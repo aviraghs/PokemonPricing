@@ -168,6 +168,17 @@
   backdrop-filter: none !important;
 }
 
+/* Prevent the wrapper from rotating, apply rotation to the image only */
+.cardWrapper > div:hover {
+  transform: rotateX(0deg) rotateY(0deg) scale(1) !important;
+}
+
+/* Apply the 3D rotation only to the card image, not the entire container */
+.cardWrapper:hover .cardImage {
+  transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) scale(1.02);
+  transition: transform 0.1s ease;
+}
+
 .cardContent {
   display: flex;
   flex-direction: column;
@@ -187,6 +198,8 @@
   padding: 20px;
   cursor: pointer;
   position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease;
 }
 
 .cardImage img {

@@ -5,9 +5,11 @@
   margin: -20px; /* Negative margin to maintain layout */
 }
 
-/* Disable 3D rotation effect - user doesn't want it */
+/* Disable 3D rotation and glow effects - user doesn't want them */
 .cardWrapper > div:hover {
   transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .cardImageWrapper {
