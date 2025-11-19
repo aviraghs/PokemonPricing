@@ -54,8 +54,14 @@
   margin: -10px; /* Negative margin to maintain spacing */
 }
 
+/* Override HoloCard background to transparent - target the inner div */
+.cardWrapper > div {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
 .card {
-  background: transparent;
+  background: var(--color-bg-secondary);
   border-radius: 20px;
   overflow: hidden;
   border: none;
@@ -68,7 +74,7 @@
 .cardImage {
   position: relative;
   height: 320px;
-  background: transparent;
+  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,7 +98,7 @@
 .cardInfo {
   padding: 20px;
   text-align: left;
-  background: var(--color-bg-secondary);
+  background: transparent;
   flex: 1;
 }
 
