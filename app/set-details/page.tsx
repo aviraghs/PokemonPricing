@@ -4,6 +4,8 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import AddToCollectionButton from '@/components/AddToCollectionButton';
+import CardImage from '@/components/CardImage';
+import HoloCard from '@/components/HoloCard';
 import { getFallbackImage } from '@/lib/image-fallback';
 import styles from './page.module.css';
 
@@ -183,45 +185,19 @@ function SetDetailsContent() {
             {setData.cards && setData.cards.length > 0 ? (
               <div className={styles.grid}>
                 {setData.cards.map((card) => (
-                  <div
+                  <HoloCard
                     key={card.id}
-                    className={styles.card}
+                    rarity={card.rarity}
+                    className={styles.cardWrapper}
                   >
+                    <div className={styles.cardContent}>
                     <div className={styles.cardImage} onClick={() => handleCardClick(card.id)}>
-                      {card.image ? (
-                        <img
-                          src={`${card.image}/high.webp`}
-                          alt={card.name}
-                          onError={(e) => {
-                            // Fallback to low quality TCGdex image
-                            if (e.currentTarget.src.includes('/high.webp')) {
-                              e.currentTarget.src = `${card.image}/low.webp`;
-                            } else if (e.currentTarget.src.includes('/low.webp')) {
-                              // Try set logo as fallback
-                              const setLogoUrl = setData.id ? `https://images.pokemontcg.io/${setData.id}/logo.png` : null;
-                              if (setLogoUrl && e.currentTarget.src !== setLogoUrl) {
-                                e.currentTarget.src = setLogoUrl;
-                              } else {
-                                e.currentTarget.src = '/card-back.svg';
-                              }
-                            } else if (e.currentTarget.src.includes('logo.png')) {
-                              // Set logo failed, use card back
-                              e.currentTarget.src = '/card-back.svg';
-                            } else {
-                              e.currentTarget.src = '/card-back.svg';
-                            }
-                          }}
-                        />
-                      ) : (
-                        // If no TCGdex image, try set logo directly
-                        <img
-                          src={setData.id ? `https://images.pokemontcg.io/${setData.id}/logo.png` : '/card-back.svg'}
-                          alt={card.name}
-                          onError={(e) => {
-                            e.currentTarget.src = '/card-back.svg';
-                          }}
-                        />
-                      )}
+                      <CardImage 
+                        card={{
+                          ...card,
+                          set: { id: setData.id }
+                        }} 
+                      />
                     </div>
                     <div className={styles.cardInfo}>
                       <div className={styles.cardHeader} onClick={() => handleCardClick(card.id)}>
@@ -246,7 +222,8 @@ function SetDetailsContent() {
                         />
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  </HoloCard>
                 ))}
               </div>
             ) : (

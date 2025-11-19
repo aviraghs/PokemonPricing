@@ -69,7 +69,8 @@ export default function HoloCard({ children, rarity = '', className = '' }: Holo
       r.includes('shiny') ||
       r.includes('special') ||
       r.includes('ace spec') ||
-      r.includes('classic collection')
+      r.includes('classic collection') ||
+      r.includes('promo') // Added Promo to Rainbow Tier
     ) return styles.rainbowRarity;
 
     // SILVER TIER (Holo Rares, Double Rares, V, etc.)
@@ -80,12 +81,14 @@ export default function HoloCard({ children, rarity = '', className = '' }: Holo
       r.includes('prime') ||
       r.includes('star') || // One Star, Two Star, etc.
       r.includes('diamond') ||
-      r.includes('full art')
+      r.includes('full art') ||
+      r.includes('trainer gallery') // Added Trainer Gallery
     ) return styles.silverRarity;
 
-    // BLUE TIER (Base rarities)
-    // Common, Uncommon, Rare, None
-    return styles.blueRarity;
+    // Default: Blue Tier if rarity exists, otherwise subtle grey
+    if (rarity && rarity !== 'None') return styles.blueRarity;
+    
+    return '';
   };
 
   return (
