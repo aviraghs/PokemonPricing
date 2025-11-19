@@ -152,21 +152,28 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 24px;
+  padding: 20px; /* Extra padding to prevent glow clipping */
+  margin: -20px; /* Negative margin to maintain layout */
 }
 
 .cardWrapper {
   height: 100%;
+  padding: 10px; /* Padding for glow and rotation */
+  margin: -10px; /* Negative margin to maintain spacing */
 }
 
 .cardContent {
   display: flex;
   flex-direction: column;
   height: 100%;
+  background: var(--color-bg-secondary);
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .cardImage {
   height: 300px;
-  background: transparent;
+  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -201,6 +208,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  background: transparent;
+  flex: 1;
 }
 
 .cardHeader {

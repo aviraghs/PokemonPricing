@@ -1,16 +1,18 @@
 .cardWrapper {
   height: auto;
   width: 100%;
+  padding: 20px; /* Add padding to prevent glow clipping */
+  margin: -20px; /* Negative margin to maintain layout */
 }
 
 .cardImageWrapper {
   position: relative;
   width: 100%;
   aspect-ratio: 0.72; /* Standard Pokemon card ratio */
-  background: transparent;
+  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
   border-radius: 20px;
   overflow: hidden;
-  /* No border/box-shadow here as HoloCard provides it */
+  /* HoloCard provides border and glow effects */
 }
 
 .cardImage {
@@ -83,6 +85,9 @@
   display: flex;
   flex-direction: column; /* Changed to column to stack compact listings */
   align-items: center; /* Center items horizontally */
+  padding: 20px; /* Extra padding for 3D rotation and glow */
+  margin: -20px; /* Negative margin to maintain grid layout */
+  overflow: visible; /* Allow glow to show */
 }
 
 /* .cardImageWrapper styles are now at the top */
