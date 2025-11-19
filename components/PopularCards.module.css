@@ -60,6 +60,16 @@
   backdrop-filter: none !important;
 }
 
+/* Prevent the wrapper from rotating, apply rotation to the visual card instead */
+.cardWrapper > div:hover {
+  transform: none !important;
+}
+
+/* Apply the 3D rotation to the actual card element instead of the wrapper */
+.cardWrapper:hover .card {
+  transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) scale(1.02);
+}
+
 .card {
   background: var(--color-bg-secondary);
   border-radius: 20px;
@@ -69,6 +79,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease;
 }
 
 .cardImage {
