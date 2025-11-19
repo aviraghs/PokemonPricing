@@ -162,33 +162,8 @@
   margin: -10px; /* Negative margin to maintain spacing */
 }
 
-/* Override HoloCard background to transparent so glows are visible */
-.cardWrapper > div {
-  background: transparent !important;
-  backdrop-filter: none !important;
-}
-
-/* Prevent the wrapper from rotating, but keep z-index for proper layering */
-.cardWrapper > div:hover {
-  transform: rotateX(0deg) rotateY(0deg) scale(1) !important;
-  z-index: 10;
-}
-
-/* Apply glow directly to cardContent on hover - use a default blue/cyan glow */
-.cardWrapper:hover .cardContent {
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.4),
-    0 0 40px rgba(0, 242, 255, 0.5),
-    0 0 70px rgba(0, 242, 255, 0.2);
-  border: 1px solid rgba(0, 242, 255, 0.7);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-/* Apply the 3D rotation only to the card image, not the entire container */
-.cardWrapper:hover .cardImage {
-  transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) scale(1.02);
-  transition: transform 0.1s ease;
-}
+/* Let HoloCard handle its own glows based on rarity - don't override */
+/* The HoloCard component will apply appropriate colors based on card rarity */
 
 .cardContent {
   display: flex;
@@ -196,7 +171,8 @@
   height: 100%;
   background: var(--color-bg-secondary);
   border-radius: 16px;
-  overflow: visible; /* Changed from hidden to allow glow to show */
+  overflow: hidden; /* Keep content clipped to rounded corners */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 }
 
 .cardImage {
