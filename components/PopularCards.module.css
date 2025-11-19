@@ -35,7 +35,8 @@
 }
 
 .carouselWrapper {
-  overflow: visible; /* Allow glow to show beyond container */
+  overflow-x: hidden; /* Clip horizontal overflow to prevent scroll breaking */
+  overflow-y: visible; /* Allow vertical overflow for glows */
   padding: 40px 0; /* Extra vertical padding for glow and rotation */
 }
 
@@ -43,15 +44,13 @@
   display: flex;
   gap: 24px;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0 20px; /* Increased padding to prevent edge clipping */
+  padding: 0 4px; /* Minimal padding to prevent edge clipping */
 }
 
 .cardWrapper {
   min-width: calc(25% - 18px);
   flex-shrink: 0;
   height: auto;
-  padding: 10px; /* Extra padding to prevent glow clipping */
-  margin: -10px; /* Negative margin to maintain spacing */
 }
 
 /* Override HoloCard background to transparent - target the inner div */
@@ -328,8 +327,6 @@
 
   .cardWrapper {
     min-width: 100%;
-    padding: 8px;
-    margin: -8px;
   }
 
   .cardImage {
