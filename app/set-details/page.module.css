@@ -168,9 +168,31 @@
   backdrop-filter: none !important;
 }
 
-/* Prevent the wrapper from rotating, apply rotation to the image only */
+/* Prevent the wrapper from rotating, but keep z-index for proper layering */
 .cardWrapper > div:hover {
   transform: rotateX(0deg) rotateY(0deg) scale(1) !important;
+  z-index: 10;
+}
+
+/* Ensure rarity glows are visible - force them to apply */
+.cardWrapper > div:global(.goldRarity):hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 215, 0, 0.3) !important;
+  border-color: rgba(255, 215, 0, 0.8) !important;
+}
+
+.cardWrapper > div:global(.rainbowRarity):hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(255, 0, 255, 0.6), 0 0 60px rgba(0, 255, 255, 0.4) !important;
+  border-color: rgba(255, 100, 255, 0.8) !important;
+}
+
+.cardWrapper > div:global(.silverRarity):hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(192, 192, 192, 0.6), 0 0 70px rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(192, 192, 192, 0.8) !important;
+}
+
+.cardWrapper > div:global(.blueRarity):hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(0, 242, 255, 0.5), 0 0 70px rgba(0, 242, 255, 0.2) !important;
+  border-color: rgba(0, 242, 255, 0.7) !important;
 }
 
 /* Apply the 3D rotation only to the card image, not the entire container */
