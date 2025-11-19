@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: var(--color-bg-primary);
+  background: transparent;
   padding-top: 100px;
 }
 
@@ -179,26 +179,20 @@
   gap: 24px;
 }
 
-.card {
-  background: var(--color-bg-secondary);
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
+.cardWrapper {
+  height: 100%;
 }
 
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--color-accent-secondary);
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .cardImage {
   position: relative;
   height: 350px;
-  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
+  background: transparent; /* HoloCard provides background */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,8 +201,8 @@
   padding: 20px;
 }
 
-/* Show quick add button on card hover */
-.card:hover .cardImage :global(.quickAddBtn) {
+/* Show quick add button on card wrapper hover */
+.cardWrapper:hover .cardImage :global(.quickAddBtn) {
   opacity: 1 !important;
   transform: scale(1) !important;
 }

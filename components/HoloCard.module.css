@@ -1,0 +1,38 @@
+/* Rarity-specific glows */
+
+/* ULTRA RARE / GOLD (Top Tier) */
+/* Hyper rare, Ultra Rare, Secret Rare, etc. */
+.goldRarity:hover {
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(255, 215, 0, 0.2); /* Gold glow */
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+/* RAINBOW / SECRET (Special Tier) */
+/* Amazing Rare, Radiant Rare, Illustration Rare */
+.rainbowRarity:hover {
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(255, 0, 255, 0.2), /* Magenta */
+    0 0 10px rgba(0, 255, 255, 0.2); /* Cyan */
+  border-color: rgba(255, 100, 255, 0.4);
+}
+
+/* HOLO / SILVER (Mid Tier) */
+/* Holo Rare, Double rare, Shiny rare, etc. */
+.silverRarity:hover {
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(192, 192, 192, 0.2); /* Silver/White glow */
+  border-color: rgba(192, 192, 192, 0.4);
+}
+
+/* COMMON / BLUE (Base Tier) */
+/* Common, Uncommon, Rare */
+.blueRarity:hover {
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(0, 242, 255, 0.15); /* Cyan glow */
+  border-color: rgba(0, 242, 255, 0.3);
+}

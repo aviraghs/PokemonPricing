@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Poppins, Orbitron } from 'next/font/google';
 import './globals.css';
 import Providers from '@/components/Providers';
+import CyberGrid from '@/components/CyberGrid';
 
 const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700', '800'],
@@ -44,6 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${poppins.variable} ${orbitron.variable}`}>
+        <CyberGrid />
         <Providers>
           {children}
         </Providers>
